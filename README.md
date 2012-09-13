@@ -29,7 +29,7 @@ How to build
 Install dependencies:
 
 ```shell
-sudo apt-get install build-essential texlive libgtk-3-dev
+sudo apt-get install build-essential texlive libgtk-3-dev graphviz
 ```
 
 Then build and run:

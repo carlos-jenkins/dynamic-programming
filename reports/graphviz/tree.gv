@@ -1,0 +1,24 @@
+digraph bstree {
+
+    node [shape = circle];
+    graph [ordering="out"];
+
+    1 [label = "Carpenter"];
+    2 [label = "Cash"];
+    3 [label = "Cobain"];
+    4 [label = "Harrison"];
+    5 [label = "Hendrix"];
+    6 [label = "Joplin"];
+    7 [label = "Lennon"];
+    8 [label = "Morrison"];
+    9 [label = "Presley"];
+
+    4 -> 2;
+    4 -> 6;
+    2 -> 1;
+    2 -> 3;
+    6 -> 5;
+    6 -> 7;
+    7 -> 8;
+    8 -> 9;
+}

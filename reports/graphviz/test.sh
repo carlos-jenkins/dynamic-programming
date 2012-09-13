@@ -1,2 +1,3 @@
 #!/bin/bash
-dot -Tpng test.gv > test.png; xdg-open test.png
+dot -Tpng graph.gv > graph.png; xdg-open graph.png
+dot -Tpng tree.gv > tree.png; xdg-open tree.png
