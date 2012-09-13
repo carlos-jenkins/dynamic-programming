@@ -4,7 +4,7 @@
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
     <property name="border_width">10</property>
-    <property name="title" translatable="yes">Dynamic Programming</property>
+    <property name="title" translatable="yes">Bounded Knapsack</property>
     <property name="window_position">center-always</property>
     <property name="default_width">800</property>
     <property name="default_height">600</property>

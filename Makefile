@@ -1,18 +1,18 @@
 CC     = gcc
-CFLAGS = `pkg-config --cflags gtk+-3.0` -Wl,--export-dynamic
-LIBS   = `pkg-config --libs gtk+-3.0 gmodule-export-2.0`
 DEBUG  = -Wall -g
-OUTPUT = bin/
 
-OBJECTS = main.o
+CFLAGS = `pkg-config --cflags --libs glib-2.0`
+GFLAGS = `pkg-config --cflags --libs gtk+-3.0 gmodule-export-2.0`
 
-all: main
+COMMON =
 
-main: $(OBJECTS)
-	$(CC) $(DEBUG) $(OBJECTS) -o $(OUTPUT)$@ $(LIBS)
+all: bin/main 
+#bin/floyd bin/knapsack bin/optbst bin/probwin bin/replacement
 
-main.o: src/main/main.c
-	$(CC) $(DEBUG) -c $< -o $@ $(CFLAGS)
+bin/main: src/main/main.c
+	$(CC) $(DEBUG) -o $@ $< $(COMMON) $(GFLAGS)
+
 
 clean:
-	rm -f *.o main
+	rm -f bin/*
+

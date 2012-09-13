@@ -16,8 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <glib.h>
+#include "floyd.h"
 #include <gtk/gtk.h>
 
 int main(int argc, char **argv)
@@ -32,7 +31,7 @@ int main(int argc, char **argv)
 
     /* Load GUI interface */
     builder = gtk_builder_new();
-    if(!gtk_builder_add_from_file(builder, "gui/main.glade", &error)) {
+    if(!gtk_builder_add_from_file(builder, "gui/floyd.glade", &error)) {
         if(error) {
             g_warning("%s", error->message);
             g_error_free(error);
