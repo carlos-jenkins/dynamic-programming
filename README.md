@@ -36,8 +36,9 @@ Then build and run:
 
 ```
 cd download/dir
+./configure
 make
-./main
+./bin/main
 ```
 
 How to hack
@@ -51,4 +52,9 @@ sudo apt-get install glade geany git devhelp libgtk-3-doc
 
 We use Kernel code standards except that identation is 4 spaces wide:
 
-    http://www.kernel.org/doc/Documentation/CodingStyle
+- http://www.kernel.org/doc/Documentation/CodingStyle
+
+This package is developed with Gtk+ and glib:
+
+- http://developer.gnome.org/glib/stable/
+- http://developer.gnome.org/gtk3/stable/
