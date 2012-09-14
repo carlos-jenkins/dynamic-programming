@@ -17,10 +17,12 @@ programming algorithms:
 - *Optimal binary search tree*, used to find the best tree given a set of nodes
   and their probability of being requested.
 - *Equipment replacement*, used to find the optimal replacement plan for any
-  equipment.
-- *Floyd algorithm*, used to find the shortest path in a weighted graph.
+  equipment given it's cost, maintenance cost and sale price per year.
+- *Floyd algorithm*, used to find the shortest path between any pair of nodes 
+  in a weighted graph.
 
-This Software is written is C and uses GTK+ 3 for the GUI.
+This Software is written is C and uses GTK+ 3 for the GUI. It uses LaTeX to render
+reports and Graphviz to draw graphs and trees.
 
 
 How to build
