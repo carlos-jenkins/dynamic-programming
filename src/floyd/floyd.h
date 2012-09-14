@@ -16,6 +16,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef H_FLOYD
+#define H_FLOYD
+
 #include <stdio.h>
 #include <glib.h>
+#include "matrix.h"
 
+/**
+ * Floyd's algorithm context data structure.
+ */
+typedef struct {
+
+        /* Common */
+        int status;
+        int execution_time;
+        int memory_required;
+
+        /* Tables */
+        matrix *table_m;
+        matrix *table_p;
+
+} floyd_context;
+
+/**
+ * Perfom Floyd algorithm with given context.
+ *
+ * @param floyd_context, the floyd's context data structure.
+ * @return TRUE if execution was successful or FALSE if and error ocurred. Check
+ *         'status' flag in context to know what went wrong.
+ */
+gboolean floyd(floyd_context* c);
+
+#endif
