@@ -18,7 +18,7 @@
 
 #include "floyd.h"
 
-gboolean floyd(floyd_context *c)
+bool floyd(floyd_context *c)
 {
-    return TRUE;
+    return true;
 }

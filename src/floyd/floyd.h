@@ -20,6 +20,7 @@
 #define H_FLOYD
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <glib.h>
 #include "matrix.h"
 
@@ -34,8 +35,13 @@ typedef struct {
         int memory_required;
 
         /* Tables */
-        matrix *table_m;
-        matrix *table_p;
+        matrix* table_d;
+        matrix* table_p;
+
+        /* Report */
+        int start;
+        int end;
+        int* names;
 
 } floyd_context;
 
@@ -46,6 +52,6 @@ typedef struct {
  * @return TRUE if execution was successful or FALSE if and error ocurred. Check
  *         'status' flag in context to know what went wrong.
  */
-gboolean floyd(floyd_context* c);
+bool floyd(floyd_context* c);
 
 #endif

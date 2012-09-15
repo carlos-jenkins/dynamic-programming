@@ -108,7 +108,7 @@ void matrix_free(matrix* m)
         /* Release the rows array */
         free(m->data);
         m->data = NULL;
-        /* free(m) */
+        free(m);
     }
 
     return;
