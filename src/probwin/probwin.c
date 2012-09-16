@@ -25,9 +25,6 @@ probwin_context* probwin_context_new(int games)
         return NULL;
     }
 
-    /* Calculate games needed to win */
-    int games_to_win = (games + 1) / 2;
-
     /* Allocate structures */
     probwin_context* c = (probwin_context*) malloc(sizeof(probwin_context));
     if(c == NULL) {
@@ -40,24 +37,27 @@ probwin_context* probwin_context_new(int games)
         return NULL;
     }
 
-    int size = games_to_win + 1;
+    /* Calculate games needed to win */
+    int games_to_win = (games + 1) / 2;
+
     /* Try to allocate matrices */
+    int size = games_to_win + 1;
     c->table_w = matrix_new(size, size, 0.0);
     if(c->table_w == NULL) {
+        free(c->game_format);
         return NULL;
     }
 
     /* Initialize values */
-    for(int i = 1; i <= games_to_win + 1; i++) {
-        c->table_w->data[i][0] = 0.0;
-        for(int j = 1; j <= games_to_win + 1; j++) {
-            c->table_w->data[0][j] = 1.0;
-        }
+    c->table_w->data[0][0] = PLUS_INF;
+    for(int i = 1; i <= games_to_win; i++) {
+        c->table_w->data[0][i] = 1.0;
     }
 
     c->status = -1;
     c->execution_time = 0;
-    c->memory_required = (matrix_sizeof(c->table_w)) + sizeof(probwin_context);
+    c->memory_required = matrix_sizeof(c->table_w) + (games * sizeof(bool)) +
+                         sizeof(probwin_context);
     c->report_buffer = tmpfile();
 
     return c;

@@ -25,22 +25,22 @@
 /**
  * Probabilities to become champion algorithm context data structure.
  */
+typedef struct{
 
- typedef struct{
-     /* Common */
-     int status;
-     double execution_time;
-     unsigned int memory_required;
-     FILE* report_buffer;
+    /* Common */
+    int status;
+    double execution_time;
+    unsigned int memory_required;
+    FILE* report_buffer;
 
-     /* Tables */
-     matrix* table_w;
+    /* Tables */
+    matrix* table_w;
 
     /* Probabilities */
     float ph;
     float pr;
 
-    /*Game format */
+    /* Game format */
     bool* game_format;
 
 } probwin_context;

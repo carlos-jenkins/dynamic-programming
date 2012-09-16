@@ -33,13 +33,13 @@ int main(int argc, char **argv)
     bool* f = c->game_format;
 
     /* Set format game */
-    f[0] = 1;
-    f[1] = 1;
-    f[2] = 0;
-    f[3] = 0;
-    f[4] = 0;
-    f[5] = 1;
-    f[6] = 1;
+    f[0] = true;
+    f[1] = true;
+    f[2] = false;
+    f[3] = false;
+    f[4] = false;
+    f[5] = true;
+    f[6] = true;
 
     /*Set probabilities */
     c->ph = 0.57;
@@ -51,6 +51,9 @@ int main(int argc, char **argv)
         printf("Probabilities to become champion algorithm was unable to complete... exiting.\n");
         return(-2);
     }
+
+    printf("Foo");
+    return(0);
 
     /* Show table */
     printf("-----------------------------------\n");
