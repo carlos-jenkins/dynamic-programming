@@ -32,20 +32,24 @@ floyd_context* floyd_context_new(int nodes)
     }
 
     /* Try to allocate matrices */
-    c->table_d = matrix_new(nodes, nodes, 0.0);
+    c->table_d = matrix_new(nodes, nodes, PLUS_INF);
     if(c->table_d == NULL) {
         return NULL;
     }
     c->table_p = matrix_new(nodes, nodes, 0.0);
     if(c->table_p == NULL) {
-        matrix_free(c->table_d)
+        matrix_free(c->table_d);
         return NULL;
     }
 
     /* Initialize values */
+    for(int i = 0; i < nodes; i++) {
+        c->table_d->data[i][i] = 0.0;
+    }
     c->status = -1;
     c->execution_time = 0;
-    c->memory_required = 0;
+    c->memory_required = (matrix_sizeof(c->table_d) * 2) +
+                                            sizeof(floyd_context);
     c->report_buffer = tmpfile();
 
     return c;
@@ -53,14 +57,39 @@ floyd_context* floyd_context_new(int nodes)
 
 void floyd_context_free(floyd_context* c)
 {
-    matrix_free(c->table_d)
-    matrix_free(c->table_p)
+    matrix_free(c->table_d);
+    matrix_free(c->table_p);
     fclose(c->report_buffer);
-    free(c)
+    free(c);
     return;
 }
 
 bool floyd(floyd_context *c)
 {
+    /* Start counting time */
+    GTimer* timer = g_timer_new();
+
+    /* Run the Floyd Warshall algorithm */
+    matrix* d = c->table_d;
+    matrix* p = c->table_p;
+    int nodes = d->rows;
+
+    for(int k = 0; k < nodes; k++) {
+        for(int i = 0; i < nodes; i++) {
+            for(int j = 0; j < nodes; j++) {
+                float minimum = fminf(d->data[i][j],
+                                      d->data[i][k] + d->data[k][j]);
+                if(minimum < d->data[i][j]) {
+                    p->data[i][j] = k + 1;
+                    d->data[i][j] = minimum;
+                }
+            }
+        }
+        /* print_iteration(d, p, k) */
+    }
+
+    /* Stop counting time */
+    g_timer_stop(timer);
+    c->execution_time = g_timer_elapsed(timer, NULL);
     return true;
 }

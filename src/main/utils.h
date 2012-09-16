@@ -24,6 +24,7 @@
 #include <stdbool.h>
 #include <float.h>
 #include <math.h>
+#include <glib.h>
 
 #define PLUS_INF FLT_MAX
 #define MINUS_INF -FLT_MAX

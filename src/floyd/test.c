@@ -20,7 +20,65 @@
 
 int main(int argc, char **argv)
 {
-    printf("Testing Floyd algorithm...");
+    printf("Testing Floyd algorithm...\n\n");
+
+    /* Create context */
+    floyd_context* c = floyd_context_new(6);
+    if(c == NULL) {
+        printf("Unable to create floyd context... exiting.\n");
+        return(-1);
+    }
+
+    /* Fill context
+     * | \ |   0 |   1 |   2 |   3 |   4 |   5 |
+     * | 0 |   0 | inf | inf | inf |   5 |  11 |
+     * | 1 |  16 |   0 |   6 |   1 | inf |   4 |
+     * | 2 | inf |   7 |   0 |  12 | inf | inf |
+     * | 3 | inf | inf |  19 |   0 |   9 | inf |
+     * | 4 |   2 | inf |   8 | inf |   0 | inf |
+     * | 5 | inf | inf | inf | inf |   3 |   0 |
+     */
+    matrix* d = c->table_d;
+    matrix* p = c->table_p;
+
+    d->data[0][4] = 5.0;
+    d->data[0][5] = 11.0;
+
+    d->data[1][0] = 16.0;
+    d->data[1][2] = 6.0;
+    d->data[1][3] = 1.0;
+    d->data[1][5] = 4.0;
+
+    d->data[2][1] = 7.0;
+    d->data[2][3] = 12.0;
+
+    d->data[3][2] = 19.0;
+    d->data[3][4] = 9.0;
+
+    d->data[4][0] = 2.0;
+    d->data[4][2] = 8.0;
+
+    d->data[5][4] = 3.0;
+
+    /* Show table */
+    printf("-----------------------------------\n");
+    matrix_print(d);
+
+    /* Run algorithm */
+    bool success = floyd(c);
+    if(!success) {
+        printf("Floyd algorithm was unable to complete... exiting.\n");
+        return(-2);
+    }
+
+    /* Show tables */
+    printf("-----------------------------------\n");
+    matrix_print(d);
+    printf("-----------------------------------\n");
+    matrix_print(p);
+
+    /* Free resources */
+    floyd_context_free(c);
     return(0);
 }
 

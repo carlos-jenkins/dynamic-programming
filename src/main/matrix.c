@@ -32,7 +32,14 @@ void matrix_print(matrix* m)
     printf("Table: %i x %i\n", m->rows, m->columns);
     for(int i = 0; i < m->rows; i++) {
         for(int j = 0; j < m->columns; j++) {
-            printf("%4.2f ", m->data[i][j]);
+            float cell = m->data[i][j];
+            if(cell == FLT_MAX) {
+                printf("+INF ");
+            } else if(cell == -FLT_MAX) {
+                printf("-INF ");
+            } else {
+                printf("%4.2f ", cell);
+            }
         }
         printf("\n");
     }
@@ -89,6 +96,12 @@ matrix* matrix_new(int rows, int columns, MATRIX_DATATYPE fill)
     matrix_fill(m, fill);
 
     return m;
+}
+
+unsigned int matrix_sizeof(matrix* m)
+{
+    return (m->rows * sizeof(MATRIX_DATATYPE*)) +
+           (m->rows * (m->columns * sizeof(MATRIX_DATATYPE)));
 }
 
 void matrix_free(matrix* m)

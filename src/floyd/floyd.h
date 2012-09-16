@@ -29,8 +29,8 @@ typedef struct {
 
     /* Common */
     int status;
-    int execution_time;
-    int memory_required;
+    double execution_time;
+    unsigned int memory_required;
     FILE* report_buffer;
 
     /* Tables */

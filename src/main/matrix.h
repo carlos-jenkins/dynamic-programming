@@ -21,6 +21,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <float.h>
 
 #define MATRIX_DATATYPE float
 
@@ -56,6 +57,14 @@ void matrix_print(matrix* m);
  *         not be allocated.
  */
 matrix* matrix_new(int rows, int columns, MATRIX_DATATYPE fill);
+
+/**
+ * Calculates the memory required based on the matrix's columns and rows.
+ *
+ * @return the size of the matrix in bytes.
+ * @param matrix, a matrix structure (by reference)
+ */
+unsigned int matrix_sizeof(matrix* m);
 
 /**
  * Free resources associated with a matrix.
