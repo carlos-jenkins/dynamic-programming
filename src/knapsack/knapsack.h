@@ -19,9 +19,7 @@
 #ifndef H_KNAPSACK
 #define H_KNAPSACK
 
-#include <stdio.h>
-#include <stdbool.h>
-#include <glib.h>
+#include "utils.h"
 #include "matrix.h"
 
 /**
@@ -50,11 +48,15 @@ typedef struct {
     matrix* table_items;
 
     /* Algorithm */
+    int num_items;
     item* items;
     float capacity;
     char* unit;
 
 } knapsack_context;
+
+knapsack_context* knapsack_context_new(float capacity, float num_items);
+void knapsack_context_free(knapsack_context* c);
 
 /**
  * Perfom Knapsack algorithm with given context.

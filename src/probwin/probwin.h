@@ -19,9 +19,7 @@
 #ifndef H_PROBWIN
 #define H_PROBWIN
 
-#include <stdio.h>
-#include <stdbool.h>
-#include <glib.h>
+#include "utils.h"
 #include "matrix.h"
 
 

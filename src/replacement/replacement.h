@@ -19,9 +19,7 @@
 #ifndef H_REPLACEMENT
 #define H_REPLACEMENT
 
-#include <stdio.h>
-#include <stdbool.h>
-#include <glib.h>
+#include "utils.h"
 #include "matrix.h"
 
 

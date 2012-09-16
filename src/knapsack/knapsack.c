@@ -18,7 +18,20 @@
 
 #include "knapsack.h"
 
+knapsack_context* knapsack_context_new(float capacity, float num_items)
+{
+    /* TODO */
+    return NULL;
+}
+
+void knapsack_context_free(knapsack_context* c)
+{
+    /* TODO */
+    return;
+}
+
 bool knapsack(knapsack_context *c)
 {
+    /* TODO */
     return true;
 }

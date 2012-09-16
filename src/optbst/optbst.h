@@ -19,9 +19,7 @@
 #ifndef H_OPTBST
 #define H_OPTBST
 
-#include <stdio.h>
-#include <stdbool.h>
-#include <glib.h>
+#include "utils.h"
 #include "matrix.h"
 
 
