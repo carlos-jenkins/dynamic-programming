@@ -16,6 +16,53 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <glib.h>
+#ifndef H_KNAPSACK
+#define H_KNAPSACK
 
+#include <stdio.h>
+#include <stdbool.h>
+#include <glib.h>
+#include "matrix.h"
+
+/**
+ * Item definition struct.
+ */
+typedef struct {
+    char* name;
+    float value;
+    float weight;
+    float amount;
+} item;
+
+/**
+ * Knapsack algorithm context data structure.
+ */
+typedef struct {
+
+    /* Common */
+    int status;
+    int execution_time;
+    int memory_required;
+    FILE* report_buffer;
+
+    /* Tables */
+    matrix* table_values;
+    matrix* table_items;
+
+    /* Algorithm */
+    item* items;
+    float capacity;
+    char* unit;
+
+} knapsack_context;
+
+/**
+ * Perfom Knapsack algorithm with given context.
+ *
+ * @param knapsack_context, the knapsack's context data structure.
+ * @return TRUE if execution was successful or FALSE if and error ocurred. Check
+ *         'status' flag in context to know what went wrong.
+ */
+bool knapsack(knapsack_context* c);
+
+#endif

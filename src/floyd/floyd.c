@@ -18,6 +18,48 @@
 
 #include "floyd.h"
 
+floyd_context* floyd_context_new(int nodes)
+{
+    /* Check input is correct */
+    if(nodes < 2) {
+        return NULL;
+    }
+
+    /* Allocate structure */
+    floyd_context* c = (floyd_context*) malloc(sizeof(floyd_context));
+    if(c == NULL) {
+        return NULL;
+    }
+
+    /* Try to allocate matrices */
+    c->table_d = matrix_new(nodes, nodes, 0.0);
+    if(c->table_d == NULL) {
+        return NULL;
+    }
+    c->table_p = matrix_new(nodes, nodes, 0.0);
+    if(c->table_p == NULL) {
+        matrix_free(c->table_d)
+        return NULL;
+    }
+
+    /* Initialize values */
+    c->status = -1;
+    c->execution_time = 0;
+    c->memory_required = 0;
+    c->report_buffer = tmpfile();
+
+    return c;
+}
+
+void floyd_context_free(floyd_context* c)
+{
+    matrix_free(c->table_d)
+    matrix_free(c->table_p)
+    fclose(c->report_buffer);
+    free(c)
+    return;
+}
+
 bool floyd(floyd_context *c)
 {
     return true;

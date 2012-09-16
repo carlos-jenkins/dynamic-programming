@@ -18,3 +18,7 @@
 
 #include "knapsack.h"
 
+bool knapsack(knapsack_context *c)
+{
+    return true;
+}

@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define MATRIX_DATATYPE int
+#define MATRIX_DATATYPE float
 
 typedef struct {
         int rows;
@@ -36,7 +36,7 @@ typedef struct {
  * @param matrix, a matrix structure (by reference)
  * @return nothing
  */
-void matrix_fill(matrix *m, MATRIX_DATATYPE value);
+void matrix_fill(matrix* m, MATRIX_DATATYPE value);
 
 /**
  * Print a matrix to the standard output.
@@ -44,7 +44,7 @@ void matrix_fill(matrix *m, MATRIX_DATATYPE value);
  * @param matrix, a matrix structure (by reference)
  * @return nothing
  */
-void matrix_print(matrix *m);
+void matrix_print(matrix* m);
 
 /**
  * Create a matrix of given size.
@@ -63,6 +63,6 @@ matrix* matrix_new(int rows, int columns, MATRIX_DATATYPE fill);
  * @return nothing
  * @param matrix, a matrix structure (by reference)
  */
-void matrix_free(matrix *m);
+void matrix_free(matrix* m);
 
 #endif

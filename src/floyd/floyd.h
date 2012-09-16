@@ -19,9 +19,7 @@
 #ifndef H_FLOYD
 #define H_FLOYD
 
-#include <stdio.h>
-#include <stdbool.h>
-#include <glib.h>
+#include "utils.h"
 #include "matrix.h"
 
 /**
@@ -29,21 +27,25 @@
  */
 typedef struct {
 
-        /* Common */
-        int status;
-        int execution_time;
-        int memory_required;
+    /* Common */
+    int status;
+    int execution_time;
+    int memory_required;
+    FILE* report_buffer;
 
-        /* Tables */
-        matrix* table_d;
-        matrix* table_p;
+    /* Tables */
+    matrix* table_d;
+    matrix* table_p;
 
-        /* Report */
-        int start;
-        int end;
-        int* names;
+    /* Report */
+    int start;
+    int end;
+    int* names;
 
 } floyd_context;
+
+floyd_context* floyd_context_new(int nodes);
+void floyd_context_free(floyd_context* c);
 
 /**
  * Perfom Floyd algorithm with given context.
@@ -53,5 +55,13 @@ typedef struct {
  *         'status' flag in context to know what went wrong.
  */
 bool floyd(floyd_context* c);
+
+/**
+ * Write report about the execution of the algorith.
+ *
+ * @param floyd_context, the floyd's context data structure after success.
+ * @return nothing.
+ */
+void floyd_report(floyd_context* c);
 
 #endif

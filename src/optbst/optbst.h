@@ -16,6 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <glib.h>
+#ifndef H_OPTBST
+#define H_OPTBST
 
+#include <stdio.h>
+#include <stdbool.h>
+#include <glib.h>
+#include "matrix.h"
+
+
+#endif

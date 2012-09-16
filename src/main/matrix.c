@@ -32,7 +32,7 @@ void matrix_print(matrix* m)
     printf("Table: %i x %i\n", m->rows, m->columns);
     for(int i = 0; i < m->rows; i++) {
         for(int j = 0; j < m->columns; j++) {
-            printf("%i ", m->data[i][j]);
+            printf("%4.2f ", m->data[i][j]);
         }
         printf("\n");
     }

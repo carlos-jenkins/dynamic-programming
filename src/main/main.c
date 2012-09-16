@@ -16,8 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include <glib.h>
+#include "utils.h"
 #include <gtk/gtk.h>
 
 int main(int argc, char **argv)

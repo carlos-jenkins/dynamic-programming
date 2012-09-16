@@ -16,13 +16,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef H_PROBWIN
-#define H_PROBWIN
+#ifndef H_UTILS
+#define H_UTILS
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
-#include <glib.h>
-#include "matrix.h"
+#include <float.h>
+#include <math.h>
 
+#define PLUS_INF FLT_MAX
+#define MINUS_INF -FLT_MAX
+
+#define F_EPSILON 0.00001
+
+bool fequal(float a, float b);
 
 #endif
