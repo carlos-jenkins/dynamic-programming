@@ -42,13 +42,14 @@
 
     /*Game format*/
     bool* game_format;
-    
-}probwin_context;
+
+} probwin_context;
 
 probwin_context* probwin_new(int games);
 void probwin_context_free(probwin_context* c);
- /**
-* Perfom Probabilities to become champion algorithm with given context.
+
+/**
+ * Perfom Probabilities to become champion algorithm with given context.
  *
  * @param probwin_context, the Probabilities to become champion's context data structure.
  * @return TRUE if execution was successful or FALSE if and error ocurred. Check
@@ -63,6 +64,5 @@ bool probwin(probwin_context* c);
  * @return nothing.
  */
 void probwin_report(probwin_context* c);
-
 
 #endif

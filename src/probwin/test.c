@@ -17,14 +17,10 @@
  */
 
 #include "probwin.h"
-#include <stdio.h>
-#include <stdbool.h>
 
 int main(int argc, char **argv)
 {
     printf("Testing Probabilities to become champion...\n");
-    return(0);
-
 
     /* Create context */
     probwin_context* c = probwin_new(7);
@@ -33,24 +29,22 @@ int main(int argc, char **argv)
         return(-1);
     }
 
-
     matrix* w = c->table_w;
-    bool* f= c->game_format;
-    
-    /* Set format game*/
-    f[0]=1;
-    f[1]=1;
-    f[2]=0;
-    f[3]=0;
-    f[4]=0;
-    f[5]=1;
-    f[6]=1;
+    bool* f = c->game_format;
 
+    /* Set format game*/
+    f[0] = 1;
+    f[1] = 1;
+    f[2] = 0;
+    f[3] = 0;
+    f[4] = 0;
+    f[5] = 1;
+    f[6] = 1;
 
     /*Set probabilities*/
-    c->ph=0.57;
-    c->pr=0.49;
-    
+    c->ph = 0.57;
+    c->pr = 0.49;
+
     /* Run algorithm */
     bool success = probwin(c);
     if(!success) {
@@ -61,9 +55,8 @@ int main(int argc, char **argv)
     /* Show table*/
     printf("-----------------------------------\n");
     matrix_print(w);
-    
+
     /* Free resources */
     probwin_context_free(c);
     return(0);
 }
-
