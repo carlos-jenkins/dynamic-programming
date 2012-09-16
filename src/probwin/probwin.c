@@ -18,15 +18,15 @@
 
 #include "probwin.h"
 
-probwin_context* probwin_new(int games){
-
+probwin_context* probwin_context_new(int games)
+{
     /* Check input is correct */
-    if(games%2 == 0) {
+    if(games % 2 == 0) {
         return NULL;
     }
 
-    /*Calculate games needed to win*/
-    int games_to_win = (games+1)/2;
+    /* Calculate games needed to win */
+    int games_to_win = (games + 1) / 2;
 
     /* Allocate structures */
     probwin_context* c = (probwin_context*) malloc(sizeof(probwin_context));
@@ -34,18 +34,13 @@ probwin_context* probwin_new(int games){
         return NULL;
     }
 
-    bool* gf = (bool*) malloc(games* sizeof (bool));
-    if(gf == NULL) {
-        return NULL;
-    }
-
-    /*Try to allocate game format*/
-    c->game_format=gf;
+    /* Try to allocate game format */
+    c->game_format = (bool*) malloc(games * sizeof(bool));
     if(c->game_format == NULL) {
         return NULL;
     }
 
-    int size=games_to_win+1;
+    int size = games_to_win + 1;
     /* Try to allocate matrices */
     c->table_w = matrix_new(size, size, 0.0);
     if(c->table_w == NULL) {
@@ -53,17 +48,16 @@ probwin_context* probwin_new(int games){
     }
 
     /* Initialize values */
-    for(int i=1; i<=games_to_win+1; i++){
-        c->table_w->data[i][0]=0.0;
-        for(int j=1; j<=games_to_win+1; j++){
-            c->table_w->data[0][j]=1.0;
+    for(int i = 1; i <= games_to_win + 1; i++) {
+        c->table_w->data[i][0] = 0.0;
+        for(int j = 1; j <= games_to_win + 1; j++) {
+            c->table_w->data[0][j] = 1.0;
         }
     }
 
     c->status = -1;
     c->execution_time = 0;
-    c->memory_required = (matrix_sizeof(c->table_w)) +
-                                            sizeof(probwin_context);
+    c->memory_required = (matrix_sizeof(c->table_w)) + sizeof(probwin_context);
     c->report_buffer = tmpfile();
 
     return c;
@@ -83,22 +77,24 @@ bool probwin(probwin_context *c)
     /* Start counting time */
     GTimer* timer = g_timer_new();
 
-    /* Run the Floyd Warshall algorithm */
+    /* Run the probabilities to win algorithm */
     matrix* w = c->table_w;
-    float ph=c->ph;
-    float pr=c->pr;
+    float ph = c->ph;
+    float pr = c->pr;
     int games_to_win = w->rows;
-    
-    for(int i=1; i<=games_to_win; i++){
-        for(int j=1; j<=games_to_win; j++){
-            int actual_game=(games_to_win+1-i-j);
-            if(c->game_format[actual_game]){
-                w->data[i][j]=ph*w->data[i-1][j]+(1.0-ph)*w->data[i][j-1];
-            }else{
-                    w->data[i][j]=pr*w->data[i-1][j]+(1.0-pr)*w->data[i][j-1];
+
+    for(int i = 1; i <= games_to_win; i++) {
+        for(int j = 1; j <= games_to_win; j++) {
+            int actual_game = (games_to_win + 1 - i - j);
+            if(c->game_format[actual_game]) {
+                w->data[i][j] = ph * w->data[i-1][j] +
+                                (1.0 - ph) * w->data[i][j-1];
+            } else {
+                w->data[i][j] = pr * w->data[i-1][j] +
+                                (1.0 - pr) * w->data[i][j - 1];
             }
-		}
-	}
+        }
+    }
 
     /* Stop counting time */
     g_timer_stop(timer);

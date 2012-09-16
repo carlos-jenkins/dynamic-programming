@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     printf("Testing Probabilities to become champion...\n");
 
     /* Create context */
-    probwin_context* c = probwin_new(7);
+    probwin_context* c = probwin_context_new(7);
     if(c == NULL) {
         printf("Unable to create Probabilities to become champion context... exiting.\n");
         return(-1);
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
     matrix* w = c->table_w;
     bool* f = c->game_format;
 
-    /* Set format game*/
+    /* Set format game */
     f[0] = 1;
     f[1] = 1;
     f[2] = 0;
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
     f[5] = 1;
     f[6] = 1;
 
-    /*Set probabilities*/
+    /*Set probabilities */
     c->ph = 0.57;
     c->pr = 0.49;
 
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
         return(-2);
     }
 
-    /* Show table*/
+    /* Show table */
     printf("-----------------------------------\n");
     matrix_print(w);
 

@@ -33,19 +33,19 @@
      unsigned int memory_required;
      FILE* report_buffer;
 
-     /* Tables*/
+     /* Tables */
      matrix* table_w;
 
     /* Probabilities */
     float ph;
     float pr;
 
-    /*Game format*/
+    /*Game format */
     bool* game_format;
 
 } probwin_context;
 
-probwin_context* probwin_new(int games);
+probwin_context* probwin_context_new(int games);
 void probwin_context_free(probwin_context* c);
 
 /**
