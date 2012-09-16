@@ -31,6 +31,9 @@
 
 #define F_EPSILON 0.00001
 
+char* get_current_time();
 bool fequal(float a, float b);
+bool copy_streams(FILE* input, FILE* output);
+bool insert_file(char* filename, FILE* output);
 
 #endif

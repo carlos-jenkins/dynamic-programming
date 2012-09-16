@@ -25,7 +25,7 @@ int main(int argc, char **argv)
     /* Create context */
     floyd_context* c = floyd_context_new(6);
     if(c == NULL) {
-        printf("Unable to create floyd context... exiting.\n");
+        printf("ERROR: Unable to create floyd context... exiting.\n");
         return(-1);
     }
 
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
     /* Run algorithm */
     bool success = floyd(c);
     if(!success) {
-        printf("Floyd algorithm was unable to complete... exiting.\n");
+        printf("ERROR: Floyd algorithm was unable to complete... exiting.\n");
         return(-2);
     }
 
@@ -76,6 +76,15 @@ int main(int argc, char **argv)
     matrix_print(d);
     printf("-----------------------------------\n");
     matrix_print(p);
+
+    /* Generate report */
+    bool report_created = floyd_report(c);
+    if(!report_created) {
+        printf("ERROR: Report could not be created.\n");
+        return(-2);
+    } else {
+        printf("Report created at reports/floyd.tex\n");
+    }
 
     /* Free resources */
     floyd_context_free(c);

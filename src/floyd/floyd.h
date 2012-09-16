@@ -62,6 +62,8 @@ bool floyd(floyd_context* c);
  * @param floyd_context, the floyd's context data structure after success.
  * @return nothing.
  */
-void floyd_report(floyd_context* c);
+bool floyd_report(floyd_context* c);
+void floyd_execution(floyd_context* c, int k);
+void floyd_table(matrix* m, char* caption, int k, FILE* stream);
 
 #endif

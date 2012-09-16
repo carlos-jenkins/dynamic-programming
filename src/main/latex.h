@@ -16,5 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "latex.h"
+#ifndef H_LATEX
+#define H_LATEX
 
+#include "utils.h"
+
+#endif

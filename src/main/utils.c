@@ -18,7 +18,59 @@
 
 #include "utils.h"
 
+char* get_current_time()
+{
+    GDateTime* now = g_date_time_new_now_local();
+    /* 31/12/2012 03:00AM */
+    char* formatted = g_date_time_format(now, "%d/%m/%Y %I:%M%p");
+    g_date_time_unref(now);
+    return formatted;
+}
+
 bool fequal(float a, float b)
 {
     return fabs(a-b) < F_EPSILON;
+}
+
+bool copy_streams(FILE* input, FILE* output)
+{
+    /* Rewind input stream so we can start reading from the beginning */
+    rewind(input);
+
+    /* Copy streams */
+    char ch;
+    while(!feof(input)) {
+
+        ch = fgetc(input);
+
+        if(ferror(input)) {
+          return false;
+        }
+        if(!feof(input)) {
+            fputc(ch, output);
+        }
+        if(ferror(output)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+bool insert_file(char* filename, FILE* output)
+{
+    FILE* input = fopen(filename, "rt");
+    if(input == NULL) {
+        return false;
+    }
+
+    bool success = copy_streams(input, output);
+    if(!success) {
+        return false;
+    }
+
+    if(fclose(input) == EOF) {
+        return false;
+    }
+
+    return true;
 }
