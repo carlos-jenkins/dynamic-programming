@@ -52,9 +52,6 @@ int main(int argc, char **argv)
         return(-2);
     }
 
-    printf("Foo");
-    return(0);
-
     /* Show table */
     printf("-----------------------------------\n");
     matrix_print(w);

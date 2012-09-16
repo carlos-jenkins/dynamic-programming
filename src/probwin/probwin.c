@@ -36,6 +36,7 @@ probwin_context* probwin_context_new(int games)
     if(c->game_format == NULL) {
         return NULL;
     }
+    c->games = games;
 
     /* Calculate games needed to win */
     int games_to_win = (games + 1) / 2;
@@ -79,20 +80,21 @@ bool probwin(probwin_context *c)
 
     /* Run the probabilities to win algorithm */
     matrix* w = c->table_w;
-    float ph = c->ph;
-    float pr = c->pr;
-    int games_to_win = w->rows;
+    int games = c->games;
+    float p;
 
-    for(int i = 1; i <= games_to_win; i++) {
-        for(int j = 1; j <= games_to_win; j++) {
-            int actual_game = (games_to_win + 1 - i - j);
+    for(int i = 1; i < w->rows; i++) {
+        for(int j = 1; j < w->columns; j++) {
+
+            /* Decide which probability to use */
+            int actual_game = games + 1 - i - j;
+            p = c->pr;
             if(c->game_format[actual_game]) {
-                w->data[i][j] = ph * w->data[i-1][j] +
-                                (1.0 - ph) * w->data[i][j-1];
-            } else {
-                w->data[i][j] = pr * w->data[i-1][j] +
-                                (1.0 - pr) * w->data[i][j - 1];
+                p = c->ph;
             }
+
+            w->data[i][j] = p * w->data[i - 1][j] +
+                            (1.0 - p) * w->data[i][j - 1];
         }
     }
 

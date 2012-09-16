@@ -41,6 +41,7 @@ typedef struct{
     float pr;
 
     /* Game format */
+    int games;
     bool* game_format;
 
 } probwin_context;
