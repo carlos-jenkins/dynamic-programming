@@ -124,12 +124,12 @@ bool knapsack(knapsack_context *c)
             /* Calculate Q and overflow */
             item* it = c->items[j];
             int q = fminf(it->amount, floor((float)i / it->weight));
-            bool y_overflow = (j - i) < 0;
+            bool y_overflow = (j - 1) < 0;
 
             /* Default and non putting the item */
             int taken = 0;
             float value = 0.0;
-            if(y_overflow) {
+            if(!y_overflow) {
                 value = c->table_values->data[i][j - 1];
             }
 
