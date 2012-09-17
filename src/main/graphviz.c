@@ -16,11 +16,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef H_LATEX
-#define H_LATEX
+#include "graphviz.h"
 
-#include "utils.h"
+int gv2eps(char* name, char* dir)
+{
+    char buffer[2000];
 
-int latex2pdf(char* name, char* dir);
+    /* Remove eps if exists */
+    sprintf(buffer, "%s/%s.eps", dir, name);
+    if(file_exists(buffer)) {
+        sprintf(buffer, "rm %s/%s.eps", dir, name);
+        system(buffer);
+    }
 
-#endif
+    /* Execute gv-eps conversion if file is available */
+    sprintf(buffer, "%s/%s.gv", dir, name);
+    if(!file_exists(buffer)) {
+        return -1;
+    }
+    sprintf(buffer, "dot -Teps -o%s/%s.eps %s/%s.gv", dir, name, dir, name);
+    printf("%s\n", buffer);
+    int dot_status = system(buffer);
+    if(dot_status != 0) {
+        printf("dot finished with status %i\n", dot_status);
+        sprintf(buffer, "rm %s/%s.eps", dir, name);
+        system(buffer);
+        return -2;
+    }
+
+    return 0;
+}

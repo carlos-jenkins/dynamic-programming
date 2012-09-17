@@ -39,6 +39,15 @@ int main(int argc, char **argv)
      * | 4 |   2 | inf |   8 | inf |   0 | inf |
      * | 5 | inf | inf | inf | inf |   3 |   0 |
      */
+
+    char** n = c->names;
+    n[0] = "1";
+    n[1] = "2";
+    n[2] = "3";
+    n[3] = "4";
+    n[4] = "5";
+    n[5] = "6";
+
     matrix* d = c->table_d;
     matrix* p = c->table_p;
 

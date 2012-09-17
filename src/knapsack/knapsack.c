@@ -55,6 +55,8 @@ knapsack_context* knapsack_context_new(int capacity, int num_items)
     /* Try to allocate items array */
     c->items = (item**) malloc(num_items * sizeof(item*));
     if(c->items == NULL) {
+        matrix_free(c->table_values);
+        matrix_free(c->table_items);
         free(c);
         return NULL;
     }
@@ -123,7 +125,7 @@ bool knapsack(knapsack_context *c)
 
             /* Calculate Q and overflow */
             item* it = c->items[j];
-            int q = fminf(it->amount, floor((float)i / it->weight));
+            int q = fminf(it->amount, floorf((float)i / it->weight));
             bool y_overflow = (j - 1) < 0;
 
             /* Default and non putting the item */
@@ -136,7 +138,7 @@ bool knapsack(knapsack_context *c)
             /* Calculate if putting the item */
             for(int times = 1; times < q + 1; times++) {
                 float pay = (float)times * it->value;
-                int prev_row = (int) floor((float)i - (times * it->weight));
+                int prev_row = (int) floorf((float)i - (times * it->weight));
                 bool x_overflow = prev_row < 0;
                 if((!x_overflow) && (!y_overflow)) {
                     pay += c->table_values->data[prev_row][j - 1];

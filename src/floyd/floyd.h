@@ -40,7 +40,7 @@ typedef struct {
     /* Report */
     int start;
     int end;
-    int* names;
+    char** names;
 
 } floyd_context;
 
@@ -56,14 +56,6 @@ void floyd_context_free(floyd_context* c);
  */
 bool floyd(floyd_context* c);
 
-/**
- * Write report about the execution of the algorith.
- *
- * @param floyd_context, the floyd's context data structure after success.
- * @return nothing.
- */
-bool floyd_report(floyd_context* c);
-void floyd_execution(floyd_context* c, int k);
-void floyd_table(matrix* m, bool d, int k, FILE* stream);
+#include "report.h"
 
 #endif

@@ -18,7 +18,8 @@
 
 #include "latex.h"
 
-int latex2pdf(char* name, char* dir) {
+int latex2pdf(char* name, char* dir)
+{
     char buffer[2000];
 
     /* Remove pdf if exists */
@@ -36,13 +37,19 @@ int latex2pdf(char* name, char* dir) {
     sprintf(buffer, "pdflatex -halt-on-error -interaction batchmode "
                     "-output-directory %s %s/%s.tex > /dev/null",
                     dir, dir, name);
-    int pdflatex_status = system(buffer);
+    int pdflatex_status = -1;
+    for(int t = 0; t < 2; t++) { /* Double compilation */
+        pdflatex_status = system(buffer);
+    }
     if(pdflatex_status != 0) {
         return -2;
     }
 
     /* Cleanup */
-    sprintf(buffer, "rm %s/%s.tex", dir, name);
+    //sprintf(buffer, "rm %s/%s.tex", dir, name);
+    //system(buffer);
+
+    sprintf(buffer, "rm %s/%s.toc", dir, name);
     system(buffer);
 
     sprintf(buffer, "rm %s/%s.log", dir, name);

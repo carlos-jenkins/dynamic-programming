@@ -16,11 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef H_LATEX
-#define H_LATEX
+#ifndef H_GRAPHVIZ
+#define H_GRAPHVIZ
 
 #include "utils.h"
 
-int latex2pdf(char* name, char* dir);
+int gv2eps(char* name, char* dir);
 
 #endif

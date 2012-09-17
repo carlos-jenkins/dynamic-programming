@@ -16,11 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef H_LATEX
-#define H_LATEX
+#ifndef H_FLOYD_REPORT
+#define H_FLOYD_REPORT
 
-#include "utils.h"
+#include "floyd.h"
+#include "graphviz.h"
 
-int latex2pdf(char* name, char* dir);
+/**
+ * Write report about the execution of the algorith.
+ *
+ * @param floyd_context, the floyd's context data structure after success.
+ * @return nothing.
+ */
+bool floyd_report(floyd_context* c);
+void floyd_execution(floyd_context* c, int k);
+void floyd_table(matrix* m, bool d, int k, FILE* stream);
+void floyd_graph(floyd_context* c);
 
 #endif

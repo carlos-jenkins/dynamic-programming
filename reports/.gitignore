@@ -1,5 +1,8 @@
 *.tex
+*.toc
 *.aux
 *.out
 *.log
 *.pdf
+*.eps
+*.gv
