@@ -31,6 +31,7 @@ typedef struct {
     float weight;
     float amount;
 } item;
+void item_new(item* it, char* name, float value, float weight, float amount);
 
 /**
  * Knapsack algorithm context data structure.

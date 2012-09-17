@@ -18,6 +18,14 @@
 
 #include "knapsack.h"
 
+void item_new(item* it, char* name, float value, float weight, float amount)
+{
+    it->name = name;
+    it->value = value;
+    it->weight = weight;
+    it->amount = amount;
+}
+
 knapsack_context* knapsack_context_new(int capacity, int num_items)
 {
     /* Check input is correct */
