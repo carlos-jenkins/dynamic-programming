@@ -109,7 +109,7 @@ bool floyd(floyd_context *c)
             }
         }
         /* Log execution */
-        floyd_execution(c, k);
+        floyd_execution(c, k + 1);
     }
 
     /* Stop counting time */
