@@ -32,12 +32,12 @@ knapsack_context* knapsack_context_new(int capacity, int num_items)
     }
 
     /* Try to allocate matrices */
-    c->table_values = matrix_new(capacity, num_items, 0.0);
+    c->table_values = matrix_new(capacity + 1, num_items, 0.0);
     if(c->table_values == NULL) {
         free(c);
         return NULL;
     }
-    c->table_items = matrix_new(capacity, num_items, 0.0);
+    c->table_items = matrix_new(capacity + 1, num_items, 0.0);
     if(c->table_items == NULL) {
         matrix_free(c->table_values);
         free(c);
@@ -110,6 +110,39 @@ void knapsack_context_free(knapsack_context* c)
 
 bool knapsack(knapsack_context *c)
 {
-    /* TODO */
+    for(int i = 0; i < c->table_values->rows; i++) {
+        for(int j = 0; j < c->table_values->columns; j++) {
+
+            /* Calculate Q and overflow */
+            item* it = c->items[j];
+            int q = fminf(it->amount, floor((float)i / it->weight));
+            bool y_overflow = (j - i) < 0;
+
+            /* Default and non putting the item */
+            int taken = 0;
+            float value = 0.0;
+            if(y_overflow) {
+                value = c->table_values->data[i][j - 1];
+            }
+
+            /* Calculate if putting the item */
+            for(int times = 1; times < q + 1; times++) {
+                float pay = (float)times * it->value;
+                int prev_row = (int) floor((float)i - (times * it->weight));
+                bool x_overflow = prev_row < 0;
+                if((!x_overflow) && (!y_overflow)) {
+                    pay += c->table_values->data[prev_row][j - 1];
+                }
+                if(pay > value) {
+                    value = pay;
+                    taken = times;
+                }
+            }
+
+            c->table_values->data[i][j] = value;
+            c->table_items->data[i][j] = (float)taken;
+        }
+    }
+
     return true;
 }
