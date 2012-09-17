@@ -18,3 +18,46 @@
 
 #include "latex.h"
 
+int latex2pdf(char* name, char* dir) {
+    char buffer[2000];
+
+    /* Remove pdf if exists */
+    sprintf(buffer, "%s/%s.pdf", dir, name);
+    if(file_exists(buffer)) {
+        sprintf(buffer, "rm %s/%s.pdf", dir, name);
+        system(buffer);
+    }
+
+    /* Execute tex-pdf conversion if file is available */
+    sprintf(buffer, "%s/%s.tex", dir, name);
+    if(!file_exists(buffer)) {
+        return -1;
+    }
+    sprintf(buffer, "pdflatex -halt-on-error -interaction batchmode "
+                    "-output-directory %s %s/%s.tex > /dev/null",
+                    dir, dir, name);
+    int pdflatex_status = system(buffer);
+    if(pdflatex_status != 0) {
+        return -2;
+    }
+
+    /* Cleanup */
+    sprintf(buffer, "rm %s/%s.tex", dir, name);
+    system(buffer);
+
+    sprintf(buffer, "rm %s/%s.log", dir, name);
+    system(buffer);
+
+    sprintf(buffer, "rm %s/%s.aux", dir, name);
+    system(buffer);
+
+    /* Open */
+    sprintf(buffer, "%s/%s.pdf", dir, name);
+    if(!file_exists(buffer)) {
+        return -3;
+    }
+    sprintf(buffer, "xdg-open %s/%s.pdf", dir, name);
+    system(buffer);
+
+    return 0;
+}

@@ -100,7 +100,7 @@ bool floyd(floyd_context *c)
     return true;
 }
 
-void floyd_table(matrix* m, char* caption, int k, FILE* stream)
+void floyd_table(matrix* m, bool d, int k, FILE* stream)
 {
     fprintf(stream, "\n");
     fprintf(stream, "\\begin{table}[!h]\n");
@@ -119,7 +119,11 @@ void floyd_table(matrix* m, char* caption, int k, FILE* stream)
             if(cell == FLT_MAX) {
                 fprintf(stream, "$\\infty$");
             } else {
-                fprintf(stream, "%4.2f", cell);
+                if(d) {
+                    fprintf(stream, "%4.2f", cell);
+                } else {
+                    fprintf(stream, "%4.0f", cell);
+                }
             }
 
             if(j == m->columns - 1) {
@@ -134,7 +138,11 @@ void floyd_table(matrix* m, char* caption, int k, FILE* stream)
     }
 
     fprintf(stream, "\\end{tabular}\n");
-    fprintf(stream, "\\caption{%s %i.}\n", caption, k);
+    if(d) {
+        fprintf(stream, "\\caption{%s %i.}\n", "D table at iteration", k);
+    } else {
+        fprintf(stream, "\\caption{%s %i.}\n", "P table at iteration", k);
+    }
     fprintf(stream, "\\end{table}\n");
     fprintf(stream, "\n");
 }
@@ -143,8 +151,8 @@ void floyd_execution(floyd_context* c, int k)
 {
     FILE* stream = c->report_buffer;
     fprintf(stream, "\\subsubsection{%s %i}\n", "Iteration", k);
-    floyd_table(c->table_d, "D table at iteration", k, stream);
-    floyd_table(c->table_p, "P table at iteration", k, stream);
+    floyd_table(c->table_d, true, k, stream);
+    floyd_table(c->table_p, false, k, stream);
 }
 
 bool floyd_report(floyd_context* c)
@@ -169,7 +177,7 @@ bool floyd_report(floyd_context* c)
                     "Executed on", get_current_time());
     fprintf(report, "\\item %s : \\textsc{%lf %s}. \n",
                     "Execution time", c->execution_time,
-                    "milliseconds");
+                    "seconds");
     fprintf(report, "\\item %s : \\textsc{%i %s}. \n",
                     "Memory required", c->memory_required,
                     "bytes");

@@ -21,4 +21,6 @@
 
 #include "utils.h"
 
+int latex2pdf(char* tex, char* output_dir);
+
 #endif

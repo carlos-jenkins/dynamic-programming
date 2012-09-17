@@ -87,9 +87,9 @@ bool probwin(probwin_context *c)
         for(int j = 1; j < w->columns; j++) {
 
             /* Decide which probability to use */
-            int actual_game = games + 1 - i - j;
+            int current_game = games + 1 - i - j;
             p = c->pr;
-            if(c->game_format[actual_game]) {
+            if(c->game_format[current_game]) {
                 p = c->ph;
             }
 

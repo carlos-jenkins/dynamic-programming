@@ -18,6 +18,17 @@
 
 #include "utils.h"
 
+bool file_exists(char *fname)
+{
+    FILE* file = fopen(fname, "r");
+
+    if(file != NULL) {
+        fclose(file);
+        return true;
+    }
+    return false;
+}
+
 char* get_current_time()
 {
     GDateTime* now = g_date_time_new_now_local();

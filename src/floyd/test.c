@@ -17,6 +17,7 @@
  */
 
 #include "floyd.h"
+#include "latex.h"
 
 int main(int argc, char **argv)
 {
@@ -84,6 +85,14 @@ int main(int argc, char **argv)
         return(-2);
     } else {
         printf("Report created at reports/floyd.tex\n");
+
+        int as_pdf = latex2pdf("floyd", "reports");
+        if(as_pdf == 0) {
+            printf("PDF version available at reports/floyd.pdf\n");
+        } else {
+            printf("ERROR: Unable to convert report to PDF. Status: %i.\n",
+                   as_pdf);
+        }
     }
 
     /* Free resources */

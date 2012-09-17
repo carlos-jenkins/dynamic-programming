@@ -64,6 +64,6 @@ bool floyd(floyd_context* c);
  */
 bool floyd_report(floyd_context* c);
 void floyd_execution(floyd_context* c, int k);
-void floyd_table(matrix* m, char* caption, int k, FILE* stream);
+void floyd_table(matrix* m, bool d, int k, FILE* stream);
 
 #endif

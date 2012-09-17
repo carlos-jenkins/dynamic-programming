@@ -4,7 +4,7 @@ DEBUG  = -Wall -g
 CFLAGS = `pkg-config --cflags --libs glib-2.0` -lm
 GFLAGS = `pkg-config --cflags --libs gtk+-3.0 gmodule-export-2.0` -lm
 
-COMMON = -Isrc/main/ src/main/matrix.c src/main/utils.c
+COMMON = -Isrc/main/ src/main/matrix.c src/main/utils.c src/main/latex.c
 
 all: bin/main bin/floyd bin/knapsack
 #bin/optbst bin/probwin bin/replacement
