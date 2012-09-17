@@ -82,7 +82,6 @@ int main(int argc, char **argv)
     bool report_created = floyd_report(c);
     if(!report_created) {
         printf("ERROR: Report could not be created.\n");
-        return(-2);
     } else {
         printf("Report created at reports/floyd.tex\n");
 
@@ -99,4 +98,3 @@ int main(int argc, char **argv)
     floyd_context_free(c);
     return(0);
 }
-

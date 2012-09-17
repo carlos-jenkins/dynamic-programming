@@ -49,13 +49,13 @@ typedef struct {
 
     /* Algorithm */
     int num_items;
-    item* items;
-    float capacity;
+    item** items;
+    int capacity;
     char* unit;
 
 } knapsack_context;
 
-knapsack_context* knapsack_context_new(float capacity, float num_items);
+knapsack_context* knapsack_context_new(int capacity, int num_items);
 void knapsack_context_free(knapsack_context* c);
 
 /**

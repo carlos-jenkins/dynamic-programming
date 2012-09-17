@@ -34,11 +34,13 @@ floyd_context* floyd_context_new(int nodes)
     /* Try to allocate matrices */
     c->table_d = matrix_new(nodes, nodes, PLUS_INF);
     if(c->table_d == NULL) {
+        free(c);
         return NULL;
     }
     c->table_p = matrix_new(nodes, nodes, 0.0);
     if(c->table_p == NULL) {
         matrix_free(c->table_d);
+        free(c);
         return NULL;
     }
 
@@ -54,6 +56,7 @@ floyd_context* floyd_context_new(int nodes)
     if(c->report_buffer == NULL) {
         matrix_free(c->table_d);
         matrix_free(c->table_p);
+        free(c);
         return NULL;
     }
 

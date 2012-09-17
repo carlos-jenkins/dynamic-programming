@@ -25,7 +25,7 @@ probwin_context* probwin_context_new(int games)
         return NULL;
     }
 
-    /* Allocate structures */
+    /* Allocate structure */
     probwin_context* c = (probwin_context*) malloc(sizeof(probwin_context));
     if(c == NULL) {
         return NULL;
@@ -34,6 +34,7 @@ probwin_context* probwin_context_new(int games)
     /* Try to allocate game format */
     c->game_format = (bool*) malloc(games * sizeof(bool));
     if(c->game_format == NULL) {
+        free(c);
         return NULL;
     }
     c->games = games;
@@ -46,6 +47,7 @@ probwin_context* probwin_context_new(int games)
     c->table_w = matrix_new(size, size, 0.0);
     if(c->table_w == NULL) {
         free(c->game_format);
+        free(c);
         return NULL;
     }
 
