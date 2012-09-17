@@ -50,10 +50,10 @@ bool floyd_report(floyd_context* c)
     /* Write nodes */
     fprintf(report, "\n");
     fprintf(report, "\\subsection{%s}\n", "Input graph");
-    if(file_exists("reports/floyd.eps")) {
+    if(file_exists("reports/graph.pdf")) {
         fprintf(report, "\\begin{figure}[H]\\centering\n");
         fprintf(report, "\\noindent\\includegraphics"//[width=450px]"
-                        "{floyd.eps}\n");
+                        "{reports/graph.pdf}\n");
         fprintf(report, "\\caption{%s.}\\end{figure}\n",
                         "Floyd's input directed graph system");
     } else {
@@ -162,7 +162,7 @@ void floyd_graph(floyd_context* c)
 {
 
     /* Create graph file */
-    FILE* graph = fopen("reports/floyd.gv", "w");
+    FILE* graph = fopen("reports/graph.gv", "w");
     if(graph == NULL) {
         return;
     }
@@ -185,7 +185,7 @@ void floyd_graph(floyd_context* c)
                     fprintf(graph, "    %i -> %i [label = \"%.0f\"];\n",
                             i + 1, j + 1, weight);
                 } else {
-                    fprintf(graph, "    %i -> %i [label = \"%4.2f\"];\n",
+                    fprintf(graph, "    %i -> %i [label = \"%.2f\"];\n",
                             i + 1, j + 1, weight);
                 }
             }
@@ -195,6 +195,9 @@ void floyd_graph(floyd_context* c)
 
     fprintf(graph, "}\n");
 
+    /* Close file */
+    fclose(graph);
+
     /* Render graph */
-    gv2eps("floyd", "reports");
+    gv2eps("graph", "reports");
 }

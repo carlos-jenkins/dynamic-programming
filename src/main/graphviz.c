@@ -23,9 +23,9 @@ int gv2eps(char* name, char* dir)
     char buffer[2000];
 
     /* Remove eps if exists */
-    sprintf(buffer, "%s/%s.eps", dir, name);
+    sprintf(buffer, "%s/%s.pdf", dir, name);
     if(file_exists(buffer)) {
-        sprintf(buffer, "rm %s/%s.eps", dir, name);
+        sprintf(buffer, "rm %s/%s.pdf", dir, name);
         system(buffer);
     }
 
@@ -34,15 +34,28 @@ int gv2eps(char* name, char* dir)
     if(!file_exists(buffer)) {
         return -1;
     }
-    sprintf(buffer, "dot -Teps -o%s/%s.eps %s/%s.gv", dir, name, dir, name);
+    sprintf(buffer, "dot -Tps2 -o%s/%s.eps %s/%s.gv",
+                    dir, name, dir, name);
     printf("%s\n", buffer);
     int dot_status = system(buffer);
     if(dot_status != 0) {
-        printf("dot finished with status %i\n", dot_status);
-        sprintf(buffer, "rm %s/%s.eps", dir, name);
-        system(buffer);
+        printf("ERROR: dot finished with status %i\n", dot_status);
         return -2;
     }
+
+    /* Convert eps to pdf */
+    sprintf(buffer, "epstopdf --outfile=%s/%s.pdf %s/%s.eps",
+                    dir, name, dir, name);
+    printf("%s\n", buffer);
+    int epstopdf_status = system(buffer);
+    if(epstopdf_status != 0) {
+        printf("ERROR: epstopdf finished with status %i\n", dot_status);
+        return -3;
+    }
+
+    /* Cleanup */
+    sprintf(buffer, "rm %s/%s.eps", dir, name);
+    system(buffer);
 
     return 0;
 }

@@ -35,3 +35,6 @@ bin/test/probwin: src/probwin/test.c src/probwin/probwin.c
 clean:
 	rm -f `find bin/ -executable -type f`
 	rm -f `find bin/test/ -executable -type f`
+	rm -f reports/floyd.*
+	rm -f reports/graph.*
+
