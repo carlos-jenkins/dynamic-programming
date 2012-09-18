@@ -22,5 +22,47 @@
 #include "utils.h"
 #include "matrix.h"
 
+/**
+ * Optimal Binary Search Tree algorithm context data structure.
+ */
+typedef struct{
+
+    /* Common */
+    int status;
+    double execution_time;
+    unsigned int memory_required;
+    FILE* report_buffer;
+
+    /* Tables */
+    matrix* table_a;
+    matrix* table_r;
+
+    /*Number of Keys*/
+    int keys;
+
+    /* Probabilities */
+    float* keys_probabilities;
+
+} optbst_context;
+
+optbst_context* optbst_context_new(int games);
+void optbst_context_free(optbst_context* c);
+
+/**
+ * Perfom Optimal Binary Search Tree algorithm with given context.
+ *
+ * @param optbst_context, the Optimal Binary Search Tree's context data structure.
+ * @return TRUE if execution was successful or FALSE if and error ocurred. Check
+ *         'status' flag in context to know what went wrong.
+ */
+bool optbst(optbst_context* c);
+
+/**
+ * Write report about the execution of the algorith.
+ *
+ * @param optbst_context, the Optimal Binary Search Tree's context data structure after success.
+ * @return nothing.
+ */
+void optbst_report(optbst_context* c);
 
 #endif
