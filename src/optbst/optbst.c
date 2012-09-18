@@ -88,14 +88,20 @@ bool optbst(optbst_context *c)
     }
 
     /* Run the probabilities to win algorithm */
-    for(int j =1;  j <= c->keys - 1;  j++ ){ /*N-1=Numbers of diagonals to fill*/
+
+     /*c->keys-1=Numbers of diagonals to fill*/
+    for(int j =1;  j <= c->keys - 1;  j++ ){
         for(int i = 1; i <= c->keys - j; i++){
             for(int k = i;  k <= i + j; k++){
                 float p=0.0;
-                for(int l=i; l<=i+j; l++){/*Calculating the probability*/
+
+                /*Calculate the probability*/
+                for(int l=i; l<=i+j; l++){
                     p += c->keys_probabilities[l-1];
                 }
-                float t = c->table_a->data[i -1][k -1] + c->table_a->data[k][i + j] + p;                
+                float t = c->table_a->data[i -1][k -1] + c->table_a->data[k][i + j] + p;
+
+                /*Compare to get the minimun value*/
                 if(t < c->table_a->data[i - 1][i + j]){
                     c->table_a->data[i - 1][i + j] = t;                
                     c->table_r->data[i - 1][i + j] = k;
