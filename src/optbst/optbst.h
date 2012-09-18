@@ -57,12 +57,6 @@ void optbst_context_free(optbst_context* c);
  */
 bool optbst(optbst_context* c);
 
-/**
- * Write report about the execution of the algorith.
- *
- * @param optbst_context, the Optimal Binary Search Tree's context data structure after success.
- * @return nothing.
- */
-void optbst_report(optbst_context* c);
+#include "report.h"
 
 #endif

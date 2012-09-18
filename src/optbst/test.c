@@ -20,12 +20,13 @@
 
 int main(int argc, char **argv)
 {
-    printf("Testing Optimal binary search tree...");
+    printf("Testing Optimal binary search tree...\n\n");
 
     /* Create context */
     optbst_context* c = optbst_context_new(4);
     if(c == NULL) {
-        printf("Unable to create Optimal Binary Search Tree's context... exiting.\n");
+        printf("Unable to create Optimal Binary Search Tree's "
+               "context... exiting.\n");
         return(-1);
     }
 
@@ -33,7 +34,7 @@ int main(int argc, char **argv)
     matrix* r = c->table_r;
     float* p = c->keys_probabilities;
 
-    /*Set probabilities */
+    /* Set probabilities */
     p[0] = 0.18;
     p[1] = 0.32;
     p[2] = 0.39;
@@ -42,13 +43,14 @@ int main(int argc, char **argv)
     /* Run algorithm */
     bool success = optbst(c);
     if(!success) {
-        printf("Optimal Binary Search Tree's algorithm was unable to complete... exiting.\n");
+        printf("Optimal Binary Search Tree's algorithm was "
+               "unable to complete... exiting.\n");
         return(-2);
     }
 
 
 
-    /* Show table s*/
+    /* Show tables */
     printf("-----------------------------------\n");
     matrix_print(a);
 
@@ -57,7 +59,7 @@ int main(int argc, char **argv)
 
     /* Free resources */
     optbst_context_free(c);
-    
+
     return(0);
 }
 

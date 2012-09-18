@@ -59,7 +59,7 @@ floyd_context* floyd_context_new(int nodes)
         c->names[i] = "";
     }
     c->status = -1;
-    c->execution_time = 0;
+    c->execution_time = 0.0;
     c->memory_required = (matrix_sizeof(c->table_d) * 2) +
                          (nodes * sizeof(char*)) +
                          sizeof(floyd_context);
@@ -80,6 +80,7 @@ void floyd_context_free(floyd_context* c)
     matrix_free(c->table_d);
     matrix_free(c->table_p);
     fclose(c->report_buffer);
+    free(c->names);
     free(c);
     return;
 }

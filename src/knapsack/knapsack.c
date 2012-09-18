@@ -95,7 +95,7 @@ knapsack_context* knapsack_context_new(int capacity, int num_items)
     c->unit = "";
 
     c->status = -1;
-    c->execution_time = 0;
+    c->execution_time = 0.0;
     c->memory_required = (matrix_sizeof(c->table_values) * 2) +
                          (num_items * sizeof(item)) +
                          (num_items * sizeof(item*)) +

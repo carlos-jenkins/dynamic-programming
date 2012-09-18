@@ -36,7 +36,7 @@ optbst_context* optbst_context_new(int keys)
     if(c->keys_probabilities == NULL) {
         return NULL;
     }
-    
+
     c->keys = keys;
 
     /* Try to allocate matrices */
@@ -52,17 +52,27 @@ optbst_context* optbst_context_new(int keys)
         matrix_free(c->table_a);
         return NULL;
     }
-    
 
-    /* Initialize values */ 
+
+    /* Initialize values */
     for(int i = 0; i < size; i++) {
-        c->table_a->data[i][i]=0.0;                       
+        c->table_a->data[i][i] = 0.0;
     }
 
     c->status = -1;
     c->execution_time = 0;
-    c->memory_required = matrix_sizeof(c->table_a) +matrix_sizeof(c->table_r) + (keys * sizeof(float)) + sizeof(optbst_context);
+    c->memory_required = matrix_sizeof(c->table_a) +
+                         matrix_sizeof(c->table_r) +
+                         (keys * sizeof(float)) +
+                         sizeof(optbst_context);
     c->report_buffer = tmpfile();
+    if(c->report_buffer == NULL) {
+        matrix_free(c->table_a);
+        matrix_free(c->table_r);
+        free(c->keys_probabilities);
+        free(c);
+        return NULL;
+    }
 
     return c;
 }
@@ -82,39 +92,38 @@ bool optbst(optbst_context *c)
     /* Start counting time */
     GTimer* timer = g_timer_new();
 
-    /* Setting probabilities values */ 
+    /* Setting probabilities values */
     for(int i = 0; i < c->keys; i++) {
-        c->table_a->data[i][i + 1] = c->keys_probabilities[i];                                
+        c->table_a->data[i][i + 1] = c->keys_probabilities[i];
     }
-    /*Setting winning k for  given probabilities in R*/
+    /* Setting winning k for  given probabilities in R */
     for(int i = 0; i < c->keys; i++) {
-        c->table_r->data[i][i + 1] = i + 1;                                
+        c->table_r->data[i][i + 1] = i + 1;
     }
-    
+
     /* Run the probabilities to win algorithm */
 
-     /*c->keys-1=Numbers of diagonals to fill*/
-    for(int j =1;  j <= c->keys - 1;  j++ ){
-        for(int i = 1; i <= c->keys - j; i++){
-            for(int k = i;  k <= i + j; k++){
-                float p=0.0;
+    /* c->keys-1=Numbers of diagonals to fill */
+    for(int j = 1; j <= c->keys - 1; j++) {
+        for(int i = 1; i <= c->keys - j; i++) {
+            for(int k = i;  k <= i + j; k++) {
+                float p = 0.0;
 
-                /*Calculate the probability*/
-                for(int l=i; l<=i+j; l++){
-                    p += c->keys_probabilities[l-1];
+                /* Calculate the probability */
+                for(int l = i; l <= i + j; l++) {
+                    p += c->keys_probabilities[l - 1];
                 }
-                float t = c->table_a->data[i -1][k -1] + c->table_a->data[k][i + j] + p;
+                float t = c->table_a->data[i - 1][k - 1] +
+                          c->table_a->data[k][i + j] + p;
 
-                /*Compare to get the minimun value*/
-                if(t < c->table_a->data[i - 1][i + j]){
-                    c->table_a->data[i - 1][i + j] = t;                
+                /* Compare to get the minimun value */
+                if(t < c->table_a->data[i - 1][i + j]) {
+                    c->table_a->data[i - 1][i + j] = t;
                     c->table_r->data[i - 1][i + j] = k;
                 }
             }
         }
-        
     }
-
 
     /* Stop counting time */
     g_timer_stop(timer);

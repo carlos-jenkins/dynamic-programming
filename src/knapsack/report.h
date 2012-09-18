@@ -16,22 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef H_FLOYD_REPORT
-#define H_FLOYD_REPORT
+#ifndef H_KNAPSACK_REPORT
+#define H_KNAPSACK_REPORT
 
-#include "floyd.h"
-#include "graphviz.h"
+#include "knapsack.h"
 
 /**
  * Write report about the execution of the algorith.
  *
- * @param floyd_context, the floyd's context data structure after
+ * @param knapsack_context, the knapsack's context data structure after
  *        successful execution.
  * @return nothing.
  */
-bool floyd_report(floyd_context* c);
-void floyd_execution(floyd_context* c, int k);
-void floyd_table(matrix* m, bool d, int k, FILE* stream);
-void floyd_graph(floyd_context* c);
+bool knapsack_report(knapsack_context* c);
 
 #endif

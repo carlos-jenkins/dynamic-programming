@@ -68,4 +68,6 @@ void knapsack_context_free(knapsack_context* c);
  */
 bool knapsack(knapsack_context* c);
 
+#include "report.h"
+
 #endif

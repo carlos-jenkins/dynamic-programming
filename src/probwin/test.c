@@ -20,7 +20,7 @@
 
 int main(int argc, char **argv)
 {
-    printf("Testing Probabilities to become champion...\n");
+    printf("Testing Probabilities to become champion...\n\n");
 
     /* Create context */
     probwin_context* c = probwin_context_new(7);
