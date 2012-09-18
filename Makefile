@@ -9,7 +9,7 @@ COMMON = -Isrc/main/ src/main/matrix.c src/main/utils.c src/main/latex.c src/mai
 all: bin/main bin/floyd bin/knapsack
 #bin/probwin bin/optbst bin/replacement
 
-test: bin/test/floyd bin/test/knapsack bin/test/probwin
+test: bin/test/floyd bin/test/knapsack bin/test/probwin bin/test/optbst
 
 # Main binaries
 bin/main: src/main/main.c
@@ -30,7 +30,10 @@ bin/test/knapsack: src/knapsack/test.c src/knapsack/knapsack.c
 
 bin/test/probwin: src/probwin/test.c src/probwin/probwin.c
 	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(CFLAGS)
-
+	
+bin/test/optbst: src/optbst/test.c src/optbst/optbst.h src/optbst/optbst.c
+	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(CFLAGS)
+	
 # Clean
 clean:
 	rm -f `find bin/ -executable -type f`
