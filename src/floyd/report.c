@@ -26,15 +26,28 @@ bool floyd_report(floyd_context* c)
         return false;
     }
 
-    /* Write header */
+    /* Write preamble */
     bool success = insert_file("latex/header.tex", report);
     if(!success) {
         return false;
     }
 
-    /* Write first section */
+    /* Write header */
     fprintf(report, "\n");
-    fprintf(report, "\\section{%s}\n", "Floyd's algorithm");
+    fprintf(report, "\\section{%s}\n\n", "Floyd's algorithm");
+    fprintf(report, "\\noindent{\\huge %s.} \\\\[0.4cm]\n", "Dynamic programming");
+    fprintf(report, "{\\LARGE %s.}\\\\[0.4cm]\n", "Operation Research");
+    fprintf(report, "\\HRule \\\\[0.4cm]\n");
+
+    /* Write description */
+    fprintf(report, "\\indent ");
+    success = insert_file("latex/floyd.txt", report);
+    if(!success) {
+        return false;
+    }
+
+    /* Write first section */
+    fprintf(report, "\\\\[0.7cm] \\noindent{\\Large Details:}\n");
     fprintf(report, "\\begin{compactitem}\n");
     fprintf(report, "\\item %s : \\textsc{%s}. \n",
                     "Executed on", get_current_time());
@@ -47,20 +60,20 @@ bool floyd_report(floyd_context* c)
     fprintf(report, "\\end{compactitem}\n");
     fprintf(report, "\n");
 
-    /* Write nodes */
+    /* Write graph */
     fprintf(report, "\n");
     fprintf(report, "\\subsection{%s}\n", "Input graph");
     if(file_exists("reports/graph.pdf")) {
         fprintf(report, "\\begin{figure}[H]\\centering\n");
-        fprintf(report, "\\noindent\\includegraphics"//[width=450px]"
+        fprintf(report, "\\noindent\\includegraphics[height=210px]"
                         "{reports/graph.pdf}\n");
-        fprintf(report, "\\caption{%s.}\\end{figure}\n",
+        fprintf(report, "\\caption{%s.}\n\\end{figure}\n\n",
                         "Floyd's input directed graph system");
     } else {
         fprintf(report, "ERROR: Graph image could not be generated.");
     }
 
-    fprintf(report, "\\newpage\n\\tableofcontents\\newpage\n");
+    fprintf(report, "\\newpage\n\\tableofcontents\n\\newpage\n");
 
     /* Write execution */
     fprintf(report, "\n");
@@ -71,9 +84,39 @@ bool floyd_report(floyd_context* c)
     }
 
     /* Write interpretation */
+    int starti = c->start - 1;
+    int endi = c->end - 1;
     fprintf(report, "\n");
-    fprintf(report, "\\subsection{%s}\n", "Interpretation");
-    fprintf(report, "TODO");
+    fprintf(report, "\\subsection{%s}\n", "Analisis");
+    fprintf(report, "\\begin{compactitem}\n");
+    fprintf(report, "\\item %s : {\\Large %s $\\longrightarrow$ %s}.\n",
+                    "Analisis for path", c->names[starti], c->names[endi]);
+    fprintf(report, "\\item %s : {\\Large %s \\subscript{(%i)}"
+                    "$\\longrightarrow$ ", "Optimal path",
+                    c->names[starti], c->start);
+    int jumps = 1;
+    int next = (int)c->table_p->data[starti][endi];
+    while(next != 0) {
+        fprintf(report, "%s \\subscript{(%i)} $\\longrightarrow$ ",
+                        c->names[next - 1], next);
+        next = (int)c->table_p->data[next - 1][endi];
+        jumps++;
+    }
+    fprintf(report, "%s \\subscript{(%i)}}.\n", c->names[endi], c->end);
+    fprintf(report, "\\item %s : {\\Large %i}.\n", "Total jumps", jumps);
+    float distance = c->table_d->data[starti][endi];
+    if(distance == FLT_MAX) {
+        fprintf(report, "\\item %s : {\\Large $\\infty$}.\n", "Total distance");
+    } else {
+        if(floorf(distance) == distance) {
+            fprintf(report, "\\item %s : {\\Large %.0f}.\n",
+                            "Total distance", distance);
+        } else {
+            fprintf(report, "\\item %s : {\\Large %.4f}.\n",
+                            "Total distance", distance);
+        }
+    }
+    fprintf(report, "\\end{compactitem}\n");
     fprintf(report, "\n");
 
     /* End document */
@@ -116,9 +159,9 @@ void floyd_table(matrix* m, bool d, int k, FILE* stream)
     fprintf(stream, "}\n\\cline{2-%i}\n", m->columns + 1);
 
     /* Table headers */
-    fprintf(stream, "  & ");
+    fprintf(stream, " & ");
     for(int j = 0; j < m->columns; j++) {
-        fprintf(stream, "\\textbf{%i}", j + 1);
+        fprintf(stream, "\\cellcolor{gray90}\\textbf{%i}", j + 1);
         if(j < m->columns - 1) {
             fprintf(stream, " & ");
         }
@@ -127,7 +170,8 @@ void floyd_table(matrix* m, bool d, int k, FILE* stream)
 
     /* Table body */
     for(int i = 0; i < m->rows; i++) {
-        fprintf(stream, "\\multicolumn{1}{|c||}{\\textbf{%i}} & ", i + 1);
+        fprintf(stream, "\\multicolumn{1}{|c||}"
+                        "{\\cellcolor{gray90}\\textbf{%i}} & ", i + 1);
         for(int j = 0; j < m->columns; j++) {
 
             float cell = m->data[i][j];

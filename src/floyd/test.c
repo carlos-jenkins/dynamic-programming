@@ -70,6 +70,9 @@ int main(int argc, char **argv)
 
     d->data[5][4] = 3.0;
 
+    c->start = 1;
+    c->end = 4;
+
     /* Show table */
     printf("-----------------------------------\n");
     matrix_print(d);
