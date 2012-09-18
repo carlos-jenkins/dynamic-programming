@@ -86,7 +86,11 @@ bool optbst(optbst_context *c)
     for(int i = 0; i < c->keys; i++) {
         c->table_a->data[i][i + 1] = c->keys_probabilities[i];                                
     }
-
+    /*Setting winning k for  given probabilities in R*/
+    for(int i = 0; i < c->keys; i++) {
+        c->table_r->data[i][i + 1] = i + 1;                                
+    }
+    
     /* Run the probabilities to win algorithm */
 
      /*c->keys-1=Numbers of diagonals to fill*/
