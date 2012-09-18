@@ -60,7 +60,7 @@ knapsack_context* knapsack_context_new(int capacity, int num_items);
 void knapsack_context_free(knapsack_context* c);
 
 /**
- * Perfom Knapsack algorithm with given context.
+ * Perform Knapsack algorithm with given context.
  *
  * @param knapsack_context, the knapsack's context data structure.
  * @return TRUE if execution was successful or FALSE if and error ocurred. Check

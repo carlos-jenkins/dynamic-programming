@@ -20,7 +20,7 @@
 
 int main(int argc, char **argv)
 {
-    printf("Testing Equipment replacement...");
+    printf("Testing Equipment replacement...\n\n");
     return(0);
 }
 

@@ -23,11 +23,11 @@
 #include "graphviz.h"
 
 /**
- * Write report about the execution of the algorith.
+ * Write a report about the execution of the algorithm.
  *
  * @param floyd_context, the floyd's context data structure after
  *        successful execution.
- * @return nothing.
+ * @return if report creation was successful.
  */
 bool floyd_report(floyd_context* c);
 void floyd_execution(floyd_context* c, int k);

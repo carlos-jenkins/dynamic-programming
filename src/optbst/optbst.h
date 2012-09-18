@@ -49,7 +49,7 @@ optbst_context* optbst_context_new(int games);
 void optbst_context_free(optbst_context* c);
 
 /**
- * Perfom Optimal Binary Search Tree algorithm with given context.
+ * Perform Optimal Binary Search Tree algorithm with given context.
  *
  * @param optbst_context, the Optimal Binary Search Tree's context data structure.
  * @return TRUE if execution was successful or FALSE if and error ocurred. Check

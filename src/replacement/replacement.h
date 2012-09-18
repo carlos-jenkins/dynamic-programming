@@ -22,5 +22,31 @@
 #include "utils.h"
 #include "matrix.h"
 
+/**
+ * Equipment replacement algorithm context data structure.
+ */
+typedef struct {
+
+    /* Common */
+    int status;
+    double execution_time;
+    unsigned int memory_required;
+    FILE* report_buffer;
+
+} replacement_context;
+
+replacement_context* replacement_context_new();
+void replacement_context_free(replacement_context* c);
+
+/**
+ * Perform equipment replacement algorithm with given context.
+ *
+ * @param replacement_context, the equipment replacement context data structure.
+ * @return TRUE if execution was successful or FALSE if and error ocurred. Check
+ *         'status' flag in context to know what went wrong.
+ */
+bool replacement(replacement_context* c);
+
+#include "report.h"
 
 #endif

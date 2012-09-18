@@ -6,10 +6,10 @@ GFLAGS = `pkg-config --cflags --libs gtk+-3.0 gmodule-export-2.0` -lm
 
 COMMON = -Isrc/main/ src/main/matrix.c src/main/utils.c src/main/latex.c src/main/graphviz.c
 
-all: bin/main bin/floyd bin/knapsack
-#bin/probwin bin/optbst bin/replacement
+# Rules
+all: bin/main bin/floyd bin/knapsack bin/optbst bin/probwin bin/replacement
 
-test: bin/test/floyd bin/test/knapsack bin/test/probwin bin/test/optbst
+test: bin/test/floyd bin/test/knapsack bin/test/optbst bin/test/probwin bin/test/replacement
 
 # Main binaries
 bin/main: src/main/main.c
@@ -18,22 +18,36 @@ bin/main: src/main/main.c
 bin/floyd: src/floyd/main.c src/floyd/floyd.c src/floyd/report.c
 	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GFLAGS)
 
-bin/knapsack: src/knapsack/main.c src/knapsack/knapsack.c
+bin/knapsack: src/knapsack/main.c src/knapsack/knapsack.c src/knapsack/report.c
 	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GFLAGS)
+
+bin/optbst: src/optbst/main.c src/optbst/optbst.c src/optbst/report.c
+	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GFLAGS)
+
+bin/probwin: src/probwin/main.c src/probwin/probwin.c src/probwin/report.c
+	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GFLAGS)
+
+bin/replacement: src/replacement/main.c src/replacement/replacement.c src/replacement/report.c
+	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GFLAGS)
+
 
 # Test binaries
 bin/test/floyd: src/floyd/test.c src/floyd/floyd.c src/floyd/report.c
 	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(CFLAGS)
 
-bin/test/knapsack: src/knapsack/test.c src/knapsack/knapsack.c
+bin/test/knapsack: src/knapsack/test.c src/knapsack/knapsack.c src/knapsack/report.c
 	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(CFLAGS)
 
-bin/test/probwin: src/probwin/test.c src/probwin/probwin.c
+bin/test/optbst: src/optbst/test.c src/optbst/optbst.c src/optbst/report.c
 	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(CFLAGS)
-	
-bin/test/optbst: src/optbst/test.c src/optbst/optbst.h src/optbst/optbst.c
+
+bin/test/probwin: src/probwin/test.c src/probwin/probwin.c src/probwin/report.c
 	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(CFLAGS)
-	
+
+bin/test/replacement: src/replacement/test.c src/replacement/replacement.c src/replacement/report.c
+	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(CFLAGS)
+
+
 # Clean
 clean:
 	rm -f `find bin/ -executable -type f`

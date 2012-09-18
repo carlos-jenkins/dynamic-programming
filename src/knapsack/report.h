@@ -22,11 +22,11 @@
 #include "knapsack.h"
 
 /**
- * Write report about the execution of the algorith.
+ * Write a report about the execution of the algorithm.
  *
  * @param knapsack_context, the knapsack's context data structure after
  *        successful execution.
- * @return nothing.
+ * @return if report creation was successful.
  */
 bool knapsack_report(knapsack_context* c);
 

@@ -16,19 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef H_OPTBST_REPORT
-#define H_OPTBST_REPORT
+#ifndef H_PROBWIN_REPORT
+#define H_PROBWIN_REPORT
 
-#include "optbst.h"
-#include "graphviz.h"
+#include "probwin.h"
 
 /**
  * Write a report about the execution of the algorithm.
  *
- * @param optbst_context, the Optimal Binary Search Tree's context data
- *        structure after successful execution.
+ * @param probwin_context, the probwin's context data structure after
+ *        successful execution.
  * @return if report creation was successful.
  */
-bool optbst_report(optbst_context* c);
+bool probwin_report(probwin_context* c);
 
 #endif

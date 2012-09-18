@@ -48,7 +48,7 @@ floyd_context* floyd_context_new(int nodes);
 void floyd_context_free(floyd_context* c);
 
 /**
- * Perfom Floyd algorithm with given context.
+ * Perform Floyd algorithm with given context.
  *
  * @param floyd_context, the floyd's context data structure.
  * @return TRUE if execution was successful or FALSE if and error ocurred. Check

@@ -18,3 +18,14 @@
 
 #include "replacement.h"
 
+replacement_context* replacement_context_new() {
+    return NULL;
+}
+
+void replacement_context_free(replacement_context* c) {
+    return;
+}
+
+bool replacement(replacement_context* c) {
+    return true;
+}

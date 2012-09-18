@@ -19,5 +19,6 @@
 #include "report.h"
 
 bool optbst_report(optbst_context* c)
+{
     return true;
 }

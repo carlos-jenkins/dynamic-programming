@@ -50,20 +50,15 @@ probwin_context* probwin_context_new(int games);
 void probwin_context_free(probwin_context* c);
 
 /**
- * Perfom Probabilities to become champion algorithm with given context.
+ * Perform Probabilities to become champion algorithm with given context.
  *
- * @param probwin_context, the Probabilities to become champion's context data structure.
+ * @param probwin_context, the Probabilities to become champion's context data
+ *        structure.
  * @return TRUE if execution was successful or FALSE if and error ocurred. Check
  *         'status' flag in context to know what went wrong.
  */
 bool probwin(probwin_context* c);
 
-/**
- * Write report about the execution of the algorith.
- *
- * @param probwin_context, the probwin's context data structure after success.
- * @return nothing.
- */
-void probwin_report(probwin_context* c);
+#include "report.h"
 
 #endif
