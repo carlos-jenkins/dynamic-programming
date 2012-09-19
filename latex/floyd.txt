@@ -1,6 +1,7 @@
-The Floyd–Warshall algorithm (also known as Floyd's algorithm, Roy–Warshall algorithm,
-Roy–Floyd algorithm, or the WFI algorithm) is a graph analysis algorithm for finding
-shortest paths in a weighted graph. A single execution of the algorithm will find the
-lengths (summed weights) of the shortest paths between all pairs of vertices and the
-paths themselves. The algorithm is an example of dynamic programming. It was published
-in its currently recognized form by Robert Floyd in 1962.
+The Floyd–Warshall algorithm (also known as Floyd's algorithm, Roy–Warshall
+algorithm, Roy–Floyd algorithm, or the WFI algorithm) is a graph analysis
+algorithm for finding shortest paths in a weighted graph. A single execution of
+the algorithm will find the lengths (summed weights) of the shortest paths
+between all pairs of vertices and the paths themselves. The algorithm is an
+example of dynamic programming. It was published in its currently recognized
+form by Robert Floyd in 1962.

@@ -1,0 +1,21 @@
+floyd.txt:
+    Text adapted from the "Floyd-Warshall algorithm" article from the Wikipedia
+    encyclopedia.
+    http://en.wikipedia.org/wiki/Floyd-Warshall_algorithm
+
+knapsack.txt:
+    Text adapted from the "Knapsack problem" article from the Wikipedia
+    encyclopedia.
+    http://en.wikipedia.org/wiki/Knapsack_problem
+
+optbst.txt:
+    Text adapted from "Examples of Dynamic Programming" by Gaston Gonnet.
+    http://linneus20.ethz.ch:8080/4_7_1.html
+
+probwin.txt:
+    ....
+
+replacement.txt:
+    Text adapted from "Finite-horizon equipment replacement analysis" by
+    Hartman, Joseph C. and Murphy, Alison.
+    http://www.highbeam.com/doc/1G1-145265669.html
