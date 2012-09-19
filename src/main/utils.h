@@ -32,8 +32,12 @@
 #define F_EPSILON 0.00001
 
 bool file_exists(char *fname);
+char* read_file(char* fname);
+
 char* get_current_time();
+
 bool fequal(float a, float b);
+
 bool copy_streams(FILE* input, FILE* output);
 bool insert_file(char* filename, FILE* output);
 

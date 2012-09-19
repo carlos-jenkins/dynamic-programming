@@ -1,11 +1,5 @@
-A binary search tree is a tree where the key values are stored in the internal
-nodes, the external nodes (leaves) are null nodes, and the keys are ordered
-lexicographically. I.e. for each internal node all the keys in the left subtree
-are less than the keys in the node, and all the keys in the right subtree are
-greater.
+A binary search tree is a tree where the key values are stored in the internal nodes, the external nodes (leaves) are null nodes, and the keys are ordered lexicographically. I.e. for each internal node all the keys in the left subtree are less than the keys in the node, and all the keys in the right subtree are greater.
 
-If the probabilities of searching each one of the keys are know then the
-expected cost of accessing the tree can be computed. An OBST is a BST which
-has minimal expected cost.
+If the probabilities of searching each one of the keys are know then the expected cost of accessing the tree can be computed. An OBST is a BST which has minimal expected cost.
 
 

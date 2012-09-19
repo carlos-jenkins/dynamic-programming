@@ -4,11 +4,11 @@
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
     <property name="border_width">10</property>
-    <property name="title" translatable="yes">Optimal binary search tree</property>
+    <property name="title" translatable="yes">Optimal binary search trees</property>
     <property name="window_position">center-always</property>
     <property name="default_width">800</property>
     <property name="default_height">600</property>
-    <signal name="destroy" handler="gtk_main_quit" swapped="no"/>
+    <signal name="delete-event" handler="gtk_main_quit" swapped="no"/>
     <child>
       <placeholder/>
     </child>

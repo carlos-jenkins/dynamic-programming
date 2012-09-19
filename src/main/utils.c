@@ -29,6 +29,48 @@ bool file_exists(char *fname)
     return false;
 }
 
+char* read_file(char* fname)
+{
+    /* Check if file exists */
+    if(!file_exists(fname)) {
+        return NULL;
+    }
+
+    /* Open file */
+    FILE *f = fopen(fname, "rb");
+    if(f == NULL) {
+        return NULL;
+    }
+
+    /* Count the size of the file */
+    fseek(f, 0, SEEK_END);
+    if (fseek(f, 0, SEEK_END) != 0) {
+        fclose(f);
+        return NULL;
+    }
+    long pos = ftell(f);
+    if (fseek(f, 0L, SEEK_SET) != 0) {
+        fclose(f);
+        return NULL;
+    }
+
+    /* Allocate memory to read the file */
+    char *content = malloc(pos + sizeof(char));
+    if(content == NULL) {
+        fclose(f);
+        return NULL;
+    }
+
+    /* Read the file */
+    fread(content, pos, 1, f);
+    fclose(f);
+
+    /* Return the string */
+    content[pos] = '\0';
+    return content;
+    /* You should later "free(bytes);" */
+}
+
 char* get_current_time()
 {
     GDateTime* now = g_date_time_new_now_local();

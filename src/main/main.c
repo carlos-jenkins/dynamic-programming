@@ -19,11 +19,43 @@
 #include "utils.h"
 #include <gtk/gtk.h>
 
+/* Helpers */
+GObject* go(GtkBuilder* builder, const gchar *name)
+{
+    return gtk_builder_get_object(builder, name);
+}
+
+/* Callbacks */
+void floyd_clicked_cb(GtkButton *button, gpointer data)
+{
+    system("./bin/floyd");
+}
+
+void knapsack_clicked_cb(GtkButton *button, gpointer data)
+{
+    system("./bin/knapsack");
+}
+
+void optbst_clicked_cb(GtkButton *button, gpointer data)
+{
+    system("./bin/optbst");
+}
+
+void probwin_clicked_cb(GtkButton *button, gpointer data)
+{
+    system("./bin/probwin");
+}
+
+void replacement_clicked_cb(GtkButton *button, gpointer data)
+{
+    system("./bin/replacement");
+}
+
+/* Main */
 int main(int argc, char **argv)
 {
 
     GtkBuilder *builder;
-    GtkWidget  *window;
     GError     *error = NULL;
 
     /* Starts Gtk+ subsystem */
@@ -42,11 +74,33 @@ int main(int argc, char **argv)
     }
 
     /* Get pointers to objects */
-    window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
+    GtkWidget* window = GTK_WIDGET(go(builder, "window"));
+
+    GtkTextBuffer* floyd_buff       =
+        GTK_TEXT_BUFFER(go(builder, "floyd_buff"));
+    GtkTextBuffer* knapsack_buff    =
+        GTK_TEXT_BUFFER(go(builder, "knapsack_buff"));
+    GtkTextBuffer* optbst_buff      =
+        GTK_TEXT_BUFFER(go(builder, "optbst_buff"));
+    GtkTextBuffer* probwin_buff     =
+        GTK_TEXT_BUFFER(go(builder, "probwin_buff"));
+    GtkTextBuffer* replacement_buff =
+        GTK_TEXT_BUFFER(go(builder, "replacement_buff"));
+
+    /* Load text in buffer */
+    gtk_text_buffer_set_text(floyd_buff,
+        read_file("./latex/floyd.txt"), -1);
+    gtk_text_buffer_set_text(knapsack_buff,
+        read_file("./latex/knapsack.txt"), -1);
+    gtk_text_buffer_set_text(optbst_buff,
+        read_file("./latex/optbst.txt"), -1);
+    gtk_text_buffer_set_text(probwin_buff,
+        read_file("./latex/probwin.txt"), -1);
+    gtk_text_buffer_set_text(replacement_buff,
+        read_file("./latex/replacement.txt"), -1);
 
     /* Connect signals */
     gtk_builder_connect_signals(builder, NULL);
-
 
     g_object_unref(G_OBJECT(builder));
     gtk_widget_show(window);
