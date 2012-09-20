@@ -18,14 +18,115 @@
 
 #include "replacement.h"
 
-replacement_context* replacement_context_new() {
-    return NULL;
+replacement_context* replacement_context_new(int yearsPlan, int lifetime) {
+    /* Check input is correct */
+    if(yearsPlan < 1 || lifetime < 1) {
+        return NULL;
+    }
+
+    /* Allocate structures */
+    replacement_context* c = (replacement_context*) malloc(sizeof(replacement_context));
+    if(c == NULL) {
+        return NULL;
+    }
+
+    /* Try to allocate manteinance and sale cost arrays */
+    c->manteinance = (float*) malloc(lifetime * sizeof(float));
+    if(c->manteinance == NULL) {
+        return NULL;
+    }
+
+    c->sale_cost = (float*) malloc(lifetime * sizeof(float));
+    if(c->sale_cost == NULL) {
+        return NULL;
+    }
+
+
+    c->years_plan = yearsPlan;
+    
+    int size = c->years_plan + 1;
+    
+    c->minimum_cost = (float*) malloc(size * sizeof(float));
+    if(c->minimum_cost == NULL) {
+        return NULL;
+    }
+
+
+
+    /* Try to allocate matrices */
+
+    c->table_c = matrix_new(yearsPlan, yearsPlan, 0.0);
+    if(c->table_c == NULL) {
+        free(c->manteinance);
+        free(c->sale_cost);
+        free(c->minimum_cost);
+        return NULL;
+    }
+
+
+    /* Initialize values */
+    for(int i = 0; i < size; i++) {
+        c->minimum_cost[ i ] = PLUS_INF;
+    }
+
+    c->status = -1;
+    c->execution_time = 0;
+    c->memory_required = matrix_sizeof(c->table_c) +
+                         (2*lifetime * sizeof(float)) +
+                         (size * sizeof(float))+
+                         sizeof(replacement_context);
+    c->report_buffer = tmpfile();
+    if(c->report_buffer == NULL) {
+        matrix_free(c->table_c);
+        free(c->manteinance);
+        free(c->sale_cost);
+        free(c->minimum_cost);
+        free(c);
+        return NULL;
+    }
+
+    return c;
 }
 
 void replacement_context_free(replacement_context* c) {
+    matrix_free(c->table_c);
+    fclose(c->report_buffer);
+    free(c->manteinance);
+    free(c->sale_cost);
+    free(c->minimum_cost);
+    free(c);
     return;
 }
 
 bool replacement(replacement_context* c) {
+    /* Start counting time */
+    GTimer* timer = g_timer_new();
+
+/*Filling the Costs table*/
+    for(int j =0;  j < c->lifetime;  j++ ){ 
+        for(int i = 1; i <= c->years_plan - j; i++){
+            float cost = c->equipment_cost - c->sale_cost[ j ];
+            for(int k = 0; k <= j; k++){/*Calculating the accumulate cost*/
+                    cost += c->manteinance[ k ];
+                }                
+                c->table_c->data[ i -1][ j +i - 1] = cost;
+            }
+        }
+    /* Run the equipment replacement algorithm */
+
+/*Calculate the minimun cost*/
+        for(int i = c->years_plan;  0 <= i; i--){
+            for (int  j = i + 1; j <= c->years_plan;  j++ ){
+                float min = c->table_c->data[ i ][ j - 1] + c->minimum_cost[ j ];
+                if(min < c->minimum_cost[ i ]){
+                    c->minimum_cost[ i ] = min;
+                }
+            }
+        }
+        
+
+    /* Stop counting time */
+    g_timer_stop(timer);
+    c->execution_time = g_timer_elapsed(timer, NULL);
     return true;
 }

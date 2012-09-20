@@ -33,6 +33,19 @@ typedef struct {
     unsigned int memory_required;
     FILE* report_buffer;
 
+    /*Plan and equipment data*/
+    int years_plan;
+    float equipment_cost;
+    int lifetime;
+    float* manteinance; /*sizeof lifetime*/
+    float* sale_cost; /*sizeof lifetime*/
+    float* minimum_cost;
+
+
+    /*Tables*/
+    matrix* table_c;
+    
+
 } replacement_context;
 
 replacement_context* replacement_context_new();
