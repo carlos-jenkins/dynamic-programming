@@ -35,7 +35,8 @@ bool floyd_report(floyd_context* c)
     /* Write header */
     fprintf(report, "\n");
     fprintf(report, "\\section{%s}\n\n", "Floyd's algorithm");
-    fprintf(report, "\\noindent{\\huge %s.} \\\\[0.4cm]\n", "Dynamic programming");
+    fprintf(report, "\\noindent{\\huge %s.} \\\\[0.4cm]\n",
+                    "Dynamic programming");
     fprintf(report, "{\\LARGE %s.}\\\\[0.4cm]\n", "Operation Research");
     fprintf(report, "\\HRule \\\\[0.4cm]\n");
 
@@ -84,39 +85,56 @@ bool floyd_report(floyd_context* c)
     }
 
     /* Write interpretation */
-    int starti = c->start - 1;
-    int endi = c->end - 1;
     fprintf(report, "\n");
     fprintf(report, "\\subsection{%s}\n", "Analisis");
-    fprintf(report, "\\begin{compactitem}\n");
-    fprintf(report, "\\item %s : {\\Large %s $\\longrightarrow$ %s}.\n",
-                    "Analisis for path", c->names[starti], c->names[endi]);
-    fprintf(report, "\\item %s : {\\Large %s \\subscript{(%i)}"
-                    "$\\longrightarrow$ ", "Optimal path",
-                    c->names[starti], c->start);
-    int jumps = 1;
-    int next = (int)c->table_p->data[starti][endi];
-    while(next != 0) {
-        fprintf(report, "%s \\subscript{(%i)} $\\longrightarrow$ ",
-                        c->names[next - 1], next);
-        next = (int)c->table_p->data[next - 1][endi];
-        jumps++;
-    }
-    fprintf(report, "%s \\subscript{(%i)}}.\n", c->names[endi], c->end);
-    fprintf(report, "\\item %s : {\\Large %i}.\n", "Total jumps", jumps);
-    float distance = c->table_d->data[starti][endi];
-    if(distance == FLT_MAX) {
-        fprintf(report, "\\item %s : {\\Large $\\infty$}.\n", "Total distance");
-    } else {
-        if(floorf(distance) == distance) {
-            fprintf(report, "\\item %s : {\\Large %.0f}.\n",
-                            "Total distance", distance);
-        } else {
-            fprintf(report, "\\item %s : {\\Large %.4f}.\n",
-                            "Total distance", distance);
+    int counter = 0;
+    for(int starti = 0; starti < c->nodes; starti++) {
+        for(int endi = 0; endi < c->nodes; endi++) {
+
+            if(starti == endi) {
+                continue;
+            }
+
+            counter++;
+            if(counter % 6 == 0) {
+                fprintf(report, "\\clearpage\n");
+            }
+
+            fprintf(report, "\\subsubsection{%s: %s $\\longrightarrow$ %s}\n",
+                            "Analisis for path",
+                            c->names[starti], c->names[endi]);
+            fprintf(report, "\\begin{compactitem}\n");
+            fprintf(report, "\\item %s : {\\Large %s \\subscript{(%i)}"
+                            "$\\longrightarrow$ ", "Optimal path",
+                            c->names[starti], starti + 1);
+            int jumps = 1;
+            int next = (int)c->table_p->data[starti][endi];
+            while(next != 0) {
+                fprintf(report, "%s \\subscript{(%i)} $\\longrightarrow$ ",
+                                c->names[next - 1], next);
+                next = (int)c->table_p->data[next - 1][endi];
+                jumps++;
+            }
+            fprintf(report, "%s \\subscript{(%i)}}.\n",
+                            c->names[endi], endi + 1);
+            fprintf(report, "\\item %s : {\\Large %i}.\n",
+                            "Total jumps", jumps);
+            float distance = c->table_d->data[starti][endi];
+            if(distance == FLT_MAX) {
+                fprintf(report, "\\item %s : {\\Large $\\infty$}.\n",
+                                "Total distance");
+            } else {
+                if(floorf(distance) == distance) {
+                    fprintf(report, "\\item %s : {\\Large %.0f}.\n",
+                                    "Total distance", distance);
+                } else {
+                    fprintf(report, "\\item %s : {\\Large %.4f}.\n",
+                                    "Total distance", distance);
+                }
+            }
+            fprintf(report, "\\end{compactitem}\n");
         }
     }
-    fprintf(report, "\\end{compactitem}\n");
     fprintf(report, "\n");
 
     /* End document */

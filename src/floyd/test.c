@@ -41,12 +41,12 @@ int main(int argc, char **argv)
      */
 
     char** n = c->names;
-    n[0] = "1";
-    n[1] = "2";
-    n[2] = "3";
-    n[3] = "4";
-    n[4] = "5";
-    n[5] = "6";
+    n[0] = "A";
+    n[1] = "B";
+    n[2] = "C";
+    n[3] = "D";
+    n[4] = "E";
+    n[5] = "F";
 
     matrix* d = c->table_d;
     matrix* p = c->table_p;
@@ -70,8 +70,6 @@ int main(int argc, char **argv)
 
     d->data[5][4] = 3.0;
 
-    c->start = 1;
-    c->end = 4;
 
     /* Show table */
     printf("-----------------------------------\n");

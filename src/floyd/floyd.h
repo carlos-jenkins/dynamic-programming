@@ -37,10 +37,8 @@ typedef struct {
     matrix* table_d;
     matrix* table_p;
 
-    /* Report */
-    int start;
-    int end;
     char** names;
+    int nodes;
 
 } floyd_context;
 

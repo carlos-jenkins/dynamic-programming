@@ -58,6 +58,9 @@ floyd_context* floyd_context_new(int nodes)
         c->table_d->data[i][i] = 0.0;
         c->names[i] = "";
     }
+
+    c->nodes = nodes;
+
     c->status = -1;
     c->execution_time = 0.0;
     c->memory_required = (matrix_sizeof(c->table_d) * 2) +
@@ -87,11 +90,11 @@ void floyd_context_free(floyd_context* c)
 
 bool floyd(floyd_context *c)
 {
-    /* Start counting time */
-    GTimer* timer = g_timer_new();
-
     /* Create graph */
     floyd_graph(c);
+
+    /* Start counting time */
+    GTimer* timer = g_timer_new();
 
     /* Run the Floyd Warshall algorithm */
     matrix* d = c->table_d;
