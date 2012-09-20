@@ -64,19 +64,22 @@ bool knapsack_report(knapsack_context* c)
     /* Write items */
     fprintf(report, "\\subsection{%s}\n", "Items");
     knapsack_items(c, report);
+    fprintf(report, "\\newpage\n");
     fprintf(report, "\n");
 
     /* TOC */
-    fprintf(report, "\\newpage\n\\tableofcontents\n\\newpage\n");
+    fprintf(report, "\\tableofcontents\n\\newpage\n");
     fprintf(report, "\n");
 
     /* Write execution */
     fprintf(report, "\\subsection{%s}\n", "Execution");
-    //knapsack_table(c, report);
+    knapsack_table(c, report);
+    fprintf(report, "\\newpage\n");
     fprintf(report, "\n");
 
     /* Write analisis */
     fprintf(report, "\\subsection{%s}\n", "Analisis");
+    // TODO
     fprintf(report, "\n");
 
     /* End document */
@@ -153,58 +156,96 @@ void knapsack_items(knapsack_context* c, FILE* stream)
     fprintf(stream, "\n");
 }
 
-//void knapsack_table(knapsack_context* c, FILE* stream)
-//{
-    ///* Table preamble */
-    //fprintf(stream, "\n");
-    //fprintf(stream, "\\begin{table}[!ht]\n");
-    //fprintf(stream, "\\centering\n");
-    //fprintf(stream, "\\begin{tabular}{c||");
-    //for(int cl = 0; cl < m->columns; cl++) {
-        //fprintf(stream, "c|");
-    //}
-    //fprintf(stream, "}\n\\cline{2-%i}\n", m->columns + 1);
-//
-    ///* Table headers */
-    //fprintf(stream, " & ");
-    //for(int j = 0; j < m->columns; j++) {
-        //fprintf(stream, "\\cellcolor{gray90}\\textbf{%i}", j + 1);
-        //if(j < m->columns - 1) {
-            //fprintf(stream, " & ");
-        //}
-    //}
-    //fprintf(stream, " \\\\\n\\hline\\hline\n");
-//
-    ///* Table body */
-    //for(int i = 0; i < m->rows; i++) {
-        //fprintf(stream, "\\multicolumn{1}{|c||}"
-                        //"{\\cellcolor{gray90}\\textbf{%i}} & ", i + 1);
-        //for(int j = 0; j < m->columns; j++) {
-//
-            //float cell = m->data[i][j];
-            //if(cell == FLT_MAX) {
-                //fprintf(stream, "$\\infty$");
-            //} else {
-                //if(d && !(ceilf(cell) == cell)) {
-                    //fprintf(stream, "%.2f", cell);
-                //} else {
-                    //fprintf(stream, "%.0f", cell);
-                //}
-            //}
-//
-            //if(j < m->columns - 1) {
-                //fprintf(stream, " & ");
-            //}
-        //}
-        //fprintf(stream, " \\\\ \\hline\n");
-    //}
-//
-    //fprintf(stream, "\\end{tabular}\n");
-    //if(d) {
-        //fprintf(stream, "\\caption{%s %i.}\n", "D table at iteration", k);
-    //} else {
-        //fprintf(stream, "\\caption{%s %i.}\n", "P table at iteration", k);
-    //}
-    //fprintf(stream, "\\end{table}\n");
-    //fprintf(stream, "\n");
-//}
+void knapsack_table(knapsack_context* c, FILE* stream)
+{
+    matrix* m = c->table_values;
+
+    /* Table preamble */
+    fprintf(stream, "\n");
+    fprintf(stream, "\\begin{table}[!ht]\n");
+    fprintf(stream, "\\begin{adjustwidth}{-3cm}{-3cm}\n");
+    fprintf(stream, "\\centering\n");
+    fprintf(stream, "\\begin{tabular}{c||");
+    for(int cl = 0; cl < m->columns; cl++) {
+        fprintf(stream, "c|");
+    }
+    fprintf(stream, "}\n\\cline{2-%i}\n", m->columns + 1);
+
+    /* Table headers */
+    fprintf(stream, " & ");
+    for(int j = 0; j < m->columns; j++) {
+        /* FIXME : Do not hardwire int output, consider PLUS_INF and float */
+        fprintf(stream,
+            "\\cellcolor{gray90}\\textbf{%s} \\subscript{(%i, %i, %i)}",
+            c->items[j]->name,
+            (int)c->items[j]->value,
+            (int)c->items[j]->weight,
+            (int)c->items[j]->amount);
+        if(j < m->columns - 1) {
+            fprintf(stream, " & ");
+        }
+    }
+    fprintf(stream, " \\\\\n\\hline\\hline\n");
+
+    /* Table body */
+    for(int i = 0; i < m->rows; i++) {
+        fprintf(stream, "\\multicolumn{1}{|c||}"
+                        "{\\cellcolor{gray90}\\textbf{%i}} & ", i + 1);
+        for(int j = 0; j < m->columns; j++) {
+
+            float cell = m->data[i][j];
+            float amount = c->table_items->data[i][j];
+
+            /* Value */
+            if(cell == FLT_MAX) {
+                fprintf(stream, "$\\infty$");
+            } else {
+                if(ceilf(cell) == cell) {
+                    fprintf(stream, "%.0f", cell);
+                } else {
+                    fprintf(stream, "%.2f", cell);
+                }
+            }
+
+            /* Amount */
+            if(amount == 0.0) {
+                fprintf(stream, "\\textcolor{deepred}{");
+            } else {
+                fprintf(stream, "\\textcolor{deepgreen}{");
+            }
+            fprintf(stream, "\\subscript{(");
+            if(amount == FLT_MAX) {
+                fprintf(stream, "$\\infty$");
+            } else {
+                if(ceilf(amount) == amount) {
+                    fprintf(stream, "%.0f", amount);
+                } else {
+                    fprintf(stream, "%.2f", amount);
+                }
+            }
+            fprintf(stream, ")}}");
+
+            if(j < m->columns - 1) {
+                fprintf(stream, " & ");
+            }
+        }
+        fprintf(stream, " \\\\ \\hline\n");
+    }
+
+    fprintf(stream, "\\end{tabular}\n");
+    fprintf(stream, "\\caption{%s.}\n", "Final knapsack table");
+    fprintf(stream, "\\end{adjustwidth}\n");
+    fprintf(stream, "\\end{table}\n");
+    fprintf(stream, "\n");
+
+
+    fprintf(stream, "\\textbf{%s}\n", "Legend");
+    fprintf(stream, "\\begin{compactitem}\n");
+    fprintf(stream, "\\item %s A (x, y, z) : \\textsc{%s}. \n",
+                    "Items", "Name (Value, Weight, Amount)");
+    fprintf(stream, "\\item %s x (y) : \\textsc{%s}. \n",
+                    "Cell", "Max value (items put)");
+    fprintf(stream, "\\end{compactitem}\n");
+    fprintf(stream, "\n");
+
+}
