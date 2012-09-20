@@ -29,5 +29,6 @@
  * @return if report creation was successful.
  */
 bool knapsack_report(knapsack_context* c);
+void knapsack_items(knapsack_context* c, FILE* stream);
 
 #endif

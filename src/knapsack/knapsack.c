@@ -120,6 +120,9 @@ void knapsack_context_free(knapsack_context* c)
 
 bool knapsack(knapsack_context *c)
 {
+    /* Start counting time */
+    GTimer* timer = g_timer_new();
+
     for(int i = 0; i < c->table_values->rows; i++) {
         for(int j = 0; j < c->table_values->columns; j++) {
 
@@ -154,5 +157,8 @@ bool knapsack(knapsack_context *c)
         }
     }
 
+    /* Stop counting time */
+    g_timer_stop(timer);
+    c->execution_time = g_timer_elapsed(timer, NULL);
     return true;
 }

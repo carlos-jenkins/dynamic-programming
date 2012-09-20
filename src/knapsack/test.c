@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 
     /* Fill context */
     item** its = c->items;
-    item_new(its[0], "A",  3, 8, 1);
+    item_new(its[0], "A",  3, 8, 1); /* value, weight, amount */
     item_new(its[1], "B", 10, 2, 2);
     item_new(its[2], "C",  2, 5, 1);
     item_new(its[3], "D",  8, 3, 4);
@@ -54,21 +54,21 @@ int main(int argc, char **argv)
     printf("-----------------------------------\n");
     matrix_print(c->table_items);
 
-    ///* Generate report */
-    //bool report_created = floyd_report(c);
-    //if(!report_created) {
-        //printf("ERROR: Report could not be created.\n");
-    //} else {
-        //printf("Report created at reports/floyd.tex\n");
-//
-        //int as_pdf = latex2pdf("floyd", "reports");
-        //if(as_pdf == 0) {
-            //printf("PDF version available at reports/floyd.pdf\n");
-        //} else {
-            //printf("ERROR: Unable to convert report to PDF. Status: %i.\n",
-                   //as_pdf);
-        //}
-    //}
+    /* Generate report */
+    bool report_created = knapsack_report(c);
+    if(!report_created) {
+        printf("ERROR: Report could not be created.\n");
+    } else {
+        printf("Report created at reports/knapsack.tex\n");
+
+        int as_pdf = latex2pdf("knapsack", "reports");
+        if(as_pdf == 0) {
+            printf("PDF version available at reports/knapsack.pdf\n");
+        } else {
+            printf("ERROR: Unable to convert report to PDF. Status: %i.\n",
+                   as_pdf);
+        }
+    }
 
     /* Free resources */
     knapsack_context_free(c);

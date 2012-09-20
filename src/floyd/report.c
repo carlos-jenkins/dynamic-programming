@@ -62,23 +62,23 @@ bool floyd_report(floyd_context* c)
     fprintf(report, "\n");
 
     /* Write graph */
-    fprintf(report, "\n");
     fprintf(report, "\\subsection{%s}\n", "Input graph");
     if(file_exists("reports/graph.pdf")) {
         fprintf(report, "\\begin{figure}[H]\\centering\n");
         fprintf(report, "\\noindent\\includegraphics[height=210px]"
                         "{reports/graph.pdf}\n");
-        fprintf(report, "\\caption{%s.}\n\\end{figure}\n\n",
+        fprintf(report, "\\caption{%s.}\n\\end{figure}\n",
                         "Floyd's input directed graph system");
     } else {
-        fprintf(report, "ERROR: Graph image could not be generated.");
+        fprintf(report, "ERROR: Graph image could not be generated.\n");
     }
+    fprintf(report, "\n");
 
     /* TOC */
     fprintf(report, "\\newpage\n\\tableofcontents\n\\newpage\n");
+    fprintf(report, "\n");
 
     /* Write execution */
-    fprintf(report, "\n");
     fprintf(report, "\\subsection{%s}\n", "Execution");
     success = copy_streams(c->report_buffer, report);
     if(!success) {
@@ -230,7 +230,7 @@ void floyd_table(matrix* m, bool d, int k, FILE* stream)
     fprintf(stream, "\\begin{table}[!ht]\n");
     fprintf(stream, "\\centering\n");
     fprintf(stream, "\\begin{tabular}{c||");
-    for(int c = 0; c < m->columns; c++) {
+    for(int cl = 0; cl < m->columns; cl++) {
         fprintf(stream, "c|");
     }
     fprintf(stream, "}\n\\cline{2-%i}\n", m->columns + 1);
