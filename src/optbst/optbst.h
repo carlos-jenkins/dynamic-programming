@@ -39,6 +39,7 @@ typedef struct{
 
     /*Number of Keys*/
     int keys;
+    char** names;
 
     /* Probabilities */
     float* keys_probabilities;

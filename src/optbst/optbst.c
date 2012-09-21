@@ -37,8 +37,6 @@ optbst_context* optbst_context_new(int keys)
         return NULL;
     }
 
-    c->keys = keys;
-
     /* Try to allocate matrices */
     int size = keys + 1;
     c->table_a = matrix_new(size, size, PLUS_INF);
@@ -53,10 +51,21 @@ optbst_context* optbst_context_new(int keys)
         return NULL;
     }
 
+    /* Try to allocate names array */
+    c->names = (char**) malloc(keys * sizeof(char*));
+    if(c->names == NULL) {
+        matrix_free(c->table_a);
+        matrix_free(c->table_r);
+        free(c->keys_probabilities);
+        free(c);
+        return NULL;
+    }
+    c->keys = keys;
 
     /* Initialize values */
     for(int i = 0; i < size; i++) {
         c->table_a->data[i][i] = 0.0;
+        c->names[i] = "";
     }
 
     c->status = -1;
@@ -64,6 +73,7 @@ optbst_context* optbst_context_new(int keys)
     c->memory_required = matrix_sizeof(c->table_a) +
                          matrix_sizeof(c->table_r) +
                          (keys * sizeof(float)) +
+                         (keys * sizeof(char*)) +
                          sizeof(optbst_context);
     c->report_buffer = tmpfile();
     if(c->report_buffer == NULL) {

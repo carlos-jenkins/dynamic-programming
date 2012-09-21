@@ -23,7 +23,7 @@ int main(int argc, char **argv)
     printf("Testing Optimal binary search tree...\n\n");
 
     /* Create context */
-    optbst_context* c = optbst_context_new(4);
+    optbst_context* c = optbst_context_new(9);
     if(c == NULL) {
         printf("Unable to create Optimal Binary Search Tree's "
                "context... exiting.\n");
@@ -33,12 +33,29 @@ int main(int argc, char **argv)
     matrix* a = c->table_a;
     matrix* r = c->table_r;
     float* p = c->keys_probabilities;
+    char** n = c->names;
 
     /* Set probabilities */
-    p[0] = 0.18;
-    p[1] = 0.32;
-    p[2] = 0.39;
-    p[3] = 0.11;
+    p[0] = 0.05;
+    p[1] = 0.07;
+    p[2] = 0.01;
+    p[3] = 0.35;
+    p[4] = 0.09;
+    p[5] = 0.23;
+    p[6] = 0.15;
+    p[7] = 0.04;
+    p[8] = 0.01;
+
+    /* Set names */
+    n[0] = "Carpenter";
+    n[1] = "Cash";
+    n[2] = "Cobain";
+    n[3] = "Harrison";
+    n[4] = "Hendrix";
+    n[5] = "Joplin";
+    n[6] = "Lennon";
+    n[7] = "Morrison";
+    n[8] = "Presley";
 
     /* Run algorithm */
     bool success = optbst(c);
@@ -47,8 +64,6 @@ int main(int argc, char **argv)
                "unable to complete... exiting.\n");
         return(-2);
     }
-
-
 
     /* Show tables */
     printf("-----------------------------------\n");

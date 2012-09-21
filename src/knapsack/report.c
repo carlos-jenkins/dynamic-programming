@@ -165,7 +165,7 @@ void knapsack_items(knapsack_context* c, FILE* stream)
                     " & \\cellcolor{gray90}\\textbf{%s}"
                     " & \\cellcolor{gray90}\\textbf{%s}"
                     " & \\cellcolor{gray90}\\textbf{%s} \\\\\n",
-                    "Name", "value", "weight", "amount");
+                    "Name", "Value", "Weight", "Amount");
     fprintf(stream, "\\hline\\hline\n");
 
     /* Table body */
