@@ -62,6 +62,8 @@ bool optbst_report(optbst_context* c)
     fprintf(report, "\n");
 
     /* Write nodes */
+    fprintf(report, "\\subsection{%s}\n", "Nodes");
+    optbst_nodes(c, report);
     fprintf(report, "\\newpage\n");
 
     /* TOC */
@@ -69,7 +71,7 @@ bool optbst_report(optbst_context* c)
     fprintf(report, "\n");
 
     /* Write tables */
-    fprintf(report, "\\subsection{%s}\n", "Nodes");
+    fprintf(report, "\\subsection{%s}\n", "Tables");
     optbst_execution(c, report);
     fprintf(report, "\n");
 
@@ -199,6 +201,38 @@ void optbst_graph(optbst_context* c)
     gv2pdf("tree", "reports");
 }
 
+void optbst_nodes(optbst_context* c, FILE* stream)
+{
+    /* Id Name Probabilities */
+    matrix* m = c->table_a;
+
+    /* Table preamble */
+    fprintf(stream, "\\begin{table}[!ht]\n");
+    fprintf(stream, "\\centering\n");
+    fprintf(stream, "\\begin{tabular}{c||c|c|");
+    fprintf(stream, "}\n\\cline{2-3}\n");
+
+    /* Table headers */
+    fprintf(stream, " & \\cellcolor{gray90}\\textbf{%s}"
+                    " & \\cellcolor{gray90}\\textbf{%s} ",
+                    "Name", "Probabilities");
+    fprintf(stream, " \\\\\n\\hline\\hline\n");
+
+    /* Table body */
+    for(int i = 0; i < c->keys; i++) {
+        fprintf(stream, "\\multicolumn{1}{|c||}"
+                        "{\\cellcolor{gray90}\\textbf{%i}} & ", i + 1);
+        fprintf(stream, "%s & %.2f \\\\ \\hline\n",
+                        c->names[i], c->keys_probabilities[i]);
+    }
+    fprintf(stream, "\\end{tabular}\n");
+
+    /* Caption */
+    fprintf(stream, "\\caption{%s.}\n", "Node probabilities");
+    fprintf(stream, "\\end{table}\n");
+    fprintf(stream, "\n");
+}
+
 void optbst_execution(optbst_context* c, FILE* stream) {
     optbst_table(c->table_a, true, stream);
     optbst_table(c->table_r, false, stream);
@@ -207,8 +241,8 @@ void optbst_execution(optbst_context* c, FILE* stream) {
 void optbst_table(matrix* m, bool a, FILE* stream)
 {
     /* Table preamble */
-    fprintf(stream, "\n");
     fprintf(stream, "\\begin{table}[!ht]\n");
+    fprintf(stream, "\\begin{adjustwidth}{-3cm}{-3cm}\n");
     fprintf(stream, "\\centering\n");
     fprintf(stream, "\\begin{tabular}{c||");
     for(int cl = 0; cl < m->columns; cl++) {
@@ -257,6 +291,7 @@ void optbst_table(matrix* m, bool a, FILE* stream)
         fprintf(stream, "\\caption{%s.}\n",
                         "Optimal binary search tree table R");
     }
+    fprintf(stream, "\\end{adjustwidth}\n");
     fprintf(stream, "\\end{table}\n");
     fprintf(stream, "\n");
 }

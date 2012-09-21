@@ -161,7 +161,6 @@ bool floyd_report(floyd_context* c)
             }
         }
     }
-    fprintf(report, "\n");
 
     /* Digest */
     fprintf(report, "\\subsection{%s}\n", "Digest");
@@ -197,8 +196,8 @@ bool floyd_report(floyd_context* c)
     fprintf(report, "\n");
 
     /* End document */
+    fprintf(report, "\\end{document}\n");
     fprintf(report, "\n");
-    fprintf(report, "\\end{document}");
 
     /* Save & swap buffers */
     int success_file = fflush(report);
@@ -226,8 +225,8 @@ void floyd_execution(floyd_context* c, int k)
 void floyd_table(matrix* m, bool d, int k, FILE* stream)
 {
     /* Table preamble */
-    fprintf(stream, "\n");
     fprintf(stream, "\\begin{table}[!ht]\n");
+    fprintf(stream, "\\begin{adjustwidth}{-3cm}{-3cm}\n");
     fprintf(stream, "\\centering\n");
     fprintf(stream, "\\begin{tabular}{c||");
     for(int cl = 0; cl < m->columns; cl++) {
@@ -275,13 +274,13 @@ void floyd_table(matrix* m, bool d, int k, FILE* stream)
     } else {
         fprintf(stream, "\\caption{%s %i.}\n", "P table at iteration", k);
     }
+    fprintf(stream, "\\end{adjustwidth}\n");
     fprintf(stream, "\\end{table}\n");
     fprintf(stream, "\n");
 }
 
 void floyd_graph(floyd_context* c)
 {
-
     /* Create graph file */
     FILE* graph = fopen("reports/graph.gv", "w");
     if(graph == NULL) {

@@ -134,8 +134,8 @@ bool knapsack_report(knapsack_context* c)
     fprintf(report, "\n");
 
     /* End document */
+    fprintf(report, "\\end{document}\n");
     fprintf(report, "\n");
-    fprintf(report, "\\end{document}");
 
     /* Save & swap buffers */
     int success_file = fflush(report);
@@ -154,8 +154,8 @@ bool knapsack_report(knapsack_context* c)
 void knapsack_items(knapsack_context* c, FILE* stream)
 {
     /* Table preamble */
-    fprintf(stream, "\n");
     fprintf(stream, "\\begin{table}[!ht]\n");
+    fprintf(stream, "\\begin{adjustwidth}{-3cm}{-3cm}\n");
     fprintf(stream, "\\centering\n");
     fprintf(stream, "\\begin{tabular}{c||c|c|c|c|");
     fprintf(stream, "}\n\\cline{2-5}\n");
@@ -203,6 +203,7 @@ void knapsack_items(knapsack_context* c, FILE* stream)
 
     fprintf(stream, "\\end{tabular}\n");
     fprintf(stream, "\\caption{%s.}\n", "Input items table");
+    fprintf(stream, "\\end{adjustwidth}\n");
     fprintf(stream, "\\end{table}\n");
     fprintf(stream, "\n");
 }
@@ -212,7 +213,6 @@ void knapsack_table(knapsack_context* c, FILE* stream)
     matrix* m = c->table_values;
 
     /* Table preamble */
-    fprintf(stream, "\n");
     fprintf(stream, "\\begin{table}[!ht]\n");
     fprintf(stream, "\\begin{adjustwidth}{-3cm}{-3cm}\n");
     fprintf(stream, "\\centering\n");
