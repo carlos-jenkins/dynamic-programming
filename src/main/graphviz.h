@@ -21,6 +21,6 @@
 
 #include "utils.h"
 
-int gv2eps(char* name, char* dir);
+int gv2pdf(char* name, char* dir);
 
 #endif

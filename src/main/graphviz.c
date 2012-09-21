@@ -18,7 +18,7 @@
 
 #include "graphviz.h"
 
-int gv2eps(char* name, char* dir)
+int gv2pdf(char* name, char* dir)
 {
     char buffer[2000];
 

@@ -288,16 +288,19 @@ void floyd_graph(floyd_context* c)
         return;
     }
 
+    /* Preamble */
     fprintf(graph, "digraph floyd {\n\n");
     fprintf(graph, "    rankdir = LR;\n");
     fprintf(graph, "    node [shape = circle];\n\n");
 
+    /* Labels */
     for(int i = 0; i < c->table_d->rows; i++) {
         char* name = c->names[i];
         fprintf(graph, "    %i [label = \"%s\"];\n", i + 1, name);
     }
     fprintf(graph, "\n");
 
+    /* Vertices */
     for(int i = 0; i < c->table_d->rows; i++) {
         for(int j = 0; j < c->table_d->columns; j++) {
             float weight = c->table_d->data[i][j];
@@ -320,5 +323,5 @@ void floyd_graph(floyd_context* c)
     fclose(graph);
 
     /* Render graph */
-    gv2eps("graph", "reports");
+    gv2pdf("graph", "reports");
 }

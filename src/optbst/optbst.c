@@ -65,6 +65,8 @@ optbst_context* optbst_context_new(int keys)
     /* Initialize values */
     for(int i = 0; i < size; i++) {
         c->table_a->data[i][i] = 0.0;
+    }
+    for(int i = 0; i < keys; i++) {
         c->names[i] = "";
     }
 
@@ -93,6 +95,7 @@ void optbst_context_free(optbst_context* c)
     matrix_free(c->table_r);
     fclose(c->report_buffer);
     free(c->keys_probabilities);
+    free(c->names);
     free(c);
     return;
 }

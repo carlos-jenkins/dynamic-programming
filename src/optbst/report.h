@@ -30,5 +30,8 @@
  * @return if report creation was successful.
  */
 bool optbst_report(optbst_context* c);
+void optbst_graph(optbst_context* c);
+void find_lnodes(matrix* r, int i, int j, FILE* stream);
+void find_rnodes(matrix* r, int i, int j, FILE* stream);
 
 #endif

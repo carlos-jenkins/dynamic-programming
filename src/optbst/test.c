@@ -17,6 +17,7 @@
  */
 
 #include "optbst.h"
+#include "latex.h"
 
 int main(int argc, char **argv)
 {
@@ -30,8 +31,6 @@ int main(int argc, char **argv)
         return(-1);
     }
 
-    matrix* a = c->table_a;
-    matrix* r = c->table_r;
     float* p = c->keys_probabilities;
     char** n = c->names;
 
@@ -66,11 +65,29 @@ int main(int argc, char **argv)
     }
 
     /* Show tables */
+    matrix* a = c->table_a;
+    matrix* r = c->table_r;
     printf("-----------------------------------\n");
     matrix_print(a);
 
     printf("-----------------------------------\n");
     matrix_print(r);
+
+    /* Generate report */
+    bool report_created = optbst_report(c);
+    if(!report_created) {
+        printf("ERROR: Report could not be created.\n");
+    } else {
+        printf("Report created at reports/optbst.tex\n");
+
+        int as_pdf = latex2pdf("optbst", "reports");
+        if(as_pdf == 0) {
+            printf("PDF version available at reports/optbst.pdf\n");
+        } else {
+            printf("ERROR: Unable to convert report to PDF. Status: %i.\n",
+                   as_pdf);
+        }
+    }
 
     /* Free resources */
     optbst_context_free(c);

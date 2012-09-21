@@ -11,6 +11,13 @@ all: bin/main bin/floyd bin/knapsack bin/optbst bin/probwin bin/replacement
 
 test: bin/test/floyd bin/test/knapsack bin/test/optbst bin/test/probwin bin/test/replacement
 
+# Algorithms
+floyd: bin/floyd bin/test/floyd
+knapsack: bin/knapsack bin/test/knapsack
+optbst: bin/optbst bin/test/optbst
+probwin: bin/probwin bin/test/probwin
+replacement: bin/replacement bin/test/replacement
+
 # Main binaries
 bin/main: src/main/main.c
 	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GFLAGS)
@@ -54,4 +61,7 @@ clean:
 	rm -f `find bin/test/ -executable -type f`
 	rm -f reports/floyd.*
 	rm -f reports/graph.*
+	rm -f reports/knapsack.*
+	rm -f reports/optbst.*
+	rm -f reports/tree.*
 
