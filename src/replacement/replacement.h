@@ -44,11 +44,11 @@ typedef struct {
 
     /*Tables*/
     matrix* table_c;
-    
+
 
 } replacement_context;
 
-replacement_context* replacement_context_new();
+replacement_context* replacement_context_new(int years_plan, int lifetime);
 void replacement_context_free(replacement_context* c);
 
 /**
