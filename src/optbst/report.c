@@ -76,7 +76,7 @@ bool optbst_report(optbst_context* c)
     fprintf(report, "\n");
 
     /* Write graphic */
-    optbst_graph(c);
+    int levels = optbst_graph(c);
     fprintf(report, "\\subsection{%s}\n", "Analisis");
     if(file_exists("reports/tree.pdf")) {
         fprintf(report, "\\begin{figure}[H]\\centering\n");
@@ -93,8 +93,10 @@ bool optbst_report(optbst_context* c)
     /* Digest */
     fprintf(report, "\\subsection{%s}\n", "Digest");
     fprintf(report, "\\begin{compactitem}\n");
-    fprintf(report, "\\item %s : \\textsc{%i}.\n",
-                    "Memory required", 10);
+    fprintf(report, "\\item %s : {\\Large %i}.\n", "Total nodes", c->keys);
+    fprintf(report, "\\item %s : {\\Large %i}.\n", "Levels", levels);
+    fprintf(report, "\\item %s : {\\Large %.2f}.\n", "Expected cost",
+                    c->table_a->data[0][c->keys]);
     fprintf(report, "\\end{compactitem}\n");
     fprintf(report, "\n");
 
@@ -116,7 +118,14 @@ bool optbst_report(optbst_context* c)
     return true;
 }
 
-void find_lnodes(matrix* r, int i, int j, FILE* stream)
+int find_nodes(matrix* r, int i, int j, FILE* stream)
+{
+    int levels = max(find_rnodes(r, i, j, stream, 1),
+                     find_lnodes(r, i, j, stream, 1));
+    return levels;
+}
+
+int find_lnodes(matrix* r, int i, int j, FILE* stream, int level)
 {
     /* printf("Finding left nodes at (%i, %i).\n", i, j); */
 
@@ -136,16 +145,16 @@ void find_lnodes(matrix* r, int i, int j, FILE* stream)
     /* No childs */
     if(sn == 0) {
         /* printf("None found.\n"); */
-        return;
+        return level;
     }
 
     /* Write node found and continue */
     fprintf(stream, "    %i -> %i;\n", cn, sn);
-    find_lnodes(r, i, j, stream);
-    find_rnodes(r, i, j, stream);
+    return max(find_rnodes(r, i, j, stream, level + 1),
+               find_lnodes(r, i, j, stream, level + 1));
 }
 
-void find_rnodes(matrix* r, int i, int j, FILE* stream)
+int find_rnodes(matrix* r, int i, int j, FILE* stream, int level)
 {
     /* printf("Finding right nodes at (%i, %i).\n", i, j); */
 
@@ -157,21 +166,21 @@ void find_rnodes(matrix* r, int i, int j, FILE* stream)
     /* No childs */
     if(sn == 0) {
         /* printf("None found.\n"); */
-        return;
+        return level;
     }
 
     /* Write node found and continue */
     fprintf(stream, "    %i -> %i;\n", cn, sn);
-    find_lnodes(r, i, j, stream);
-    find_rnodes(r, i, j, stream);
+    return max(find_rnodes(r, i, j, stream, level + 1),
+               find_lnodes(r, i, j, stream, level + 1));
 }
 
-void optbst_graph(optbst_context* c)
+int optbst_graph(optbst_context* c)
 {
     /* Create tree file */
     FILE* tree = fopen("reports/tree.gv", "w");
     if(tree == NULL) {
-        return;
+        return -1;
     }
 
     /* Preamble */
@@ -189,8 +198,7 @@ void optbst_graph(optbst_context* c)
     /* Vertices */
     int i = 0;
     int j = c->table_r->columns - 1;
-    find_lnodes(c->table_r, i, j, tree);
-    find_rnodes(c->table_r, i, j, tree);
+    int levels = find_nodes(c->table_r, i, j, tree);
     fprintf(tree, "\n");
     fprintf(tree, "}\n");
 
@@ -199,12 +207,13 @@ void optbst_graph(optbst_context* c)
 
     /* Render graph */
     gv2pdf("tree", "reports");
+
+    return levels;
 }
 
 void optbst_nodes(optbst_context* c, FILE* stream)
 {
     /* Id Name Probabilities */
-    matrix* m = c->table_a;
 
     /* Table preamble */
     fprintf(stream, "\\begin{table}[!ht]\n");
@@ -228,7 +237,7 @@ void optbst_nodes(optbst_context* c, FILE* stream)
     fprintf(stream, "\\end{tabular}\n");
 
     /* Caption */
-    fprintf(stream, "\\caption{%s.}\n", "Node probabilities");
+    fprintf(stream, "\\caption{%s.}\n", "Nodes probabilities");
     fprintf(stream, "\\end{table}\n");
     fprintf(stream, "\n");
 }
@@ -285,11 +294,9 @@ void optbst_table(matrix* m, bool a, FILE* stream)
 
     /* Caption */
     if(a) {
-        fprintf(stream, "\\caption{%s.}\n",
-                        "Optimal binary search tree table A");
+        fprintf(stream, "\\caption{%s.}\n", "Table A");
     } else {
-        fprintf(stream, "\\caption{%s.}\n",
-                        "Optimal binary search tree table R");
+        fprintf(stream, "\\caption{%s.}\n", "Table R");
     }
     fprintf(stream, "\\end{adjustwidth}\n");
     fprintf(stream, "\\end{table}\n");

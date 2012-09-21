@@ -37,6 +37,8 @@ char* read_file(char* fname);
 char* get_current_time();
 
 bool fequal(float a, float b);
+int max(int a, int b);
+int min(int a, int b);
 
 bool copy_streams(FILE* input, FILE* output);
 bool insert_file(char* filename, FILE* output);

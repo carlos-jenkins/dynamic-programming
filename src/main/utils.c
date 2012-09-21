@@ -85,6 +85,16 @@ bool fequal(float a, float b)
     return fabs(a-b) < F_EPSILON;
 }
 
+int max(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
+int min(int a, int b)
+{
+    return (a < b) ? a : b;
+}
+
 bool copy_streams(FILE* input, FILE* output)
 {
     /* Rewind input stream so we can start reading from the beginning */
