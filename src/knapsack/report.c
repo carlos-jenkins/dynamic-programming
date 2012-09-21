@@ -82,6 +82,7 @@ bool knapsack_report(knapsack_context* c)
     fprintf(report, "\\begin{compactitem}\n");
 
     int capacity_left = c->capacity;
+    int total_items = 0;
     matrix* ti = c->table_items;
 
     for(int at_item = ti->columns - 1; at_item > -1; at_item--) {
@@ -112,7 +113,23 @@ bool knapsack_report(knapsack_context* c)
         fprintf(report, "\n");
 
         capacity_left -= capacity_took;
+        total_items += put_items;
     }
+    fprintf(report, "\\end{compactitem}\n");
+    fprintf(report, "\n");
+
+    /* Write digest */
+    matrix* tv = c->table_values;
+    fprintf(report, "\\subsection{%s}\n", "Digest");
+    fprintf(report, "\\begin{compactitem}\n");
+    fprintf(report, "    \\item %s : {\\Large %i}. \n",
+                    "Total accumulated value",
+                    (int)tv->data[tv->rows - 1][tv->columns - 1]);
+    fprintf(report, "    \\item %s : {\\Large %i/%i}. \n",
+                    "Total accumulated weight",
+                    c->capacity - capacity_left, c->capacity);
+    fprintf(report, "    \\item %s : {\\Large %i}. \n",
+                    "Total items", total_items);
     fprintf(report, "\\end{compactitem}\n");
     fprintf(report, "\n");
 
