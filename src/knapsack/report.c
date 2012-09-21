@@ -79,7 +79,41 @@ bool knapsack_report(knapsack_context* c)
 
     /* Write analisis */
     fprintf(report, "\\subsection{%s}\n", "Analisis");
-    // TODO
+    fprintf(report, "\\begin{compactitem}\n");
+
+    int capacity_left = c->capacity;
+    matrix* ti = c->table_items;
+
+    for(int at_item = ti->columns - 1; at_item > -1; at_item--) {
+
+        int put_items = (int)ti->data[capacity_left - 1][at_item];
+        if(put_items == 0) {
+            continue;
+        }
+        item* citem = c->items[at_item];
+        int capacity_took = (int)ceilf((float)put_items * citem->weight);
+        float value_added = put_items * citem->value;
+
+        fprintf(report, "\\item %s {\\Large %s} : %s {\\Large %i}. \n",
+                        "Item", citem->name, "put", put_items);
+
+        fprintf(report, "    \\begin{compactitem}\n");
+        if(floorf(value_added) == value_added) {
+            fprintf(report, "    \\item %s : {\\Large %.0f}. \n",
+                            "Accumulated value", value_added);
+        } else {
+            fprintf(report, "    \\item %s : {\\Large %.2f}. \n",
+                            "Accumulated value", value_added);
+        }
+        fprintf(report, "    \\item %s : {\\Large %i}. \n",
+                        "Accumulated weight", capacity_took);
+        fprintf(report, "    \\end{compactitem}\n");
+
+        fprintf(report, "\n");
+
+        capacity_left -= capacity_took;
+    }
+    fprintf(report, "\\end{compactitem}\n");
     fprintf(report, "\n");
 
     /* End document */
