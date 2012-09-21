@@ -65,7 +65,20 @@ bool optbst_report(optbst_context* c)
     fprintf(report, "\\newpage\n\\tableofcontents\n\\newpage\n");
     fprintf(report, "\n");
 
+    /* Write graphic */
     optbst_graph(c);
+    fprintf(report, "\\subsection{%s}\n", "Analisis");
+    if(file_exists("reports/tree.pdf")) {
+        fprintf(report, "\\begin{figure}[H]\\centering\n");
+        fprintf(report, "\\noindent\\includegraphics"
+                        "[height=500px, width=400px, keepaspectratio]"
+                        "{reports/tree.pdf}\n");
+        fprintf(report, "\\caption{%s.}\n\\end{figure}\n",
+                        "Optimal search tree");
+    } else {
+        fprintf(report, "ERROR: Tree image could not be generated.\n");
+    }
+    fprintf(report, "\n");
 
     /* End document */
     fprintf(report, "\n");
@@ -87,17 +100,24 @@ bool optbst_report(optbst_context* c)
 
 void find_lnodes(matrix* r, int i, int j, FILE* stream)
 {
+    /* printf("Finding left nodes at (%i, %i).\n", i, j); */
+
     /* Current node, search node */
     int cn = (int)r->data[i][j];
-    int sn = cn;
+    int sn;
 
     /* Search node */
-    for(; cn == sn && j > -1; j--) {
+    while(j >= 0) {
         sn = (int)r->data[i][j];
+        if(cn != sn) {
+            break;
+        }
+        j--;
     }
 
     /* No childs */
     if(sn == 0) {
+        /* printf("None found.\n"); */
         return;
     }
 
@@ -109,17 +129,16 @@ void find_lnodes(matrix* r, int i, int j, FILE* stream)
 
 void find_rnodes(matrix* r, int i, int j, FILE* stream)
 {
+    /* printf("Finding right nodes at (%i, %i).\n", i, j); */
+
     /* Current node, search node */
     int cn = (int)r->data[i][j];
-    int sn = cn;
-
-    /* Search node */
-    for(; cn == sn && i < r->rows; i++) {
-        sn = (int)r->data[i][j];
-    }
+    i = cn;
+    int sn = (int)r->data[i][j];
 
     /* No childs */
     if(sn == 0) {
+        /* printf("None found.\n"); */
         return;
     }
 
