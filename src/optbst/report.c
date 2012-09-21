@@ -61,8 +61,16 @@ bool optbst_report(optbst_context* c)
     fprintf(report, "\\end{compactitem}\n");
     fprintf(report, "\n");
 
+    /* Write nodes */
+    fprintf(report, "\\newpage\n");
+
     /* TOC */
     fprintf(report, "\\newpage\n\\tableofcontents\n\\newpage\n");
+    fprintf(report, "\n");
+
+    /* Write tables */
+    fprintf(report, "\\subsection{%s}\n", "Nodes");
+    optbst_execution(c, report);
     fprintf(report, "\n");
 
     /* Write graphic */
@@ -78,11 +86,19 @@ bool optbst_report(optbst_context* c)
     } else {
         fprintf(report, "ERROR: Tree image could not be generated.\n");
     }
+    fprintf(report, "\\newpage\n\n");
+
+    /* Digest */
+    fprintf(report, "\\subsection{%s}\n", "Digest");
+    fprintf(report, "\\begin{compactitem}\n");
+    fprintf(report, "\\item %s : \\textsc{%i}.\n",
+                    "Memory required", 10);
+    fprintf(report, "\\end{compactitem}\n");
     fprintf(report, "\n");
 
     /* End document */
+    fprintf(report, "\\end{document}\n");
     fprintf(report, "\n");
-    fprintf(report, "\\end{document}");
 
     /* Save & swap buffers */
     int success_file = fflush(report);
@@ -181,4 +197,66 @@ void optbst_graph(optbst_context* c)
 
     /* Render graph */
     gv2pdf("tree", "reports");
+}
+
+void optbst_execution(optbst_context* c, FILE* stream) {
+    optbst_table(c->table_a, true, stream);
+    optbst_table(c->table_r, false, stream);
+}
+
+void optbst_table(matrix* m, bool a, FILE* stream)
+{
+    /* Table preamble */
+    fprintf(stream, "\n");
+    fprintf(stream, "\\begin{table}[!ht]\n");
+    fprintf(stream, "\\centering\n");
+    fprintf(stream, "\\begin{tabular}{c||");
+    for(int cl = 0; cl < m->columns; cl++) {
+        fprintf(stream, "c|");
+    }
+    fprintf(stream, "}\n\\cline{2-%i}\n", m->columns + 1);
+
+    /* Table headers */
+    fprintf(stream, " & ");
+    for(int j = 0; j < m->columns; j++) {
+        fprintf(stream, "\\cellcolor{gray90}\\textbf{%i}", j);
+        if(j < m->columns - 1) {
+            fprintf(stream, " & ");
+        }
+    }
+    fprintf(stream, " \\\\\n\\hline\\hline\n");
+
+    /* Table body */
+    for(int i = 0; i < m->rows; i++) {
+        fprintf(stream, "\\multicolumn{1}{|c||}"
+                        "{\\cellcolor{gray90}\\textbf{%i}} & ", i + 1);
+        for(int j = 0; j < m->columns; j++) {
+
+            float cell = m->data[i][j];
+            if(i <= j) {
+                if(a) {
+                    fprintf(stream, "%.2f", cell);
+                } else {
+                    fprintf(stream, "%.0f", cell);
+                }
+            }
+
+            if(j < m->columns - 1) {
+                fprintf(stream, " & ");
+            }
+        }
+        fprintf(stream, " \\\\ \\hline\n");
+    }
+    fprintf(stream, "\\end{tabular}\n");
+
+    /* Caption */
+    if(a) {
+        fprintf(stream, "\\caption{%s.}\n",
+                        "Optimal binary search tree table A");
+    } else {
+        fprintf(stream, "\\caption{%s.}\n",
+                        "Optimal binary search tree table R");
+    }
+    fprintf(stream, "\\end{table}\n");
+    fprintf(stream, "\n");
 }
