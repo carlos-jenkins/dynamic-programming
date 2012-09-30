@@ -92,17 +92,17 @@ bool probwin_report(probwin_context* c)
 
     /* Write execution */
     fprintf(report, "\\subsection{%s}\n", "Execution");
-    fprintf(report, "TODO\n");
+    probwin_table(c, report);
     fprintf(report, "\\newpage\n");
     fprintf(report, "\n");
 
     /* Write analisis */
-    fprintf(report, "\\subsection{%s}\n", "Analisis");
-    fprintf(report, "TODO\n");
+    //fprintf(report, "\\subsection{%s}\n", "Analisis");
+    //fprintf(report, "TODO\n");
 
     /* Write digest */
-    fprintf(report, "\\subsection{%s}\n", "Digest");
-    fprintf(report, "TODO\n");
+    //fprintf(report, "\\subsection{%s}\n", "Digest");
+    //fprintf(report, "TODO\n");
 
     /* End document */
     fprintf(report, "\\end{document}\n");
@@ -156,4 +156,48 @@ void probwin_format(probwin_context* c, FILE* stream)
 
 void probwin_table(probwin_context* c, FILE* stream)
 {
+    matrix* m = c->table_w;
+
+    /* Table preamble */
+    fprintf(stream, "\\begin{table}[!ht]\n");
+    fprintf(stream, "\\begin{adjustwidth}{-3cm}{-3cm}\n");
+    fprintf(stream, "\\centering\n");
+    fprintf(stream, "\\begin{tabular}{c||");
+    for(int cl = 0; cl < m->columns; cl++) {
+        fprintf(stream, "c|");
+    }
+    fprintf(stream, "}\n\\cline{2-%i}\n", m->columns + 1);
+
+    /* Table headers */
+    fprintf(stream, " & ");
+    for(int j = 0; j < m->columns; j++) {
+        fprintf(stream, "\\cellcolor{gray90}\\textbf{%i}", j);
+        if(j < m->columns - 1) {
+            fprintf(stream, " & ");
+        }
+    }
+    fprintf(stream, " \\\\\n\\hline\\hline\n");
+
+    /* Table body */
+    for(int i = 0; i < m->rows; i++) {
+        fprintf(stream, "\\multicolumn{1}{|c||}"
+                        "{\\cellcolor{gray90}\\textbf{%i}} & ", i);
+        for(int j = 0; j < m->columns; j++) {
+
+            if(!(i == 0 && j == 0)) {
+                fprintf(stream, "%1.4f", m->data[i][j]);
+            }
+
+            if(j < m->columns - 1) {
+                fprintf(stream, " & ");
+            }
+        }
+        fprintf(stream, " \\\\ \\hline\n");
+    }
+    fprintf(stream, "\\end{tabular}\n");
+
+    fprintf(stream, "\\caption{%s.}\n", "Table W");
+    fprintf(stream, "\\end{adjustwidth}\n");
+    fprintf(stream, "\\end{table}\n");
+    fprintf(stream, "\n");
 }
