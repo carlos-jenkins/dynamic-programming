@@ -48,7 +48,7 @@ typedef struct {
 
 } replacement_context;
 
-replacement_context* replacement_context_new(int years_plan, int lifetime);
+replacement_context* replacement_context_new(int years_plan, int lifetime, float equipmentCost);
 void replacement_context_free(replacement_context* c);
 
 /**
