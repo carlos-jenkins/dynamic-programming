@@ -105,6 +105,14 @@ knapsack_context* knapsack_context_new(int capacity, int num_items)
     return c;
 }
 
+void knapsack_context_clear(knapsack_context* c)
+{
+    matrix_fill(c->table_values, 0.0);
+    matrix_fill(c->table_items, 0.0);
+    fclose(c->report_buffer);
+    c->report_buffer = tmpfile();
+}
+
 void knapsack_context_free(knapsack_context* c)
 {
     matrix_free(c->table_values);
@@ -160,5 +168,6 @@ bool knapsack(knapsack_context *c)
     /* Stop counting time */
     g_timer_stop(timer);
     c->execution_time = g_timer_elapsed(timer, NULL);
+    g_timer_destroy(timer);
     return true;
 }

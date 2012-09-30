@@ -141,5 +141,6 @@ bool optbst(optbst_context *c)
     /* Stop counting time */
     g_timer_stop(timer);
     c->execution_time = g_timer_elapsed(timer, NULL);
+    g_timer_destroy(timer);
     return true;
 }

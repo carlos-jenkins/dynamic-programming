@@ -61,7 +61,7 @@ bool replacement_report(replacement_context* c)
     fprintf(report, "\\end{compactitem}\n");
     fprintf(report, "\n");
 
-    /* Write data*/
+    /* Write data */
     fprintf(report, "\\subsection{%s}\n", "Data");
     replacement_data(c, report);
     fprintf(report, "\\newpage\n");
@@ -76,8 +76,6 @@ bool replacement_report(replacement_context* c)
     replacement_table(c, report);
     fprintf(report, "\\newpage\n");
     fprintf(report, "\n");
-
-
 
     /* End document */
     fprintf(report, "\\end{document}\n");
@@ -97,12 +95,11 @@ bool replacement_report(replacement_context* c)
     return true;
 }
 
-
 void replacement_table(replacement_context* c, FILE* stream)
 {
-   float* mc = c->minimum_cost;
-   for(int i = 0; i <= c->years_plan; i++) {
-           fprintf(stream, "G(%d): %4.2f \n",i, mc[i]);
+    float* mc = c->minimum_cost;
+    for(int i = 0; i <= c->years_plan; i++) {
+           fprintf(stream, "G(%d): %4.2f \n", i, mc[i]);
            fprintf(stream, "\n");
     }
     fprintf(stream, "\n");
@@ -110,7 +107,7 @@ void replacement_table(replacement_context* c, FILE* stream)
 
 void replacement_data(replacement_context* c, FILE* stream)
 {
-   fprintf(stream, "\\begin{compactitem}\n");
+    fprintf(stream, "\\begin{compactitem}\n");
     fprintf(stream, "\\item %s : \\textsc{%d %s}. \n",
                     "Equipment replace plan for:", c->years_plan,
                     "years");

@@ -17,14 +17,21 @@
  */
 
 #include "probwin.h"
+#include "latex.h"
+#include "dialogs.h"
 #include <gtk/gtk.h>
+
+/* GUI */
+GtkWindow* window;
+
+/* Context */
+probwin_context* c = NULL;
 
 int main(int argc, char **argv)
 {
 
-    GtkBuilder *builder;
-    GtkWidget  *window;
-    GError     *error = NULL;
+    GtkBuilder* builder;
+    GError* error = NULL;
 
     /* Starts Gtk+ subsystem */
     gtk_init(&argc, &argv);
@@ -42,14 +49,13 @@ int main(int argc, char **argv)
     }
 
     /* Get pointers to objects */
-    window = GTK_WIDGET(gtk_builder_get_object(builder, "window"));
+    window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
 
     /* Connect signals */
     gtk_builder_connect_signals(builder, NULL);
 
-
     g_object_unref(G_OBJECT(builder));
-    gtk_widget_show(window);
+    gtk_widget_show(GTK_WIDGET(window));
     gtk_main();
 
     return(0);
