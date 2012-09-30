@@ -44,6 +44,10 @@ typedef struct{
     int games;
     bool* game_format;
 
+    /* Report */
+    char* a_name;
+    char* b_name;
+
 } probwin_context;
 
 probwin_context* probwin_context_new(int games);

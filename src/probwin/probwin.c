@@ -56,12 +56,20 @@ probwin_context* probwin_context_new(int games)
     for(int i = 1; i <= games_to_win; i++) {
         c->table_w->data[0][i] = 1.0;
     }
+    c->a_name = "";
+    c->b_name = "";
 
     c->status = -1;
     c->execution_time = 0;
     c->memory_required = matrix_sizeof(c->table_w) + (games * sizeof(bool)) +
                          sizeof(probwin_context);
     c->report_buffer = tmpfile();
+    if(c->report_buffer == NULL) {
+        matrix_free(c->table_w);
+        free(c->game_format);
+        free(c);
+        return NULL;
+    }
 
     return c;
 }

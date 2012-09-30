@@ -17,6 +17,7 @@
  */
 
 #include "probwin.h"
+#include "latex.h"
 
 int main(int argc, char **argv)
 {
@@ -55,6 +56,22 @@ int main(int argc, char **argv)
     /* Show table */
     printf("-----------------------------------\n");
     matrix_print(w);
+
+    /* Generate report */
+    bool report_created = probwin_report(c);
+    if(!report_created) {
+        printf("ERROR: Report could not be created.\n");
+    } else {
+        printf("Report created at reports/probwin.tex\n");
+
+        int as_pdf = latex2pdf("probwin", "reports");
+        if(as_pdf == 0) {
+            printf("PDF version available at reports/probwin.pdf\n");
+        } else {
+            printf("ERROR: Unable to convert report to PDF. Status: %i.\n",
+                   as_pdf);
+        }
+    }
 
     /* Free resources */
     probwin_context_free(c);
