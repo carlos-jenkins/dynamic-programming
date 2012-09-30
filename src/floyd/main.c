@@ -18,6 +18,7 @@
 
 #include "floyd.h"
 #include "latex.h"
+#include "dialogs.h"
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
@@ -343,7 +344,10 @@ void change_matrix_cb(GtkSpinButton* spinbutton, gpointer user_data)
     /* Get the number of srequested nodes */
     int value = gtk_spin_button_get_value_as_int(spinbutton);
     bool success = change_matrix(value);
-    /* FIXME: Report error to the user */
+    if(!success) {
+        show_error(window, "Unable to allocate enough memory for "
+                           "this problem. Sorry.");
+    }
     return;
 }
 
@@ -356,15 +360,16 @@ void process(GtkButton* button, gpointer user_data)
 
     /* Execute algorithm */
     bool success = floyd(c);
-    //if(!success) {
-        /* FIXME: Report error to the user */
-    //}
+    if(!success) {
+        show_error(window, "Error while processing the information. "
+                           "Please check your data.");
+    }
 
     /* Generate report */
     bool report_created = floyd_report(c);
     if(!report_created) {
-        /* FIXME: Report error to the user */
-        printf("ERROR: Report could not be created.\n");
+        show_error(window, "Report could not be created. "
+                           "Please check your data.");
     } else {
         printf("Report created at reports/floyd.tex\n");
 
@@ -372,8 +377,10 @@ void process(GtkButton* button, gpointer user_data)
         if(as_pdf == 0) {
             printf("PDF version available at reports/floyd.pdf\n");
         } else {
-            printf("ERROR: Unable to convert report to PDF. Status: %i.\n",
-                   as_pdf);
+            char* error = g_strdup_printf("Unable to convert report to PDF. "
+                                          "Status: %i.", as_pdf);
+            show_error(window, error);
+            g_free(error);
         }
     }
 }

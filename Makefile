@@ -5,6 +5,7 @@ CFLAGS = `pkg-config --cflags --libs glib-2.0` -lm
 GFLAGS = `pkg-config --cflags --libs gtk+-3.0 gmodule-export-2.0` -lm
 
 COMMON = -Isrc/main/ src/main/matrix.c src/main/utils.c src/main/latex.c src/main/graphviz.c
+GUICOMMON = src/main/dialogs.c
 
 # Rules
 all: bin/main bin/floyd bin/knapsack bin/optbst bin/probwin bin/replacement
@@ -20,22 +21,22 @@ replacement: bin/replacement bin/test/replacement
 
 # Main binaries
 bin/main: src/main/main.c
-	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GFLAGS)
+	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GUICOMMON) $(GFLAGS)
 
 bin/floyd: src/floyd/main.c src/floyd/floyd.c src/floyd/report.c
-	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GFLAGS)
+	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GUICOMMON) $(GFLAGS)
 
 bin/knapsack: src/knapsack/main.c src/knapsack/knapsack.c src/knapsack/report.c
-	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GFLAGS)
+	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GUICOMMON) $(GFLAGS)
 
 bin/optbst: src/optbst/main.c src/optbst/optbst.c src/optbst/report.c
-	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GFLAGS)
+	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GUICOMMON) $(GFLAGS)
 
 bin/probwin: src/probwin/main.c src/probwin/probwin.c src/probwin/report.c
-	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GFLAGS)
+	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GUICOMMON) $(GFLAGS)
 
 bin/replacement: src/replacement/main.c src/replacement/replacement.c src/replacement/report.c
-	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GFLAGS)
+	$(CC) $(DEBUG) -o $@ $? $(COMMON) $(GUICOMMON) $(GFLAGS)
 
 
 # Test binaries
