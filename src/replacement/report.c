@@ -47,7 +47,7 @@ bool replacement_report(replacement_context* c)
         return false;
     }
 
-     /* Write first section */
+    /* Write first section */
     fprintf(report, "\\\\[0.5cm]\n\\noindent{\\Large Details:}\n");
     fprintf(report, "\\begin{compactitem}\n");
     fprintf(report, "\\item %s : \\textsc{%s}. \n",
@@ -61,9 +61,22 @@ bool replacement_report(replacement_context* c)
     fprintf(report, "\\end{compactitem}\n");
     fprintf(report, "\n");
 
+    /* Write data*/
+    fprintf(report, "\\subsection{%s}\n", "Data");
+    replacement_data(c, report);
+    fprintf(report, "\\newpage\n");
+
+
     /* TOC */
     fprintf(report, "\\newpage\n\\tableofcontents\n\\newpage\n");
     fprintf(report, "\n");
+
+     /* Write execution */
+    fprintf(report, "\\subsection{%s}\n", "Execution");
+    replacement_table(c, report);
+    fprintf(report, "\\newpage\n");
+    fprintf(report, "\n");
+
 
 
     /* End document */
@@ -83,3 +96,33 @@ bool replacement_report(replacement_context* c)
 
     return true;
 }
+
+
+void replacement_table(replacement_context* c, FILE* stream)
+{
+   float* mc = c->minimum_cost;
+   for(int i = 0; i <= c->years_plan; i++) {
+           fprintf(stream, "G(%d): %4.2f \n",i, mc[i]);
+           fprintf(stream, "\n");
+    }
+    fprintf(stream, "\n");
+}
+
+void replacement_data(replacement_context* c, FILE* stream)
+{
+   fprintf(stream, "\\begin{compactitem}\n");
+    fprintf(stream, "\\item %s : \\textsc{%d %s}. \n",
+                    "Equipment replace plan for:", c->years_plan,
+                    "years");
+    fprintf(stream, "\\item %s : \\textsc{%4.2f}. \n",
+                    "Equipment Cost:", c->equipment_cost);
+    fprintf(stream, "\\item %s : \\textsc{%d %s}. \n",
+                    "Equipment Lifetime:", c->lifetime,
+                    "years");
+    fprintf(stream, "\\end{compactitem}\n");
+    fprintf(stream, "\n");
+}
+
+
+//    float* manteinance; /* sizeof lifetime */
+//    float* sale_cost;   /* sizeof lifetime */
