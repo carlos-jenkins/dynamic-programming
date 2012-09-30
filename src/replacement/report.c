@@ -20,5 +20,66 @@
 
 bool replacement_report(replacement_context* c)
 {
+        /* Create report file */
+    FILE* report = fopen("reports/replacement.tex", "w");
+    if(report == NULL) {
+        return false;
+    }
+
+    /* Write preamble */
+    bool success = insert_file("latex/header.tex", report);
+    if(!success) {
+        return false;
+    }
+    fprintf(report, "\n");
+
+    /* Write header */
+    fprintf(report, "\\section{%s}\n\n", "Equipment Replacement");
+    fprintf(report, "\\noindent{\\huge %s.} \\\\[0.4cm]\n",
+                    "Dynamic programming");
+    fprintf(report, "{\\LARGE %s.}\\\\[0.4cm]\n", "Operation Research");
+    fprintf(report, "\\HRule \\\\[0.5cm]\n");
+
+    /* Write description */
+    fprintf(report, "\\indent ");
+    success = insert_file("latex/replacement.txt", report);
+    if(!success) {
+        return false;
+    }
+
+     /* Write first section */
+    fprintf(report, "\\\\[0.5cm]\n\\noindent{\\Large Details:}\n");
+    fprintf(report, "\\begin{compactitem}\n");
+    fprintf(report, "\\item %s : \\textsc{%s}. \n",
+                    "Executed on", get_current_time());
+    fprintf(report, "\\item %s : \\textsc{%lf %s}. \n",
+                    "Execution time", c->execution_time,
+                    "seconds");
+    fprintf(report, "\\item %s : \\textsc{%i %s}. \n",
+                    "Memory required", c->memory_required,
+                    "bytes");
+    fprintf(report, "\\end{compactitem}\n");
+    fprintf(report, "\n");
+
+   /* TOC */
+    fprintf(report, "\\newpage\n\\tableofcontents\n\\newpage\n");
+    fprintf(report, "\n");
+
+
+       /* End document */
+    fprintf(report, "\\end{document}\n");
+    fprintf(report, "\n");
+
+    /* Save & swap buffers */
+    int success_file = fflush(report);
+    if(success_file == EOF) {
+        return false;
+    }
+    success_file = fclose(c->report_buffer);
+    if(success_file == EOF) {
+        return false;
+    }
+    c->report_buffer = report;
+
     return true;
 }

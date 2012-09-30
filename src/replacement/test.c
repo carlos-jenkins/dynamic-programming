@@ -56,9 +56,28 @@ int main(int argc, char **argv)
      float* mc = c->minimum_cost;
 
      
-        for ( int i = 0; i<=c->years_plan; i++ ){
-            printf("G( %d ): %4.2f \n", i, mc[i]);
+    for ( int i = 0; i<=c->years_plan; i++ ){
+        printf("G( %d ): %4.2f \n", i, mc[i]);
         }
+
+        /* Generate report */
+    bool report_created = replacement_report(c);
+    if(!report_created) {
+        printf("ERROR: Report could not be created.\n");
+    } else {
+        printf("Report created at reports/replacement.tex\n");
+
+        int as_pdf = latex2pdf("replacement", "reports");
+        if(as_pdf == 0) {
+            printf("PDF version available at reports/replacement.pdf\n");
+        } else {
+            printf("ERROR: Unable to convert report to PDF. Status: %i.\n",
+                   as_pdf);
+        }
+    }
+
+
+        
 
 
      /* Free resources */

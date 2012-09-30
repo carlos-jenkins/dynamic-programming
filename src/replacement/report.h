@@ -24,7 +24,7 @@
 /**
  * Write a report about the execution of the algorithm.
  *
- * @param knapsack_context, the knapsack's context data structure after
+ * @param replacement_context, the replacement's context data structure after
  *        successful execution.
  * @return if report creation was successful.
  */
