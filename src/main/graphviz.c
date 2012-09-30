@@ -22,7 +22,7 @@ int gv2pdf(char* name, char* dir)
 {
     char buffer[2000];
 
-    /* Remove eps if exists */
+    /* Remove pdf if exists */
     sprintf(buffer, "%s/%s.pdf", dir, name);
     if(file_exists(buffer)) {
         sprintf(buffer, "rm %s/%s.pdf", dir, name);
@@ -56,6 +56,34 @@ int gv2pdf(char* name, char* dir)
     /* Cleanup */
     sprintf(buffer, "rm %s/%s.eps", dir, name);
     system(buffer);
+
+    return 0;
+}
+
+int gv2png(char* name, char* dir)
+{
+    char buffer[2000];
+
+    /* Remove png if exists */
+    sprintf(buffer, "%s/%s.png", dir, name);
+    if(file_exists(buffer)) {
+        sprintf(buffer, "rm %s/%s.png", dir, name);
+        system(buffer);
+    }
+
+    /* Execute gv-png conversion if file is available */
+    sprintf(buffer, "%s/%s.gv", dir, name);
+    if(!file_exists(buffer)) {
+        return -1;
+    }
+    sprintf(buffer, "dot -Tpng -o%s/%s.png %s/%s.gv",
+                    dir, name, dir, name);
+    printf("%s\n", buffer);
+    int dot_status = system(buffer);
+    if(dot_status != 0) {
+        printf("ERROR: dot finished with status %i\n", dot_status);
+        return -2;
+    }
 
     return 0;
 }

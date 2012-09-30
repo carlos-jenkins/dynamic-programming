@@ -63,6 +63,7 @@ bool floyd_report(floyd_context* c)
 
     /* Write graph */
     fprintf(report, "\\subsection{%s}\n", "Input graph");
+    gv2pdf("graph", "reports");
     if(file_exists("reports/graph.pdf")) {
         fprintf(report, "\\begin{figure}[H]\\centering\n");
         fprintf(report, "\\noindent\\includegraphics[height=210px]"
@@ -320,7 +321,4 @@ void floyd_graph(floyd_context* c)
 
     /* Close file */
     fclose(graph);
-
-    /* Render graph */
-    gv2pdf("graph", "reports");
 }

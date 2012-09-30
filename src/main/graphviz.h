@@ -22,5 +22,6 @@
 #include "utils.h"
 
 int gv2pdf(char* name, char* dir);
+int gv2png(char* name, char* dir);
 
 #endif
