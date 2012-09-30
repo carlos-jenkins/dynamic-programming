@@ -33,6 +33,10 @@ int main(int argc, char **argv)
     matrix* w = c->table_w;
     bool* f = c->game_format;
 
+    /* Set team names */
+    c->a_name = "Team A";
+    c->b_name = "Team B";
+
     /* Set format game */
     f[0] = true;
     f[1] = true;

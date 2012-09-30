@@ -61,9 +61,28 @@ bool probwin_report(probwin_context* c)
     fprintf(report, "\\end{compactitem}\n");
     fprintf(report, "\n");
 
-    /* Write teams subreport */
+    /* Write teams */
     fprintf(report, "\\subsection{%s}\n", "Teams");
-    fprintf(report, "TODO\n");
+    fprintf(report, "\\begin{multicols}{3}\n");
+    fprintf(report, "A: {\\Large %s} \\\\ \n\\indent{}", c->a_name);
+    fprintf(report, "B: {\\Large %s}\n", c->b_name);
+    fprintf(report, "\n");
+    fprintf(report, "P\\subscript{h}: {\\Large %1.4f} \\\\ \n\\indent{}", c->ph);
+    fprintf(report, "Q\\subscript{h}: {\\Large %1.4f}\n", 1.0 - c->ph);
+    fprintf(report, "\n");
+    fprintf(report, "P\\subscript{r}: {\\Large %1.4f} \\\\ \n\\indent{}", c->pr);
+    fprintf(report, "Q\\subscript{r}: {\\Large %1.4f}\n", 1.0 - c->pr);
+    fprintf(report, "\n");
+    fprintf(report, "\\end{multicols}\n");
+    fprintf(report, "\n");
+
+    //fprintf(report, "\\subsection{%s}\n", "Games");
+    //fprintf(report, "\\hspace{1cm}%s: {\\Large \\textbf{%i}}\n",
+                    //"Number of games", c->games);
+    //fprintf(report, "\n");
+
+    fprintf(report, "\\subsection{%s}\n", "Games");
+    probwin_format(c, report);
     fprintf(report, "\\newpage\n");
     fprintf(report, "\n");
 
@@ -73,7 +92,6 @@ bool probwin_report(probwin_context* c)
 
     /* Write execution */
     fprintf(report, "\\subsection{%s}\n", "Execution");
-    //probwin_table(c, report);
     fprintf(report, "TODO\n");
     fprintf(report, "\\newpage\n");
     fprintf(report, "\n");
@@ -102,4 +120,40 @@ bool probwin_report(probwin_context* c)
     c->report_buffer = report;
 
     return true;
+}
+
+void probwin_format(probwin_context* c, FILE* stream)
+{
+    /* Game number  A plays at home */
+
+    /* Table preamble */
+    fprintf(stream, "\\begin{table}[!ht]\n");
+    fprintf(stream, "\\centering\n");
+    fprintf(stream, "\\begin{tabular}{|c|c|}\n");
+    fprintf(stream, "\\hline\n");
+
+    /* Table headers */
+    fprintf(stream, "\\cellcolor{gray90}\\textbf{%s} &"
+                    "\\cellcolor{gray90}\\textbf{%s %s}",
+                    "Game number", c->a_name, "plays at home");
+    fprintf(stream, " \\\\ \n\\hline\\hline\n");
+
+    /* Table body */
+    for(int i = 0; i < c->games; i++) {
+        if(c->game_format[i]) {
+            fprintf(stream, "%i & %s \\\\ \\hline\n", i + 1, "Yes");
+        } else {
+            fprintf(stream, "%i & %s \\\\ \\hline\n", i + 1, "No");
+        }
+    }
+    fprintf(stream, "\\end{tabular}\n");
+
+    /* Caption */
+    fprintf(stream, "\\caption{%s.}\n", "Game format");
+    fprintf(stream, "\\end{table}\n");
+    fprintf(stream, "\n");
+}
+
+void probwin_table(probwin_context* c, FILE* stream)
+{
 }

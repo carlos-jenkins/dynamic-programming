@@ -218,8 +218,8 @@ void optbst_nodes(optbst_context* c, FILE* stream)
     /* Table preamble */
     fprintf(stream, "\\begin{table}[!ht]\n");
     fprintf(stream, "\\centering\n");
-    fprintf(stream, "\\begin{tabular}{c||c|c|");
-    fprintf(stream, "}\n\\cline{2-3}\n");
+    fprintf(stream, "\\begin{tabular}{c||c|c|}\n");
+    fprintf(stream, "\\cline{2-3}\n");
 
     /* Table headers */
     fprintf(stream, " & \\cellcolor{gray90}\\textbf{%s}"

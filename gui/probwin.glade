@@ -149,10 +149,10 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="prob_route_label">
+              <object class="GtkLabel" id="prob_road_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="label" translatable="yes">Route</property>
+                <property name="label" translatable="yes">Road</property>
               </object>
               <packing>
                 <property name="left_attach">2</property>
@@ -202,7 +202,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSpinButton" id="prob_a_route">
+              <object class="GtkSpinButton" id="prob_a_road">
                 <property name="width_request">150</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -229,7 +229,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="prob_b_route">
+              <object class="GtkLabel" id="prob_b_road">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="label" translatable="yes">Qr</property>
