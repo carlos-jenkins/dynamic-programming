@@ -35,6 +35,7 @@ void change_matrix_cb(GtkSpinButton* spinbutton, gpointer user_data);
 void update_graph();
 void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
                     gchar* new_text, gpointer user_data);
+void process(GtkButton* button, gpointer user_data);
 
 int main(int argc, char **argv)
 {
@@ -304,7 +305,7 @@ void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
     /* A distance is being set */
     /* INFINITY */
     int is_inf = strncmp(new_text, "oo", 2);
-    if(is_inf == 0) {
+    if(is_inf == 0 || is_empty_string(new_text)) {
         g_value_set_string(&value, "oo");
         gtk_list_store_set_value(
                             GTK_LIST_STORE(gtk_tree_view_get_model(input)),
@@ -342,6 +343,37 @@ void change_matrix_cb(GtkSpinButton* spinbutton, gpointer user_data)
     /* Get the number of srequested nodes */
     int value = gtk_spin_button_get_value_as_int(spinbutton);
     bool success = change_matrix(value);
-    /* FIXME: Do something with success */
+    /* FIXME: Report error to the user */
     return;
+}
+
+void process(GtkButton* button, gpointer user_data)
+{
+    if(c == NULL) {
+        return;
+    }
+    floyd_context_clear(c);
+
+    /* Execute algorithm */
+    bool success = floyd(c);
+    //if(!success) {
+        /* FIXME: Report error to the user */
+    //}
+
+    /* Generate report */
+    bool report_created = floyd_report(c);
+    if(!report_created) {
+        /* FIXME: Report error to the user */
+        printf("ERROR: Report could not be created.\n");
+    } else {
+        printf("Report created at reports/floyd.tex\n");
+
+        int as_pdf = latex2pdf("floyd", "reports");
+        if(as_pdf == 0) {
+            printf("PDF version available at reports/floyd.pdf\n");
+        } else {
+            printf("ERROR: Unable to convert report to PDF. Status: %i.\n",
+                   as_pdf);
+        }
+    }
 }

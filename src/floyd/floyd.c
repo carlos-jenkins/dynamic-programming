@@ -78,6 +78,13 @@ floyd_context* floyd_context_new(int nodes)
     return c;
 }
 
+void floyd_context_clear(floyd_context* c)
+{
+    matrix_fill(c->table_p, 0.0);
+    fclose(c->report_buffer);
+    c->report_buffer = tmpfile();
+}
+
 void floyd_context_free(floyd_context* c)
 {
     matrix_free(c->table_d);
