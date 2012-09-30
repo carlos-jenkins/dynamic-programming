@@ -18,7 +18,7 @@
 
 #include "replacement.h"
 
-replacement_context* replacement_context_new(int years_plan, int lifetime, float equipmentCost)
+replacement_context* replacement_context_new(int years_plan, int lifetime, float equipment_cost)
 {
 
     /* Check input is correct */
@@ -52,7 +52,7 @@ replacement_context* replacement_context_new(int years_plan, int lifetime, float
 
     c->years_plan = years_plan;
     c->lifetime = lifetime;
-    c->equipment_cost = equipmentCost;
+    c->equipment_cost = equipment_cost;
 
     /* Try to allocate matrices */
     c->table_c = matrix_new(years_plan, years_plan, 0.0);
@@ -68,7 +68,7 @@ replacement_context* replacement_context_new(int years_plan, int lifetime, float
         c->minimum_cost[i] = PLUS_INF;
     }
 
-    c->minimum_cost[size-1] = 0;
+    c->minimum_cost[size - 1] = 0;
 
     c->status = -1;
     c->execution_time = 0;

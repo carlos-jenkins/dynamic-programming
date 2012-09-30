@@ -23,28 +23,28 @@ int main(int argc, char **argv)
 {
     printf("Testing Equipment replacement...\n\n");
 
-     /* Create context */
-     replacement_context* c = replacement_context_new(5, 3, 500);
-     if(c == NULL) {
+    /* Create context */
+    replacement_context* c = replacement_context_new(5, 3, 500);
+    if(c == NULL) {
         printf("Unable to create  Equipment replacement's "
                "context... exiting.\n");
         return(-1);
     }
 
-    float* mt = c->manteinance; 
-    float* s = c->sale_cost; 
+    float* mt = c->manteinance;
+    float* s = c->sale_cost;
 
-    /*Set manteinance  cost*/
+    /* Set manteinance  cost */
     mt[0] = 30;
     mt[1] = 40;
     mt[2] = 60;
 
-    /*Set sale cost*/
+    /* Set sale cost */
     s[0] = 400;
     s[1] = 300;
     s[2] = 250;
 
-      /* Run algorithm */
+    /* Run algorithm */
     bool success = replacement(c);
     if(!success) {
         printf("Equipment replacement's algorithm was "
@@ -52,15 +52,13 @@ int main(int argc, char **argv)
         return(-2);
     }
 
-     /* Show result*/
-     float* mc = c->minimum_cost;
-
-     
-    for ( int i = 0; i<=c->years_plan; i++ ){
+    /* Show result */
+    float* mc = c->minimum_cost;
+    for(int i = 0; i <= c->years_plan; i++) {
         printf("G( %d ): %4.2f \n", i, mc[i]);
-        }
+    }
 
-        /* Generate report */
+    /* Generate report */
     bool report_created = replacement_report(c);
     if(!report_created) {
         printf("ERROR: Report could not be created.\n");
@@ -75,9 +73,6 @@ int main(int argc, char **argv)
                    as_pdf);
         }
     }
-
-
-        
 
 
      /* Free resources */

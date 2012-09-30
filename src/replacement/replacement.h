@@ -33,22 +33,20 @@ typedef struct {
     unsigned int memory_required;
     FILE* report_buffer;
 
-    /*Plan and equipment data*/
+    /* Plan and equipment data*/
     int years_plan;
     float equipment_cost;
     int lifetime;
-    float* manteinance; /*sizeof lifetime*/
-    float* sale_cost; /*sizeof lifetime*/
+    float* manteinance; /* sizeof lifetime */
+    float* sale_cost;   /* sizeof lifetime */
     float* minimum_cost;
 
-
-    /*Tables*/
+    /* Tables*/
     matrix* table_c;
-
 
 } replacement_context;
 
-replacement_context* replacement_context_new(int years_plan, int lifetime, float equipmentCost);
+replacement_context* replacement_context_new(int years_plan, int lifetime, float equipment_cost);
 void replacement_context_free(replacement_context* c);
 
 /**

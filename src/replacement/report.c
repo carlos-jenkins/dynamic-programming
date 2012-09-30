@@ -20,7 +20,7 @@
 
 bool replacement_report(replacement_context* c)
 {
-        /* Create report file */
+    /* Create report file */
     FILE* report = fopen("reports/replacement.tex", "w");
     if(report == NULL) {
         return false;
@@ -61,12 +61,12 @@ bool replacement_report(replacement_context* c)
     fprintf(report, "\\end{compactitem}\n");
     fprintf(report, "\n");
 
-   /* TOC */
+    /* TOC */
     fprintf(report, "\\newpage\n\\tableofcontents\n\\newpage\n");
     fprintf(report, "\n");
 
 
-       /* End document */
+    /* End document */
     fprintf(report, "\\end{document}\n");
     fprintf(report, "\n");
 
