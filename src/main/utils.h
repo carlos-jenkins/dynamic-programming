@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <float.h>
+#include <string.h>
 #include <math.h>
 #include <glib.h>
 
@@ -42,5 +43,7 @@ int min(int a, int b);
 
 bool copy_streams(FILE* input, FILE* output);
 bool insert_file(char* filename, FILE* output);
+
+bool is_empty_string(char* string);
 
 #endif

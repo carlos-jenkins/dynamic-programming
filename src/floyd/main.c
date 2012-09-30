@@ -21,15 +21,20 @@
 #include <gtk/gtk.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
+/* GUI */
 GtkWindow  *window;
 GtkTreeView* input;
 GtkImage* graph;
 
+/* Context */
 floyd_context* c = NULL;
 
+/* Functions */
 bool change_matrix(int size);
-bool change_matrix_cb(GtkSpinButton* spinbutton, gpointer user_data);
+void change_matrix_cb(GtkSpinButton* spinbutton, gpointer user_data);
 void update_graph();
+void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
+                    gchar* new_text, gpointer user_data);
 
 int main(int argc, char **argv)
 {
@@ -123,13 +128,14 @@ bool change_matrix(int size)
                 /* Set value */
                 if(j > 0) {
                     g_value_set_string(&init, g_strdup_printf("%i", j));
+                    g_value_set_boolean(&initb, true);
                 } else {
                     g_value_set_string(&init, "");
+                    g_value_set_boolean(&initb, false);
                 }
                 gtk_list_store_set_value(model, &iter, j, &init);
 
                 /* Set editable */
-                g_value_set_boolean(&initb, true);
                 gtk_list_store_set_value(model, &iter, rsize + j, &initb);
 
                 /* Set background set */
@@ -182,8 +188,13 @@ bool change_matrix(int size)
 
     /* Create the matrix */
     for(int i = 0; i < rsize; i++) {
+        /* Configure cell */
         GtkCellRenderer* cell = gtk_cell_renderer_text_new();
         g_object_set(cell, "cell-background", "Black", NULL);
+        g_signal_connect(G_OBJECT(cell),
+                         "edited", G_CALLBACK(cell_edited_cb),
+                         GINT_TO_POINTER(i));
+        /* Configure column */
         GtkTreeViewColumn* column = gtk_tree_view_column_new_with_attributes(
                                         "", cell,  /* Title, renderer */
                                         "text", i,
@@ -240,11 +251,97 @@ void update_graph()
     g_object_unref(pixbuf);
 }
 
-bool change_matrix_cb(GtkSpinButton* spinbutton, gpointer user_data)
+void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
+                    gchar* new_text, gpointer user_data)
+{
+    int row = atoi(path);
+    int column = GPOINTER_TO_INT(user_data);
+    printf("%s at (%i, %i)\n", new_text, row, column);
+
+    /* Validate row and column just in case */
+    if((row == column) || column == 0) {
+        return;
+    }
+
+    /* Get reference to model */
+    GtkTreePath* model_path = gtk_tree_path_new_from_string(path);
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter(gtk_tree_view_get_model(input), &iter, model_path);
+    gtk_tree_path_free(model_path);
+
+    GValue value = G_VALUE_INIT;
+    g_value_init(&value, G_TYPE_STRING);
+
+    /* A node is being renamed */
+    if(row == 0) {
+        if(!is_empty_string(new_text)) {
+            /* Set node at first row */
+            g_value_set_string(&value, new_text);
+            gtk_list_store_set_value(
+                            GTK_LIST_STORE(gtk_tree_view_get_model(input)),
+                            &iter, column, &value);
+
+            /* Set node at first column */
+            char* at_y = g_strdup_printf("%i", column);
+            model_path = gtk_tree_path_new_from_string(at_y);
+            gtk_tree_model_get_iter(
+                    gtk_tree_view_get_model(input), &iter, model_path);
+            gtk_tree_path_free(model_path);
+            g_free(at_y);
+            gtk_list_store_set_value(
+                            GTK_LIST_STORE(gtk_tree_view_get_model(input)),
+                            &iter, 0, &value);
+
+            g_free(c->names[column - 1]);
+            c->names[column - 1] = g_strdup(new_text);
+
+            /* Update the graph */
+            update_graph();
+        }
+        return;
+    }
+
+    /* A distance is being set */
+    /* INFINITY */
+    int is_inf = strncmp(new_text, "oo", 2);
+    if(is_inf == 0) {
+        g_value_set_string(&value, "oo");
+        gtk_list_store_set_value(
+                            GTK_LIST_STORE(gtk_tree_view_get_model(input)),
+                            &iter, column, &value);
+
+        c->table_d->data[row - 1][column - 1] = PLUS_INF;
+
+        /* Update the graph */
+        update_graph();
+        return;
+    }
+    /* Distance */
+    char* end;
+    int distance = (int) strtol(new_text, &end, 10);
+    if((end != new_text) && (*end == '\0') && (distance > 0)) {
+        char* distance_as_string = g_strdup_printf("%i", distance);
+        g_value_set_string(&value, distance_as_string);
+        gtk_list_store_set_value(
+                            GTK_LIST_STORE(gtk_tree_view_get_model(input)),
+                            &iter, column, &value);
+        g_free(distance_as_string);
+
+        c->table_d->data[row - 1][column - 1] = (float) distance;
+
+        /* Update the graph */
+        update_graph();
+        return;
+    }
+    return;
+
+}
+
+void change_matrix_cb(GtkSpinButton* spinbutton, gpointer user_data)
 {
     /* Get the number of srequested nodes */
     int value = gtk_spin_button_get_value_as_int(spinbutton);
     bool success = change_matrix(value);
     /* FIXME: Do something with success */
-    return false;
+    return;
 }

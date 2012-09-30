@@ -137,3 +137,11 @@ bool insert_file(char* filename, FILE* output)
 
     return true;
 }
+
+bool is_empty_string(char* string)
+{
+    if(*string == '\0') {
+        return true;
+    }
+    return false;
+}
