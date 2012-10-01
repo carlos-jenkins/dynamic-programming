@@ -77,6 +77,10 @@ bool replacement_report(replacement_context* c)
     fprintf(report, "\\newpage\n");
     fprintf(report, "\n");
 
+    /* Write analisis */
+    fprintf(report, "\\subsection{%s}\n", "Analisis");
+    fprintf(report, "\n");
+
     /* End document */
     fprintf(report, "\\end{document}\n");
     fprintf(report, "\n");
