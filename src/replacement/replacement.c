@@ -42,7 +42,7 @@ replacement_context* replacement_context_new(int years_plan, int lifetime)
         free(c->manteinance);
         return NULL;
     }
-    c->equipment_cost  = (float*) malloc(years_plan * sizeof(float));
+    c->equipment_cost  = (float*) malloc(lifetime * sizeof(float));
      if(c->equipment_cost == NULL) {
         free(c->manteinance);
         free(c->equipment_cost);

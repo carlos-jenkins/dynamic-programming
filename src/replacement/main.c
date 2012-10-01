@@ -215,17 +215,17 @@ void process(GtkButton* button, gpointer user_data)
     do {
         gtk_tree_model_get_value(
                             GTK_TREE_MODEL(costs_model), &iter, 1, &value);
-        int c = g_value_get_int(&value);
+        float c = g_value_get_float(&value);
         g_value_unset(&value);
 
         gtk_tree_model_get_value(
                             GTK_TREE_MODEL(costs_model), &iter, 2, &value);
-        int m = g_value_get_int(&value);
+        float m = g_value_get_float(&value);
         g_value_unset(&value);
 
         gtk_tree_model_get_value(
                             GTK_TREE_MODEL(costs_model), &iter, 3, &value);
-        int s = g_value_get_int(&value);
+        float s = g_value_get_float(&value);
         g_value_unset(&value);
 
         /* Set values */
