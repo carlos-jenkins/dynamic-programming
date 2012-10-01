@@ -39,10 +39,10 @@ typedef struct {
     int lifetime;
     float* manteinance; /* sizeof lifetime */
     float* sale_cost;   /* sizeof lifetime */
-    float* minimum_cost;
 
-    /* Tables */
+    /* Process */
     matrix* table_c;
+    float* minimum_cost;
 
 } replacement_context;
 
