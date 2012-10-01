@@ -72,6 +72,16 @@ replacement_context* replacement_context_new(int years_plan, int lifetime)
         return NULL;
     }
 
+    c->table_p= matrix_new(c->lifetime, c->years_plan-1, 0.0);
+    if(c->table_p == NULL) {
+        matrix_free(c->table_c);
+        free(c->manteinance);
+        free(c->sale_cost);
+        free(c->equipment_cost);
+        free(c->minimum_cost);
+        return NULL;
+    }
+
     /* Initialize values */
     for(int i = 0; i < size; i++) {
         c->minimum_cost[i] = PLUS_INF;
@@ -82,12 +92,14 @@ replacement_context* replacement_context_new(int years_plan, int lifetime)
     c->status = -1;
     c->execution_time = 0;
     c->memory_required = matrix_sizeof(c->table_c) +
+                         matrix_sizeof(c->table_p)+
                          (3 * lifetime * sizeof(float)) +
                          (size * sizeof(float))+
                          sizeof(replacement_context);
     c->report_buffer = tmpfile();
     if(c->report_buffer == NULL) {
         matrix_free(c->table_c);
+        matrix_free(c->table_p);
         free(c->manteinance);
         free(c->sale_cost);
         free(c->minimum_cost);
@@ -102,6 +114,7 @@ replacement_context* replacement_context_new(int years_plan, int lifetime)
 void replacement_context_free(replacement_context* c)
 {
     matrix_free(c->table_c);
+    matrix_free(c->table_p);
     fclose(c->report_buffer);
     free(c->manteinance);
     free(c->sale_cost);

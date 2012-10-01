@@ -31,6 +31,7 @@ int main(int argc, char **argv)
         return(-1);
     }
 
+    strcpy(c->equipment, "Bicycle");
     float* mt = c->manteinance;
     float* s = c->sale_cost;
     float* e= c->equipment_cost;

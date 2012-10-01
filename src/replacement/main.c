@@ -27,6 +27,7 @@ GtkTreeView* costs_view;
 GtkListStore* costs_model;
 GtkSpinButton* life;
 GtkSpinButton* plan;
+GtkEntry* name;
 
 /* Context */
 replacement_context* c = NULL;
@@ -67,6 +68,7 @@ int main(int argc, char **argv)
     costs_model = GTK_LIST_STORE(gtk_builder_get_object(builder, "costs_model"));
     life = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "life"));
     plan = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "plan"));
+    name = GTK_ENTRY(gtk_builder_get_object(builder, "name"));
 
     /* Configure cell renderers callback */
     GtkCellRenderer* new_renderer = GTK_CELL_RENDERER(
@@ -183,6 +185,7 @@ void process(GtkButton* button, gpointer user_data)
 {
 
     if(c != NULL) {
+         g_free(c->equipment);
         replacement_context_free(c);
     }
 
@@ -198,7 +201,7 @@ void process(GtkButton* button, gpointer user_data)
     }
 
     /* Fill context */
-     float* mt = c->manteinance;
+    float* mt = c->manteinance;
     float* sc = c->sale_cost;
     float* ec= c->equipment_cost;
     GtkTreeIter iter;
@@ -238,6 +241,8 @@ void process(GtkButton* button, gpointer user_data)
         i++;
     } while(was_set);
 
+
+    c->equipment = g_strdup(gtk_entry_get_text(name));
     /* Execute algorithm */
     bool success = replacement(c);
     if(!success) {
