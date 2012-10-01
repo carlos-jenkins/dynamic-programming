@@ -20,6 +20,13 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="plan_adjustment">
+    <property name="lower">2</property>
+    <property name="upper">1000000</property>
+    <property name="value">2</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
     <property name="border_width">10</property>
@@ -54,13 +61,14 @@
           <object class="GtkGrid" id="equipment_grid">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="margin_left">30</property>
+            <property name="margin_right">30</property>
             <property name="row_spacing">5</property>
             <property name="column_spacing">5</property>
             <child>
               <object class="GtkLabel" id="name_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">30</property>
                 <property name="xalign">1</property>
                 <property name="label" translatable="yes">Name:</property>
               </object>
@@ -75,9 +83,8 @@
               <object class="GtkLabel" id="life_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">30</property>
                 <property name="xalign">1</property>
-                <property name="label" translatable="yes">Years:</property>
+                <property name="label" translatable="yes">Service Life:</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
@@ -90,11 +97,11 @@
               <object class="GtkSpinButton" id="life">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="margin_right">30</property>
                 <property name="hexpand">True</property>
                 <property name="invisible_char">•</property>
                 <property name="invisible_char_set">True</property>
                 <property name="adjustment">life_adjustement</property>
+                <signal name="value-changed" handler="change_life_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -107,7 +114,6 @@
               <object class="GtkEntry" id="name">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="margin_right">30</property>
                 <property name="hexpand">True</property>
                 <property name="invisible_char">•</property>
                 <property name="text" translatable="yes">Bicycle</property>
@@ -120,6 +126,35 @@
                 <property name="height">1</property>
               </packing>
             </child>
+            <child>
+              <object class="GtkSpinButton" id="plan">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="invisible_char">•</property>
+                <property name="invisible_char_set">True</property>
+                <property name="adjustment">plan_adjustment</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">2</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="plan_label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="xalign">1</property>
+                <property name="label" translatable="yes">Plan for:</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">2</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -128,54 +163,14 @@
           </packing>
         </child>
         <child>
-          <object class="GtkBox" id="costs_title">
+          <object class="GtkLabel" id="costs_label">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_right">30</property>
-            <property name="spacing">10</property>
-            <child>
-              <object class="GtkLabel" id="costs_label">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="xalign">0</property>
-                <property name="label" translatable="yes">Costs:</property>
-                <attributes>
-                  <attribute name="weight" value="bold"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="years_label">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="xalign">1</property>
-                <property name="label" translatable="yes">Service Life:</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSpinButton" id="years">
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="invisible_char">•</property>
-                <property name="adjustment">years_adjustment</property>
-                <signal name="value-changed" handler="change_years_cb" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
+            <property name="xalign">0</property>
+            <property name="label" translatable="yes">Costs:</property>
+            <attributes>
+              <attribute name="weight" value="bold"/>
+            </attributes>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -336,12 +331,5 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkAdjustment" id="years_adjustment">
-    <property name="lower">2</property>
-    <property name="upper">1000000</property>
-    <property name="value">2</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
   </object>
 </interface>
