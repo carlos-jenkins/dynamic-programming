@@ -100,9 +100,11 @@ bool probwin_report(probwin_context* c)
     //fprintf(report, "\\subsection{%s}\n", "Analisis");
     //fprintf(report, "TODO\n");
 
+
     /* Write digest */
-    //fprintf(report, "\\subsection{%s}\n", "Digest");
-    //fprintf(report, "TODO\n");
+    fprintf(report, "\\subsection{%s}\n", "Digest");
+    fprintf(report, "At the beginning of the series, %s has a probability to win of: %4.2f", c->a_name,  c->table_w->data[(c->games + 1) / 2][(c->games + 1) / 2]);
+    fprintf(report, "\n");
 
     /* End document */
     fprintf(report, "\\end{document}\n");
