@@ -41,6 +41,8 @@ int main(int argc, char **argv)
     item_new(its[6], "G",  9, 9, 5);
     item_new(its[7], "H",  4, 3, 1);
 
+    c->unit = "kg";
+
     /* Run algorithm */
     bool success = knapsack(c);
     if(!success) {

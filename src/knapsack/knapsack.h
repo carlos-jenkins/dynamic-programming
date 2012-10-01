@@ -57,7 +57,6 @@ typedef struct {
 } knapsack_context;
 
 knapsack_context* knapsack_context_new(int capacity, int num_items);
-void knapsack_context_clear(knapsack_context* c);
 void knapsack_context_free(knapsack_context* c);
 
 /**

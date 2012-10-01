@@ -25,6 +25,8 @@
 GtkWindow* window;
 GtkTreeView* items_view;
 GtkListStore* items_model;
+GtkSpinButton* capacity;
+GtkEntry* unit;
 
 /* Context */
 knapsack_context* c = NULL;
@@ -63,6 +65,8 @@ int main(int argc, char **argv)
     window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
     items_view = GTK_TREE_VIEW(gtk_builder_get_object(builder, "items_view"));
     items_model = GTK_LIST_STORE(gtk_builder_get_object(builder, "items_model"));
+    capacity = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "capacity"));
+    unit = GTK_ENTRY(gtk_builder_get_object(builder, "unit"));
 
     /* Configure cell renderers callback */
     GtkCellRenderer* name_renderer = GTK_CELL_RENDERER(
@@ -97,6 +101,7 @@ int main(int argc, char **argv)
 
     /* Initialize interface */
     add_row(NULL, NULL);
+    add_row(NULL, NULL);
 
     g_object_unref(G_OBJECT(builder));
     gtk_widget_show(GTK_WIDGET(window));
@@ -129,7 +134,7 @@ void remove_row(GtkToolButton *toolbutton, gpointer user_data)
 {
     int rows = gtk_tree_model_iter_n_children(
                                     GTK_TREE_MODEL(items_model), NULL);
-    if(rows < 2) {
+    if(rows < 3) {
         return;
     }
 
@@ -192,26 +197,78 @@ void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
         g_value_init(&value, G_TYPE_STRING);
         g_value_set_string(&value, new_text);
         gtk_list_store_set_value(items_model, &iter, column, &value);
-    } else {
-        g_value_init(&value, G_TYPE_INT);
-        g_value_set_int(&value, atoi(new_text));
-        gtk_list_store_set_value(items_model, &iter, column, &value);
+    } else if(!is_empty_string(new_text)) {
+        char* end;
+        int v = (int) strtol(new_text, &end, 10);
+        if((end != new_text) && (*end == '\0') && (v > 0)) {
+            g_value_init(&value, G_TYPE_INT);
+            g_value_set_int(&value, v);
+            gtk_list_store_set_value(items_model, &iter, column, &value);
+        }
     }
 }
 
 void process(GtkButton* button, gpointer user_data)
 {
+    if(c != NULL) {
+        g_free(c->unit);
+        knapsack_context_free(c);
+    }
+
+    /* Create context */
+    int cap = gtk_spin_button_get_value_as_int(capacity);
+    int num_it = gtk_tree_model_iter_n_children(
+                                    GTK_TREE_MODEL(items_model), NULL);
+    c = knapsack_context_new(cap, num_it);
     if(c == NULL) {
+        show_error(window, "Unable to allocate enough memory for "
+                           "this problem. Sorry.");
         return;
     }
-    knapsack_context_clear(c);
 
-    /*
-     * TODO: Create and fill a context:
-     *  1. Get capacity from widget and count number of item rows and
-     *     create context.
-     *  2. Fill context with items data.
-     */
+    /* Fill context */
+    item** its = c->items;
+    GtkTreeIter iter;
+    bool was_set = gtk_tree_model_get_iter_first(
+                            GTK_TREE_MODEL(items_model), &iter);
+    if(!was_set) {
+        return;
+    }
+
+    GValue value = G_VALUE_INIT;
+
+    int i = 0;
+
+    do {
+        gtk_tree_model_get_value(
+                            GTK_TREE_MODEL(items_model), &iter, 0, &value);
+        char* n = g_value_dup_string(&value);
+        g_value_unset(&value);
+
+        gtk_tree_model_get_value(
+                            GTK_TREE_MODEL(items_model), &iter, 1, &value);
+        int v = g_value_get_int(&value);
+        g_value_unset(&value);
+
+        gtk_tree_model_get_value(
+                            GTK_TREE_MODEL(items_model), &iter, 2, &value);
+        int w = g_value_get_int(&value);
+        g_value_unset(&value);
+
+        gtk_tree_model_get_value(
+                            GTK_TREE_MODEL(items_model), &iter, 3, &value);
+        int a = g_value_get_int(&value);
+        g_value_unset(&value);
+
+        /* Set values */
+        item_new(its[i], n,  v, w, a); /* name, value, weight, amount */
+
+        was_set = gtk_tree_model_iter_next(
+                            GTK_TREE_MODEL(items_model), &iter);
+        i++;
+    } while(was_set);
+
+    c->unit = g_strdup(gtk_entry_get_text(unit));
 
     /* Execute algorithm */
     bool success = knapsack(c);

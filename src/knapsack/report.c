@@ -241,7 +241,7 @@ void knapsack_table(knapsack_context* c, FILE* stream)
     /* Table body */
     for(int i = 0; i < m->rows; i++) {
         fprintf(stream, "\\multicolumn{1}{|c||}"
-                        "{\\cellcolor{gray90}\\textbf{%i}} & ", i + 1);
+                        "{\\cellcolor{gray90}\\textbf{%i}} & ", i);
         for(int j = 0; j < m->columns; j++) {
 
             float cell = m->data[i][j];
