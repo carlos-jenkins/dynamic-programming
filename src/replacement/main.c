@@ -23,9 +23,21 @@
 
 /* GUI */
 GtkWindow* window;
+GtkTreeView* costs_view;
+GtkListStore* costs_model;
+GtkSpinButton* years;
 
 /* Context */
 replacement_context* c = NULL;
+
+/* Functions */
+void edit_started_cb(GtkCellRenderer* renderer, GtkCellEditable* editable,
+                     gchar* path, gpointer user_data);
+void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
+                    gchar* new_text, gpointer user_data);
+void change_years(int y);
+void change_years_cb(GtkSpinButton* spinbutton, gpointer user_data);
+void process(GtkButton* button, gpointer user_data);
 
 int main(int argc, char **argv)
 {
@@ -50,9 +62,37 @@ int main(int argc, char **argv)
 
     /* Get pointers to objects */
     window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
+    costs_view = GTK_TREE_VIEW(gtk_builder_get_object(builder, "costs_view"));
+    costs_model = GTK_LIST_STORE(gtk_builder_get_object(builder, "costs_model"));
+    years = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "years"));
+
+    /* Configure cell renderers callback */
+    GtkCellRenderer* new_renderer = GTK_CELL_RENDERER(
+                            gtk_builder_get_object(builder, "new_renderer"));
+    g_signal_connect(G_OBJECT(new_renderer),
+                         "edited", G_CALLBACK(cell_edited_cb),
+                         GINT_TO_POINTER(1));
+    edit_started_cb(new_renderer, NULL, NULL, NULL);
+
+    GtkCellRenderer* maint_renderer = GTK_CELL_RENDERER(
+                            gtk_builder_get_object(builder, "maint_renderer"));
+    g_signal_connect(G_OBJECT(maint_renderer),
+                         "edited", G_CALLBACK(cell_edited_cb),
+                         GINT_TO_POINTER(2));
+    edit_started_cb(maint_renderer, NULL, NULL, NULL);
+
+    GtkCellRenderer* sale_renderer = GTK_CELL_RENDERER(
+                            gtk_builder_get_object(builder, "sale_renderer"));
+    g_signal_connect(G_OBJECT(sale_renderer),
+                         "edited", G_CALLBACK(cell_edited_cb),
+                         GINT_TO_POINTER(3));
+    edit_started_cb(sale_renderer, NULL, NULL, NULL);
 
     /* Connect signals */
     gtk_builder_connect_signals(builder, NULL);
+
+    /* Initialize interface */
+    change_years(2);
 
     g_object_unref(G_OBJECT(builder));
     gtk_widget_show(GTK_WIDGET(window));
@@ -61,3 +101,81 @@ int main(int argc, char **argv)
     return(0);
 }
 
+void edit_started_cb(GtkCellRenderer* renderer, GtkCellEditable* editable,
+                     gchar* path, gpointer user_data)
+{
+    GtkAdjustment* adj;
+
+    g_object_get(renderer, "adjustment", &adj, NULL);
+    if(adj) {
+        g_object_unref(adj);
+    }
+
+    adj = gtk_adjustment_new(
+                    2.00,           /* the initial value. */
+                    2.00,           /* the minimum value. */
+                    1000000.00,     /* the maximum value. */
+                    1.0,            /* the step increment. */
+                    10.0,           /* the page increment. */
+                    0.0             /* the page size. */
+                );
+    g_object_set(renderer, "adjustment", adj, NULL);
+}
+
+void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
+                    gchar* new_text, gpointer user_data)
+{
+    int row = atoi(path);
+    int column = GPOINTER_TO_INT(user_data);
+    printf("%s at (%i, %i)\n", new_text, row, column);
+
+    /* Get reference to model */
+    GtkTreePath* model_path = gtk_tree_path_new_from_string(path);
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter(GTK_TREE_MODEL(costs_model), &iter, model_path);
+    gtk_tree_path_free(model_path);
+
+    GValue value = G_VALUE_INIT;
+
+    if(!is_empty_string(new_text)) {
+        char* end;
+        float v = strtol(new_text, &end, 10);
+        if((end != new_text) && (*end == '\0') && (v > 0.0)) {
+            g_value_init(&value, G_TYPE_FLOAT);
+            g_value_set_float(&value, v);
+            gtk_list_store_set_value(costs_model, &iter, column, &value);
+        }
+    }
+}
+
+void change_years(int y)
+{
+    gtk_list_store_clear(costs_model);
+    GtkTreeIter iter;
+    for(int i = 0; i < y; i++) {
+        gtk_list_store_append(costs_model, &iter);
+        gtk_list_store_set(costs_model, &iter,
+                        0, i + 1,
+                        1, 1000.0,
+                        2, 1000.0,
+                        3, 1000.0,
+                        -1);
+    }
+
+    GtkTreePath* model_path = gtk_tree_model_get_path(
+                                GTK_TREE_MODEL(costs_model), &iter);
+    gtk_tree_view_set_cursor(costs_view, model_path, NULL, false);
+    gtk_tree_path_free(model_path);
+    gtk_widget_grab_focus(GTK_WIDGET(costs_view));
+}
+
+void change_years_cb(GtkSpinButton* spinbutton, gpointer user_data)
+{
+    int y = gtk_spin_button_get_value_as_int(years);
+    change_years(y);
+}
+
+void process(GtkButton* button, gpointer user_data)
+{
+    printf("BOOM!\n");
+}

@@ -65,4 +65,5 @@ clean:
 	rm -f reports/knapsack.*
 	rm -f reports/optbst.*
 	rm -f reports/tree.*
-
+	rm -f reports/probwin.*
+	rm -f reports/replacement.*

@@ -20,13 +20,6 @@
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
-  <object class="GtkAdjustment" id="years_adjustment">
-    <property name="lower">2</property>
-    <property name="upper">1000000</property>
-    <property name="value">2</property>
-    <property name="step_increment">1</property>
-    <property name="page_increment">10</property>
-  </object>
   <object class="GtkWindow" id="window">
     <property name="can_focus">False</property>
     <property name="border_width">10</property>
@@ -175,6 +168,7 @@
                 <property name="can_focus">True</property>
                 <property name="invisible_char">•</property>
                 <property name="adjustment">years_adjustment</property>
+                <signal name="value-changed" handler="change_years_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -200,7 +194,6 @@
                 <property name="can_focus">True</property>
                 <property name="model">costs_model</property>
                 <property name="headers_clickable">False</property>
-                <property name="expander_column"></property>
                 <property name="enable_search">False</property>
                 <property name="search_column">0</property>
                 <child internal-child="selection">
@@ -210,9 +203,7 @@
                   <object class="GtkTreeViewColumn" id="year_column">
                     <property name="title">#</property>
                     <child>
-                      <object class="GtkCellRendererText" id="year_renderer">
-                        <property name="editable">True</property>
-                      </object>
+                      <object class="GtkCellRendererText" id="year_renderer"/>
                       <attributes>
                         <attribute name="text">0</attribute>
                       </attributes>
@@ -226,6 +217,7 @@
                     <child>
                       <object class="GtkCellRendererSpin" id="new_renderer">
                         <property name="editable">True</property>
+                        <signal name="editing-started" handler="edit_started_cb" swapped="no"/>
                       </object>
                       <attributes>
                         <attribute name="text">1</attribute>
@@ -240,6 +232,7 @@
                     <child>
                       <object class="GtkCellRendererSpin" id="maint_renderer">
                         <property name="editable">True</property>
+                        <signal name="editing-started" handler="edit_started_cb" swapped="no"/>
                       </object>
                       <attributes>
                         <attribute name="text">2</attribute>
@@ -254,6 +247,7 @@
                     <child>
                       <object class="GtkCellRendererSpin" id="sale_renderer">
                         <property name="editable">True</property>
+                        <signal name="editing-started" handler="edit_started_cb" swapped="no"/>
                       </object>
                       <attributes>
                         <attribute name="text">3</attribute>
@@ -325,6 +319,7 @@
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="use_action_appearance">False</property>
+                <signal name="clicked" handler="process" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -341,5 +336,12 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkAdjustment" id="years_adjustment">
+    <property name="lower">2</property>
+    <property name="upper">1000000</property>
+    <property name="value">2</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
   </object>
 </interface>
