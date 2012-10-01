@@ -36,10 +36,10 @@ typedef struct {
     /* Plan and equipment data */
     char* equipment;
     int years_plan;
-    float* equipment_cost; /* sizeof lifetime */
     int lifetime;
-    float* manteinance; /* sizeof lifetime */
-    float* sale_cost;   /* sizeof lifetime */
+    float* equipment_cost; /* sizeof lifetime */
+    float* manteinance;    /* sizeof lifetime */
+    float* sale_cost;      /* sizeof lifetime */
 
     /* Process */
     matrix* table_c;

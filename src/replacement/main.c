@@ -25,8 +25,8 @@
 GtkWindow* window;
 GtkTreeView* costs_view;
 GtkListStore* costs_model;
-GtkSpinButton* years;
 GtkSpinButton* life;
+GtkSpinButton* plan;
 
 /* Context */
 replacement_context* c = NULL;
@@ -36,8 +36,8 @@ void edit_started_cb(GtkCellRenderer* renderer, GtkCellEditable* editable,
                      gchar* path, gpointer user_data);
 void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
                     gchar* new_text, gpointer user_data);
-void change_years(int y);
-void change_years_cb(GtkSpinButton* spinbutton, gpointer user_data);
+void change_life(int y);
+void change_life_cb(GtkSpinButton* spinbutton, gpointer user_data);
 void process(GtkButton* button, gpointer user_data);
 
 int main(int argc, char **argv)
@@ -65,8 +65,8 @@ int main(int argc, char **argv)
     window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
     costs_view = GTK_TREE_VIEW(gtk_builder_get_object(builder, "costs_view"));
     costs_model = GTK_LIST_STORE(gtk_builder_get_object(builder, "costs_model"));
-    years = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "years"));
     life = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "life"));
+    plan = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "plan"));
 
     /* Configure cell renderers callback */
     GtkCellRenderer* new_renderer = GTK_CELL_RENDERER(
@@ -94,7 +94,7 @@ int main(int argc, char **argv)
     gtk_builder_connect_signals(builder, NULL);
 
     /* Initialize interface */
-    change_years(2);
+    change_life(2);
 
     g_object_unref(G_OBJECT(builder));
     gtk_widget_show(GTK_WIDGET(window));
@@ -150,7 +150,7 @@ void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
     }
 }
 
-void change_years(int y)
+void change_life(int y)
 {
     gtk_list_store_clear(costs_model);
     GtkTreeIter iter;
@@ -173,10 +173,10 @@ void change_years(int y)
     gtk_widget_grab_focus(GTK_WIDGET(costs_view));
 }
 
-void change_years_cb(GtkSpinButton* spinbutton, gpointer user_data)
+void change_life_cb(GtkSpinButton* spinbutton, gpointer user_data)
 {
-    int y = gtk_spin_button_get_value_as_int(years);
-    change_years(y);
+    int l = gtk_spin_button_get_value_as_int(life);
+    change_life(l);
 }
 
 void process(GtkButton* button, gpointer user_data)
@@ -187,9 +187,9 @@ void process(GtkButton* button, gpointer user_data)
     }
 
     /* Create context */
+    int p = gtk_spin_button_get_value_as_int(plan);
     int l = gtk_spin_button_get_value_as_int(life);
-    int y = gtk_spin_button_get_value_as_int(years);
-    c = replacement_context_new(y, l);
+    c = replacement_context_new(p, l);
     if(c == NULL) {
         show_error(window, "Unable to allocate enough memory for "
                            "this problem. Sorry.");
