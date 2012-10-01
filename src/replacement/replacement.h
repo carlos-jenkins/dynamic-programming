@@ -34,8 +34,9 @@ typedef struct {
     FILE* report_buffer;
 
     /* Plan and equipment data */
+    char* equipment;
     int years_plan;
-    float equipment_cost;
+    float* equipment_cost; /* sizeof lifetime */
     int lifetime;
     float* manteinance; /* sizeof lifetime */
     float* sale_cost;   /* sizeof lifetime */
@@ -46,7 +47,7 @@ typedef struct {
 
 } replacement_context;
 
-replacement_context* replacement_context_new(int years_plan, int lifetime, float equipment_cost);
+replacement_context* replacement_context_new(int years_plan, int lifetime);
 void replacement_context_free(replacement_context* c);
 
 /**

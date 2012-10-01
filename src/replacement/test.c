@@ -24,7 +24,7 @@ int main(int argc, char **argv)
     printf("Testing Equipment replacement...\n\n");
 
     /* Create context */
-    replacement_context* c = replacement_context_new(5, 3, 500);
+    replacement_context* c = replacement_context_new(5, 3);
     if(c == NULL) {
         printf("Unable to create  Equipment replacement's "
                "context... exiting.\n");
@@ -33,6 +33,14 @@ int main(int argc, char **argv)
 
     float* mt = c->manteinance;
     float* s = c->sale_cost;
+    float* e= c->equipment_cost;
+
+        /* Set manteinance  cost */
+    e[0] = 500;
+    e[1] = 500;
+    e[2] = 500;
+    e[3] = 500;
+    e[4] = 500;
 
     /* Set manteinance  cost */
     mt[0] = 30;

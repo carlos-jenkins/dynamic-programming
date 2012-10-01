@@ -162,6 +162,8 @@ void change_years(int y)
                         -1);
     }
 
+    
+
     GtkTreePath* model_path = gtk_tree_model_get_path(
                                 GTK_TREE_MODEL(costs_model), &iter);
     gtk_tree_view_set_cursor(costs_view, model_path, NULL, false);
@@ -177,5 +179,92 @@ void change_years_cb(GtkSpinButton* spinbutton, gpointer user_data)
 
 void process(GtkButton* button, gpointer user_data)
 {
-    printf("BOOM!\n");
+    
+if(c != NULL) {
+        replacement_context_free(c);
+    }
+
+    /* Create context */
+    int life = gtk_spin_button_get_value_as_int(life);
+    int years = gtk_spin_button_get_value_as_int(years);
+    c = replacement_context_new(years, life);
+    if(c == NULL) {
+        show_error(window, "Unable to allocate enough memory for "
+                           "this problem. Sorry.");
+        return;
+    }
+
+    /* Fill context */
+     float* mt = c->manteinance;
+    float* sc = c->sale_cost;
+    float* ec= c->equipment_cost;
+    GtkTreeIter iter;
+    bool was_set = gtk_tree_model_get_iter_first(
+                            GTK_TREE_MODEL(costs_model), &iter);
+    if(!was_set) {
+        return;
+    }
+
+    GValue value = G_VALUE_INIT;
+
+    int i = 0;
+
+    do {
+        gtk_tree_model_get_value(
+                            GTK_TREE_MODEL(costs_model), &iter, 0, &value);
+        float n = g_value_get_int(&value);
+        g_value_unset(&value);
+
+        gtk_tree_model_get_value(
+                            GTK_TREE_MODEL(costs_model), &iter, 1, &value);
+        int c = g_value_get_int(&value);
+        g_value_unset(&value);
+
+        gtk_tree_model_get_value(
+                            GTK_TREE_MODEL(costs_model), &iter, 2, &value);
+        int m = g_value_get_int(&value);
+        g_value_unset(&value);
+
+        gtk_tree_model_get_value(
+                            GTK_TREE_MODEL(costs_model), &iter, 3, &value);
+        int s = g_value_get_int(&value);
+        g_value_unset(&value);
+
+        /* Set values */
+        ec[i] = c;
+        mt[i] = m;
+        sc[i]=s;
+
+        was_set = gtk_tree_model_iter_next(
+                            GTK_TREE_MODEL(costs_model), &iter);
+        i++;
+    } while(was_set);
+
+    
+
+    /* Execute algorithm */
+    bool success = replacement(c);
+    if(!success) {
+        show_error(window, "Error while processing the information. "
+                           "Please check your data.");
+    }
+
+    /* Generate report */
+    bool report_created = replacement_report(c);
+    if(!report_created) {
+        show_error(window, "Report could not be created. "
+                           "Please check your data.");
+    } else {
+        printf("Report created at reports/floyd.tex\n");
+
+        int as_pdf = latex2pdf("floyd", "reports");
+        if(as_pdf == 0) {
+            printf("PDF version available at reports/floyd.pdf\n");
+        } else {
+            char* error = g_strdup_printf("Unable to convert report to PDF. "
+                                          "Status: %i.", as_pdf);
+            show_error(window, error);
+            g_free(error);
+        }
+    }
 }

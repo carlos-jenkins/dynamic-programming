@@ -111,8 +111,12 @@ void replacement_data(replacement_context* c, FILE* stream)
     fprintf(stream, "\\item %s : \\textsc{%d %s}. \n",
                     "Equipment replace plan for:", c->years_plan,
                     "years");
-    fprintf(stream, "\\item %s : \\textsc{%4.2f}. \n",
-                    "Equipment Cost:", c->equipment_cost);
+
+    for(int i = 0; i <c->years_plan; i++) {
+           fprintf(stream, "\\item %s %d: \\textsc{%4.2f}. \n",
+                    "Equipment Cost  in year:", i+1, c->equipment_cost[ i ]);
+    }
+    
     fprintf(stream, "\\item %s : \\textsc{%d %s}. \n",
                     "Equipment Lifetime:", c->lifetime,
                     "years");

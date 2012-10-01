@@ -18,7 +18,7 @@
 
 #include "replacement.h"
 
-replacement_context* replacement_context_new(int years_plan, int lifetime, float equipment_cost)
+replacement_context* replacement_context_new(int years_plan, int lifetime)
 {
 
     /* Check input is correct */
@@ -42,23 +42,32 @@ replacement_context* replacement_context_new(int years_plan, int lifetime, float
         free(c->manteinance);
         return NULL;
     }
+    c->equipment_cost  = (float*) malloc(years_plan * sizeof(float));
+     if(c->equipment_cost == NULL) {
+        free(c->manteinance);
+        free(c->equipment_cost);
+        return NULL;
+    }
     int size = years_plan + 1;
     c->minimum_cost = (float*) malloc(size * sizeof(float));
     if(c->minimum_cost == NULL) {
         free(c->manteinance);
         free(c->sale_cost);
+        free(c->equipment_cost );
         return NULL;
     }
 
+    c->equipment = (char*) malloc( sizeof(char*));
     c->years_plan = years_plan;
     c->lifetime = lifetime;
-    c->equipment_cost = equipment_cost;
+    
 
     /* Try to allocate matrices */
     c->table_c = matrix_new(years_plan, years_plan, 0.0);
     if(c->table_c == NULL) {
         free(c->manteinance);
         free(c->sale_cost);
+        free(c->equipment_cost);
         free(c->minimum_cost);
         return NULL;
     }
@@ -73,7 +82,7 @@ replacement_context* replacement_context_new(int years_plan, int lifetime, float
     c->status = -1;
     c->execution_time = 0;
     c->memory_required = matrix_sizeof(c->table_c) +
-                         (2 * lifetime * sizeof(float)) +
+                         (3 * lifetime * sizeof(float)) +
                          (size * sizeof(float))+
                          sizeof(replacement_context);
     c->report_buffer = tmpfile();
@@ -82,6 +91,7 @@ replacement_context* replacement_context_new(int years_plan, int lifetime, float
         free(c->manteinance);
         free(c->sale_cost);
         free(c->minimum_cost);
+        free(c->equipment_cost);
         free(c);
         return NULL;
     }
@@ -95,6 +105,7 @@ void replacement_context_free(replacement_context* c)
     fclose(c->report_buffer);
     free(c->manteinance);
     free(c->sale_cost);
+    free(c->equipment_cost);
     free(c->minimum_cost);
     free(c);
     return;
@@ -109,7 +120,7 @@ bool replacement(replacement_context* c)
     /* Filling the Costs table */
     for(int j = 0; j < c->lifetime; j++) {
         for(int i = 1; i <= c->years_plan - j; i++) {
-            float cost = c->equipment_cost - c->sale_cost[j];
+            float cost = c->equipment_cost[j] - c->sale_cost[j];
             /* Calculating the accumulated cost */
             for(int k = 0; k <= j; k++) {
                     cost += c->manteinance[k];
