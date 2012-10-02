@@ -253,6 +253,17 @@ void process(GtkButton* button, gpointer user_data)
         i++;
     } while(was_set);
 
+    /* Verify probabilities equality */
+    float total = 0.0;
+    for(int i = 0; i < keys; i++) {
+        total += probs[i];
+    }
+    if(!fequal(total, 1.0)) {
+        show_error(window, "The sum of the probabilities is not 1.0. "
+                           "Please check your data.");
+        return;
+    }
+
     /* Execute algorithm */
     bool success = optbst(c);
     if(!success) {

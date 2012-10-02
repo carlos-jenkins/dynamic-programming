@@ -30,7 +30,7 @@
 #define PLUS_INF FLT_MAX
 #define MINUS_INF -FLT_MAX
 
-#define F_EPSILON 0.00001
+#define F_EPSILON 0.000001
 
 bool file_exists(char *fname);
 char* read_file(char* fname);
