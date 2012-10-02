@@ -67,7 +67,7 @@ replacement_context* replacement_context_new(int years_plan, int lifetime)
         return NULL;
     }
 
-    c->table_p = matrix_new(lifetime, years_plan - 1, 0.0);
+    c->table_p = matrix_new(years_plan, years_plan, 0.0);
     if(c->table_p == NULL) {
         matrix_free(c->table_c);
         free(c->minimum_cost);
@@ -140,15 +140,17 @@ bool replacement(replacement_context* c)
     }
     /* Run the equipment replacement algorithm */
 
-    /* Calculate the minimun cost */
+    /* Calculate the minimum cost */
     for(int i = c->years_plan; 0 <= i; i--) {
         for(int j = i + 1; j <= c->years_plan; j++) {
             float min = c->table_c->data[i][j - 1] + c->minimum_cost[j];
-            if(min < c->minimum_cost[i] && j - i <= c->lifetime) {
+            if(min <= c->minimum_cost[i] && j - i <= c->lifetime) {
+                c->table_p->data[i][j - 1]=j;
                 c->minimum_cost[i] = min;
             }
         }
     }
+
 
     /* Stop counting time */
     g_timer_stop(timer);

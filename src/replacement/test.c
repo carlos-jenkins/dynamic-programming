@@ -60,8 +60,8 @@ int main(int argc, char **argv)
     /* Show result */
     float* mc = c->minimum_cost;
     for(int i = 0; i <= c->years_plan; i++) {
-        printf("G( %d ): %4.2f \n", i, mc[i]);
-    }
+       printf("G( %d ): %4.2f \n", i, mc[i]);
+   }
     /* Show tables */
     printf("-----------------------------------\n");
     matrix_print(c->table_c);

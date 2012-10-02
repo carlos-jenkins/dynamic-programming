@@ -73,8 +73,10 @@ bool replacement_report(replacement_context* c)
 
      /* Write execution */
     fprintf(report, "\\subsection{%s}\n", "Execution");
-    replacement_table(c, report);
-    fprintf(report, "\n");
+    replacement_table(c, report, c->table_c, "Table C: costs of buying the equipment in t instant and sell it at x instant");
+    fprintf(report, "\n\n");
+    replacement_table(c, report, c->table_p, "Table P: Replacement Plan");
+    fprintf(report, "\n\n");
     replacement_mincost(c, report);
     fprintf(report, "\\newpage\n");
     fprintf(report, "\n");
@@ -102,8 +104,8 @@ bool replacement_report(replacement_context* c)
     return true;
 }
 
-void replacement_table(replacement_context* c, FILE* stream){
-    matrix* m = c->table_c;
+void replacement_table(replacement_context* c, FILE* stream, matrix* table, char* msj){
+    matrix* m = table;
 
     /* Table preamble */
     fprintf(stream, "\\begin{table}[!ht]\n");
@@ -143,10 +145,10 @@ void replacement_table(replacement_context* c, FILE* stream){
     }
     fprintf(stream, "\\end{tabular}\n");
 
-    fprintf(stream, "\\caption{%s.}\n", "Table C: costs of buying the equipment in t instant and sell it at x instant");
+    fprintf(stream, "\\caption{%s.}\n", msj);
     fprintf(stream, "\\end{adjustwidth}\n");
     fprintf(stream, "\\end{table}\n");
-    fprintf(stream, "\n");
+    fprintf(stream, "\n\n\n");
 
     }
 
@@ -194,7 +196,7 @@ void replacement_mincost(replacement_context* c, FILE* stream){
     fprintf(stream, "\\caption{%s.}\n", "Table with the minimum costs");
     fprintf(stream, "\\end{adjustwidth}\n");
     fprintf(stream, "\\end{table}\n");
-    fprintf(stream, "\n");
+    fprintf(stream, "\n\n\n");
 }
 
 
@@ -205,7 +207,7 @@ void replacement_analisis(replacement_context* c, FILE* stream)
            fprintf(stream, "G(%d): %4.2f \n", i, mc[i]);
            fprintf(stream, "\n");
     }
-    fprintf(stream, "\n");
+    fprintf(stream, "\n\n\n");
 }
 
 void replacement_data(replacement_context* c, FILE* stream)
