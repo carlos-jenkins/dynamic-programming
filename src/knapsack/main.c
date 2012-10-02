@@ -121,6 +121,7 @@ void add_row(GtkToolButton *toolbutton, gpointer user_data)
                         1, 1,
                         2, 1,
                         3, 1,
+                        4, "1",
                         -1);
 
     GtkTreePath* model_path = gtk_tree_model_get_path(
@@ -195,17 +196,45 @@ void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
 
     GValue value = G_VALUE_INIT;
 
+    /* Text */
     if(column == 0) {
         g_value_init(&value, G_TYPE_STRING);
         g_value_set_string(&value, new_text);
         gtk_list_store_set_value(items_model, &iter, column, &value);
-    } else if(!is_empty_string(new_text)) {
-        char* end;
-        int v = (int) strtol(new_text, &end, 10);
-        if((end != new_text) && (*end == '\0') && (v > 0)) {
+        return;
+    }
+
+    /* Infinity */
+    if(column == 3) {
+        int is_inf = strncmp(new_text, "oo", 2);
+        if(is_inf == 0 || is_empty_string(new_text)) {
             g_value_init(&value, G_TYPE_INT);
-            g_value_set_int(&value, v);
-            gtk_list_store_set_value(items_model, &iter, column, &value);
+            g_value_set_int(&value, (int) PLUS_INF);
+
+            g_value_unset(&value);
+
+            g_value_init(&value, G_TYPE_STRING);
+            g_value_set_string(&value, "oo");
+            gtk_list_store_set_value(items_model, &iter, column + 1, &value);
+
+            return;
+        }
+    }
+
+    /* Number */
+    char* end;
+    int v = (int) strtol(new_text, &end, 10);
+    if((end != new_text) && (*end == '\0') && (v > 0)) {
+        g_value_init(&value, G_TYPE_INT);
+        g_value_set_int(&value, v);
+        gtk_list_store_set_value(items_model, &iter, column, &value);
+
+        if(column == 3) {
+            g_value_unset(&value);
+
+            g_value_init(&value, G_TYPE_STRING);
+            g_value_set_string(&value, g_strdup_printf("%i", v));
+            gtk_list_store_set_value(items_model, &iter, column + 1, &value);
         }
     }
 }

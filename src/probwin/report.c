@@ -102,8 +102,12 @@ bool probwin_report(probwin_context* c)
 
 
     /* Write digest */
+    float prob = c->table_w->data[(c->games + 1) / 2][(c->games + 1) / 2];
     fprintf(report, "\\subsection{%s}\n", "Digest");
-    fprintf(report, "At the beginning of the series, %s has a probability to win of: %4.2f", c->a_name,  c->table_w->data[(c->games + 1) / 2][(c->games + 1) / 2]);
+    fprintf(report, "At the beginning of the series, {\\Large %s} has a "
+                    "probability to win of {\\Large %0.4f}, and therefore "
+                    "{\\Large %s} has a probability of {\\Large %0.4f}",
+                    c->a_name, prob, c->b_name, 1 - prob);
     fprintf(report, "\n");
 
     /* End document */
