@@ -40,7 +40,6 @@ void process(GtkButton* button, gpointer user_data);
 
 int main(int argc, char **argv)
 {
-
     GtkBuilder* builder;
     GError* error = NULL;
 

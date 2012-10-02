@@ -23,11 +23,14 @@
 
 /* GUI */
 GtkWindow* window;
+
 GtkTreeView* costs_view;
 GtkListStore* costs_model;
+
+GtkEntry* name;
+GtkSpinButton* new;
 GtkSpinButton* life;
 GtkSpinButton* plan;
-GtkEntry* name;
 
 /* Context */
 replacement_context* c = NULL;
@@ -43,7 +46,6 @@ void process(GtkButton* button, gpointer user_data);
 
 int main(int argc, char **argv)
 {
-
     GtkBuilder* builder;
     GError* error = NULL;
 
@@ -66,30 +68,24 @@ int main(int argc, char **argv)
     window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
     costs_view = GTK_TREE_VIEW(gtk_builder_get_object(builder, "costs_view"));
     costs_model = GTK_LIST_STORE(gtk_builder_get_object(builder, "costs_model"));
+    name = GTK_ENTRY(gtk_builder_get_object(builder, "name"));
+    new = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "new"));
     life = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "life"));
     plan = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "plan"));
-    name = GTK_ENTRY(gtk_builder_get_object(builder, "name"));
 
     /* Configure cell renderers callback */
-    GtkCellRenderer* new_renderer = GTK_CELL_RENDERER(
-                            gtk_builder_get_object(builder, "new_renderer"));
-    g_signal_connect(G_OBJECT(new_renderer),
-                         "edited", G_CALLBACK(cell_edited_cb),
-                         GINT_TO_POINTER(1));
-    edit_started_cb(new_renderer, NULL, NULL, NULL);
-
     GtkCellRenderer* maint_renderer = GTK_CELL_RENDERER(
                             gtk_builder_get_object(builder, "maint_renderer"));
     g_signal_connect(G_OBJECT(maint_renderer),
                          "edited", G_CALLBACK(cell_edited_cb),
-                         GINT_TO_POINTER(2));
+                         GINT_TO_POINTER(1));
     edit_started_cb(maint_renderer, NULL, NULL, NULL);
 
     GtkCellRenderer* sale_renderer = GTK_CELL_RENDERER(
                             gtk_builder_get_object(builder, "sale_renderer"));
     g_signal_connect(G_OBJECT(sale_renderer),
                          "edited", G_CALLBACK(cell_edited_cb),
-                         GINT_TO_POINTER(3));
+                         GINT_TO_POINTER(2));
     edit_started_cb(sale_renderer, NULL, NULL, NULL);
 
     /* Connect signals */
@@ -143,8 +139,8 @@ void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
 
     if(!is_empty_string(new_text)) {
         char* end;
-        float v = strtol(new_text, &end, 10);
-        if((end != new_text) && (*end == '\0') && (v > 0.0)) {
+        float v = strtof(new_text, &end);
+        if((end != new_text) && (*end == '\0') && (v >= 2.0)) {
             g_value_init(&value, G_TYPE_FLOAT);
             g_value_set_float(&value, v);
             gtk_list_store_set_value(costs_model, &iter, column, &value);
@@ -162,11 +158,8 @@ void change_life(int y)
                         0, i + 1,
                         1, 1000.0,
                         2, 1000.0,
-                        3, 1000.0,
                         -1);
     }
-
-
 
     GtkTreePath* model_path = gtk_tree_model_get_path(
                                 GTK_TREE_MODEL(costs_model), &iter);
@@ -183,7 +176,6 @@ void change_life_cb(GtkSpinButton* spinbutton, gpointer user_data)
 
 void process(GtkButton* button, gpointer user_data)
 {
-
     if(c != NULL) {
          g_free(c->equipment);
         replacement_context_free(c);
@@ -201,9 +193,6 @@ void process(GtkButton* button, gpointer user_data)
     }
 
     /* Fill context */
-    float* mt = c->manteinance;
-    float* sc = c->sale_cost;
-    float* ec= c->equipment_cost;
     GtkTreeIter iter;
     bool was_set = gtk_tree_model_get_iter_first(
                             GTK_TREE_MODEL(costs_model), &iter);
@@ -214,26 +203,22 @@ void process(GtkButton* button, gpointer user_data)
     GValue value = G_VALUE_INIT;
 
     int i = 0;
+    float* tc = c->maintenance_cost;
+    float* sc = c->sale_cost;
 
     do {
         gtk_tree_model_get_value(
                             GTK_TREE_MODEL(costs_model), &iter, 1, &value);
-        float c = g_value_get_float(&value);
-        g_value_unset(&value);
-
-        gtk_tree_model_get_value(
-                            GTK_TREE_MODEL(costs_model), &iter, 2, &value);
         float m = g_value_get_float(&value);
         g_value_unset(&value);
 
         gtk_tree_model_get_value(
-                            GTK_TREE_MODEL(costs_model), &iter, 3, &value);
+                            GTK_TREE_MODEL(costs_model), &iter, 2, &value);
         float s = g_value_get_float(&value);
         g_value_unset(&value);
 
         /* Set values */
-        ec[i] = c;
-        mt[i] = m;
+        tc[i] = m;
         sc[i] = s;
 
         was_set = gtk_tree_model_iter_next(
@@ -241,8 +226,10 @@ void process(GtkButton* button, gpointer user_data)
         i++;
     } while(was_set);
 
-
     c->equipment = g_strdup(gtk_entry_get_text(name));
+    c->equipment_cost = gtk_spin_button_get_value(new);
+
+
     /* Execute algorithm */
     bool success = replacement(c);
     if(!success) {

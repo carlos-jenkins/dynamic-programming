@@ -42,7 +42,6 @@ void process(GtkButton* button, gpointer user_data);
 
 int main(int argc, char **argv)
 {
-
     GtkBuilder* builder;
     GError* error = NULL;
 
@@ -276,6 +275,12 @@ void process(GtkButton* button, gpointer user_data)
         show_error(window, "Error while processing the information. "
                            "Please check your data.");
     }
+
+    /* Show tables */
+    printf("-----------------------------------\n");
+    matrix_print(c->table_values);
+    printf("-----------------------------------\n");
+    matrix_print(c->table_items);
 
     /* Generate report */
     bool report_created = knapsack_report(c);

@@ -31,27 +31,23 @@ int main(int argc, char **argv)
         return(-1);
     }
 
-    strcpy(c->equipment, "Bicycle");
-    float* mt = c->manteinance;
-    float* s = c->sale_cost;
-    float* e= c->equipment_cost;
+    /* Set name of the equipment */
+    c->equipment = "Bicycle";
 
-        /* Set manteinance  cost */
-    e[0] = 500;
-    e[1] = 500;
-    e[2] = 500;
-    e[3] = 500;
-    e[4] = 500;
+    /* Set buy new cost */
+    c->equipment_cost = 500.0;
 
-    /* Set manteinance  cost */
-    mt[0] = 30;
-    mt[1] = 40;
-    mt[2] = 60;
+    /* Set maintenance cost */
+    float* tc = c->maintenance_cost;
+    tc[0] = 30.0;
+    tc[1] = 40.0;
+    tc[2] = 60.0;
 
     /* Set sale cost */
-    s[0] = 400;
-    s[1] = 300;
-    s[2] = 250;
+    float* sc = c->sale_cost;
+    sc[0] = 400.0;
+    sc[1] = 300.0;
+    sc[2] = 250.0;
 
     /* Run algorithm */
     bool success = replacement(c);
@@ -66,6 +62,11 @@ int main(int argc, char **argv)
     for(int i = 0; i <= c->years_plan; i++) {
         printf("G( %d ): %4.2f \n", i, mc[i]);
     }
+    /* Show tables */
+    printf("-----------------------------------\n");
+    matrix_print(c->table_c);
+    printf("-----------------------------------\n");
+    matrix_print(c->table_p);
 
     /* Generate report */
     bool report_created = replacement_report(c);
@@ -82,7 +83,6 @@ int main(int argc, char **argv)
                    as_pdf);
         }
     }
-
 
      /* Free resources */
     replacement_context_free(c);

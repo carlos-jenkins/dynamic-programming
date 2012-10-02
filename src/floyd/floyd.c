@@ -97,8 +97,9 @@ void floyd_context_free(floyd_context* c)
 
 bool floyd(floyd_context *c)
 {
-    /* Create graph */
+    /* Create graph and first iteration */
     floyd_graph(c);
+    floyd_execution(c, 0);
 
     /* Start counting time */
     GTimer* timer = g_timer_new();

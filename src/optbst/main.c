@@ -29,7 +29,6 @@ optbst_context* c = NULL;
 
 int main(int argc, char **argv)
 {
-
     GtkBuilder* builder;
     GError* error = NULL;
 

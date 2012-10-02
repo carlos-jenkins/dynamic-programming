@@ -112,24 +112,16 @@ void replacement_table(replacement_context* c, FILE* stream)
 void replacement_data(replacement_context* c, FILE* stream)
 {
     fprintf(stream, "\\begin{compactitem}\n");
-    fprintf(stream, "\\item %s : \\textsc{%s}. \n",
-                    "Equipment:", c->equipment);
-    fprintf(stream, "\\item %s : \\textsc{%d %s}. \n",
-                    "Replace plan for:", c->years_plan,
-                    "years");
 
-    for(int i = 0; i <c->lifetime; i++) {
-           fprintf(stream, "\\item %s %d: \\textsc{%4.2f}. \n",
-                    "Equipment Cost  in year ", i+1, c->equipment_cost[ i ]);
-    }
-    
-    fprintf(stream, "\\item %s : \\textsc{%d %s}. \n",
-                    "Equipment Lifetime:", c->lifetime,
-                    "years");
+    fprintf(stream, "\\item %s : \\textsc{%s}. \n",
+                    "Equipment", c->equipment);
+    fprintf(stream, "\\item %s : \\textsc{%.2f}. \n",
+                    "Equipment cost", c->equipment_cost);
+    fprintf(stream, "\\item %s : \\textsc{%i %s}. \n",
+                    "Equipment Lifetime", c->lifetime, "years");
+    fprintf(stream, "\\item %s : \\textsc{%i %s}. \n",
+                    "Replacement plan for", c->years_plan, "years");
+
     fprintf(stream, "\\end{compactitem}\n");
     fprintf(stream, "\n");
 }
-
-
-//    float* manteinance; /* sizeof lifetime */
-//    float* sale_cost;   /* sizeof lifetime */

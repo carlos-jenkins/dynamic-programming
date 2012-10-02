@@ -5,8 +5,6 @@
     <columns>
       <!-- column-name num -->
       <column type="gint"/>
-      <!-- column-name new -->
-      <column type="gfloat"/>
       <!-- column-name maintenance -->
       <column type="gfloat"/>
       <!-- column-name sale -->
@@ -17,6 +15,13 @@
     <property name="lower">2</property>
     <property name="upper">1000000</property>
     <property name="value">2</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="new_adjustment">
+    <property name="lower">1</property>
+    <property name="upper">100000000</property>
+    <property name="value">1</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
@@ -84,11 +89,11 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="xalign">1</property>
-                <property name="label" translatable="yes">Service Life:</property>
+                <property name="label" translatable="yes">Service life:</property>
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">1</property>
+                <property name="top_attach">2</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
               </packing>
@@ -105,7 +110,7 @@
               </object>
               <packing>
                 <property name="left_attach">1</property>
-                <property name="top_attach">1</property>
+                <property name="top_attach">2</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
               </packing>
@@ -136,7 +141,7 @@
               </object>
               <packing>
                 <property name="left_attach">1</property>
-                <property name="top_attach">2</property>
+                <property name="top_attach">3</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
               </packing>
@@ -150,7 +155,38 @@
               </object>
               <packing>
                 <property name="left_attach">0</property>
-                <property name="top_attach">2</property>
+                <property name="top_attach">3</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="new_label">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="xalign">1</property>
+                <property name="label" translatable="yes">Cost of new:</property>
+              </object>
+              <packing>
+                <property name="left_attach">0</property>
+                <property name="top_attach">1</property>
+                <property name="width">1</property>
+                <property name="height">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinButton" id="new">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="hexpand">True</property>
+                <property name="invisible_char">•</property>
+                <property name="invisible_char_set">True</property>
+                <property name="adjustment">new_adjustment</property>
+                <property name="digits">2</property>
+              </object>
+              <packing>
+                <property name="left_attach">1</property>
+                <property name="top_attach">1</property>
                 <property name="width">1</property>
                 <property name="height">1</property>
               </packing>
@@ -206,31 +242,17 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkTreeViewColumn" id="new_column">
-                    <property name="title" translatable="yes">New</property>
-                    <property name="expand">True</property>
-                    <child>
-                      <object class="GtkCellRendererSpin" id="new_renderer">
-                        <property name="editable">True</property>
-                        <signal name="editing-started" handler="edit_started_cb" swapped="no"/>
-                      </object>
-                      <attributes>
-                        <attribute name="text">1</attribute>
-                      </attributes>
-                    </child>
-                  </object>
-                </child>
-                <child>
                   <object class="GtkTreeViewColumn" id="maint_column">
                     <property name="title" translatable="yes">Maintenance</property>
                     <property name="expand">True</property>
                     <child>
                       <object class="GtkCellRendererSpin" id="maint_renderer">
                         <property name="editable">True</property>
+                        <property name="digits">2</property>
                         <signal name="editing-started" handler="edit_started_cb" swapped="no"/>
                       </object>
                       <attributes>
-                        <attribute name="text">2</attribute>
+                        <attribute name="text">1</attribute>
                       </attributes>
                     </child>
                   </object>
@@ -242,10 +264,11 @@
                     <child>
                       <object class="GtkCellRendererSpin" id="sale_renderer">
                         <property name="editable">True</property>
+                        <property name="digits">2</property>
                         <signal name="editing-started" handler="edit_started_cb" swapped="no"/>
                       </object>
                       <attributes>
-                        <attribute name="text">3</attribute>
+                        <attribute name="text">2</attribute>
                       </attributes>
                     </child>
                   </object>
