@@ -193,6 +193,7 @@ void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
             g_value_init(&value, G_TYPE_FLOAT);
             g_value_set_float(&value, v);
             gtk_list_store_set_value(nodes_model, &iter, 2, &value);
+
             g_value_unset(&value);
 
             g_value_init(&value, G_TYPE_STRING);

@@ -144,6 +144,12 @@ void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
             g_value_init(&value, G_TYPE_FLOAT);
             g_value_set_float(&value, v);
             gtk_list_store_set_value(costs_model, &iter, column, &value);
+
+            g_value_unset(&value);
+
+            g_value_init(&value, G_TYPE_STRING);
+            g_value_set_string(&value, g_strdup_printf("%.4f", v));
+            gtk_list_store_set_value(costs_model, &iter, column + 2, &value);
         }
     }
 }
@@ -158,6 +164,8 @@ void change_life(int y)
                         0, i + 1,
                         1, 1000.0,
                         2, 1000.0,
+                        3, g_strdup_printf("%.4f", 1000.0),
+                        4, g_strdup_printf("%.4f", 1000.0),
                         -1);
     }
 

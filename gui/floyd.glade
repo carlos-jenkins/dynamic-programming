@@ -124,6 +124,7 @@
                         <property name="can_focus">True</property>
                         <property name="invisible_char">•</property>
                         <property name="adjustment">nodes_adjustment</property>
+                        <property name="numeric">True</property>
                         <signal name="value-changed" handler="change_matrix_cb" swapped="no"/>
                       </object>
                       <packing>
