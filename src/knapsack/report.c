@@ -87,7 +87,7 @@ bool knapsack_report(knapsack_context* c)
 
     for(int at_item = ti->columns - 1; at_item > -1; at_item--) {
 
-        int put_items = (int)ti->data[capacity_left - 1][at_item];
+        int put_items = (int)ti->data[capacity_left][at_item];
         if(put_items == 0) {
             continue;
         }

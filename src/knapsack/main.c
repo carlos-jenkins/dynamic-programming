@@ -126,10 +126,11 @@ void add_row(GtkToolButton *toolbutton, gpointer user_data)
 
     GtkTreePath* model_path = gtk_tree_model_get_path(
                                 GTK_TREE_MODEL(items_model), &iter);
-    gtk_tree_view_set_cursor(items_view, model_path, NULL, false);
+    gtk_tree_view_set_cursor(items_view, model_path,
+                             gtk_tree_view_get_column(items_view, 0),
+                             true);
     gtk_tree_path_free(model_path);
 
-    gtk_widget_grab_focus(GTK_WIDGET(items_view));
     return;
 }
 
