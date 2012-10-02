@@ -8,6 +8,20 @@
       <!-- column-name home -->
       <column type="gboolean"/>
     </columns>
+    <data>
+      <row>
+        <col id="0">1</col>
+        <col id="1">True</col>
+      </row>
+      <row>
+        <col id="0">2</col>
+        <col id="1">False</col>
+      </row>
+      <row>
+        <col id="0">3</col>
+        <col id="1">True</col>
+      </row>
+    </data>
   </object>
   <object class="GtkAdjustment" id="num_games_adjustment">
     <property name="lower">3</property>
@@ -62,13 +76,14 @@
           <object class="GtkGrid" id="teams_grid">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="margin_left">30</property>
+            <property name="margin_right">30</property>
             <property name="row_spacing">5</property>
             <property name="column_spacing">5</property>
             <child>
               <object class="GtkLabel" id="team_a_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">30</property>
                 <property name="xalign">1</property>
                 <property name="label" translatable="yes">A:</property>
               </object>
@@ -83,7 +98,6 @@
               <object class="GtkLabel" id="team_b_label">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">30</property>
                 <property name="xalign">1</property>
                 <property name="label" translatable="yes">B:</property>
               </object>
@@ -98,7 +112,6 @@
               <object class="GtkEntry" id="team_b_name">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="margin_right">30</property>
                 <property name="hexpand">True</property>
                 <property name="invisible_char">•</property>
                 <property name="text" translatable="yes">Team B</property>
@@ -115,7 +128,6 @@
               <object class="GtkEntry" id="team_a_name">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
-                <property name="margin_right">30</property>
                 <property name="invisible_char">•</property>
                 <property name="text" translatable="yes">Team A</property>
               </object>
@@ -218,6 +230,7 @@
                 <property name="adjustment">prob_a_home_adjustement</property>
                 <property name="digits">4</property>
                 <property name="numeric">True</property>
+                <signal name="value-changed" handler="prob_changed_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">1</property>
@@ -235,6 +248,7 @@
                 <property name="adjustment">prob_a_road_adjustement</property>
                 <property name="digits">4</property>
                 <property name="numeric">True</property>
+                <signal name="value-changed" handler="prob_changed_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="left_attach">2</property>
@@ -329,12 +343,14 @@
             </child>
             <child>
               <object class="GtkSpinButton" id="num_games">
+                <property name="width_request">150</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="margin_left">10</property>
                 <property name="invisible_char">•</property>
                 <property name="adjustment">num_games_adjustment</property>
                 <property name="numeric">True</property>
-                <signal name="value-changed" handler="check_odd_cb" swapped="no"/>
+                <signal name="value-changed" handler="games_changed_cb" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -386,7 +402,9 @@
                     <property name="min_width">40</property>
                     <property name="title">#</property>
                     <child>
-                      <object class="GtkCellRendererText" id="num_renderer"/>
+                      <object class="GtkCellRendererText" id="num_renderer">
+                        <property name="size_points">14</property>
+                      </object>
                       <attributes>
                         <attribute name="text">0</attribute>
                       </attributes>
@@ -398,7 +416,7 @@
                     <property name="title" translatable="yes">Team A plays at home?</property>
                     <child>
                       <object class="GtkCellRendererToggle" id="playsathome_renderer">
-                        <property name="indicator_size">32</property>
+                        <property name="indicator_size">24</property>
                         <signal name="toggled" handler="cell_edited_cb" swapped="no"/>
                       </object>
                       <attributes>

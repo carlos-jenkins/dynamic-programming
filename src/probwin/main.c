@@ -41,7 +41,9 @@ GtkLabel* prob_b_road;
 probwin_context* c = NULL;
 
 /* Context */
-void check_odd_cb(GtkSpinButton* spinbutton, gpointer user_data);
+void prob_changed_cb(GtkSpinButton* spinbutton, gpointer user_data);
+void games_changed(int g);
+void games_changed_cb(GtkSpinButton* spinbutton, gpointer user_data);
 void cell_edited_cb(GtkCellRendererToggle *cell_renderer,
                     gchar* path, gpointer user_data);
 void process(GtkButton* button, gpointer user_data);
@@ -92,17 +94,70 @@ int main(int argc, char **argv)
     return(0);
 }
 
-void check_odd_cb(GtkSpinButton* spinbutton, gpointer user_data)
+void prob_changed_cb(GtkSpinButton* spinbutton, gpointer user_data)
+{
+    float value = gtk_spin_button_get_value(spinbutton);
+    float complement = 1.0 - value;
+    if(spinbutton == prob_a_home) {
+        gtk_label_set_text(prob_b_road, g_strdup_printf("%.4f", complement));
+    } else {
+        gtk_label_set_text(prob_b_home, g_strdup_printf("%.4f", complement));
+    }
+}
+
+void games_changed(int g)
+{
+    /* Validate input */
+    if(g < 3) {
+        return;
+    }
+
+    gtk_list_store_clear(format_model);
+    GtkTreeIter iter;
+    bool swap = true;
+    for(int i = 0; i < g; i++) {
+        gtk_list_store_append(format_model, &iter);
+        gtk_list_store_set(format_model, &iter,
+                        0, i + 1,
+                        1, swap,
+                        -1);
+        swap = !swap;
+    }
+
+    GtkTreePath* model_path = gtk_tree_model_get_path(
+                                GTK_TREE_MODEL(format_model), &iter);
+    gtk_tree_view_set_cursor(format_view, model_path, NULL, false);
+    gtk_tree_path_free(model_path);
+    gtk_widget_grab_focus(GTK_WIDGET(format_view));
+}
+
+void games_changed_cb(GtkSpinButton* spinbutton, gpointer user_data)
 {
     int value = gtk_spin_button_get_value_as_int(num_games);
-    show_error(window, "Number of games must be odd.");
-    gtk_spin_button_set_value(3.0);
+    if((value % 2) == 0) {
+        show_error(window, "Number of games must be odd.");
+        gtk_spin_button_set_value(num_games, 3.0);
+        games_changed(3);
+        return;
+    }
+    games_changed(value);
 }
 
 void cell_edited_cb(GtkCellRendererToggle *cell_renderer,
                     gchar* path, gpointer user_data)
 {
+    /* Get reference to model */
+    GtkTreePath* model_path = gtk_tree_path_new_from_string(path);
+    GtkTreeIter iter;
+    gtk_tree_model_get_iter(GTK_TREE_MODEL(format_model), &iter, model_path);
+    gtk_tree_path_free(model_path);
 
+    GValue value = G_VALUE_INIT;
+
+    g_value_init(&value, G_TYPE_BOOLEAN);
+    g_value_set_boolean(&value,
+                        !gtk_cell_renderer_toggle_get_active(cell_renderer));
+    gtk_list_store_set_value(format_model, &iter, 1, &value);
 }
 
 void process(GtkButton* button, gpointer user_data)
