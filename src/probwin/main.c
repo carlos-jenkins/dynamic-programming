@@ -24,8 +24,27 @@
 /* GUI */
 GtkWindow* window;
 
+GtkTreeView* format_view;
+GtkListStore* format_model;
+
+GtkEntry* team_a_name;
+GtkEntry* team_b_name;
+
+GtkSpinButton* prob_a_home;
+GtkSpinButton* prob_a_road;
+GtkSpinButton* num_games;
+
+GtkLabel* prob_b_home;
+GtkLabel* prob_b_road;
+
 /* Context */
 probwin_context* c = NULL;
+
+/* Context */
+void check_odd_cb(GtkSpinButton* spinbutton, gpointer user_data);
+void cell_edited_cb(GtkCellRendererToggle *cell_renderer,
+                    gchar* path, gpointer user_data);
+void process(GtkButton* button, gpointer user_data);
 
 int main(int argc, char **argv)
 {
@@ -50,6 +69,19 @@ int main(int argc, char **argv)
     /* Get pointers to objects */
     window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
 
+    format_view = GTK_TREE_VIEW(gtk_builder_get_object(builder, "format_view"));
+    format_model = GTK_LIST_STORE(gtk_builder_get_object(builder, "format_model"));
+
+    team_a_name = GTK_ENTRY(gtk_builder_get_object(builder, "team_a_name"));
+    team_b_name = GTK_ENTRY(gtk_builder_get_object(builder, "team_b_name"));
+
+    prob_a_home = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "prob_a_home"));
+    prob_a_road = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "prob_a_road"));
+    num_games = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "num_games"));
+
+    prob_b_home = GTK_LABEL(gtk_builder_get_object(builder, "prob_b_home"));
+    prob_b_road = GTK_LABEL(gtk_builder_get_object(builder, "prob_b_road"));
+
     /* Connect signals */
     gtk_builder_connect_signals(builder, NULL);
 
@@ -60,3 +92,20 @@ int main(int argc, char **argv)
     return(0);
 }
 
+void check_odd_cb(GtkSpinButton* spinbutton, gpointer user_data)
+{
+    int value = gtk_spin_button_get_value_as_int(num_games);
+    show_error(window, "Number of games must be odd.");
+    gtk_spin_button_set_value(3.0);
+}
+
+void cell_edited_cb(GtkCellRendererToggle *cell_renderer,
+                    gchar* path, gpointer user_data)
+{
+
+}
+
+void process(GtkButton* button, gpointer user_data)
+{
+    printf("BOOM!");
+}
