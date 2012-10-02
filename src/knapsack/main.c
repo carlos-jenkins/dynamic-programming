@@ -240,7 +240,6 @@ void process(GtkButton* button, gpointer user_data)
     GValue value = G_VALUE_INIT;
 
     int i = 0;
-
     do {
         gtk_tree_model_get_value(
                             GTK_TREE_MODEL(items_model), &iter, 0, &value);

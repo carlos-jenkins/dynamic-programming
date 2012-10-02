@@ -102,7 +102,8 @@ void add_row(GtkToolButton *toolbutton, gpointer user_data)
     gtk_list_store_set(nodes_model, &iter,
                         0, rows + 1,
                         1, sequence_name(rows),
-                        2, 0.001,
+                        2, 0.0010,
+                        3, g_strdup_printf("%.4f", 0.0010),
                         -1);
 
     GtkTreePath* model_path = gtk_tree_model_get_path(
@@ -177,17 +178,26 @@ void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
 
     GValue value = G_VALUE_INIT;
 
-    if(column == 0) {
+    if(column == 1) {
+
         g_value_init(&value, G_TYPE_STRING);
         g_value_set_string(&value, new_text);
         gtk_list_store_set_value(nodes_model, &iter, column, &value);
+
     } else if(!is_empty_string(new_text)) {
+
         char* end;
         float v = strtof(new_text, &end);
         if((end != new_text) && (*end == '\0') && (v > 0.0)) {
+
             g_value_init(&value, G_TYPE_FLOAT);
             g_value_set_float(&value, v);
-            gtk_list_store_set_value(nodes_model, &iter, column, &value);
+            gtk_list_store_set_value(nodes_model, &iter, 2, &value);
+            g_value_unset(&value);
+
+            g_value_init(&value, G_TYPE_STRING);
+            g_value_set_string(&value, g_strdup_printf("%.4f", v));
+            gtk_list_store_set_value(nodes_model, &iter, 3, &value);
         }
     }
 }
