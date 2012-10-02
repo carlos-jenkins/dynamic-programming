@@ -34,7 +34,9 @@ bool replacement_report(replacement_context* c)
     fprintf(report, "\n");
 
     /* Write header */
-    fprintf(report, "\\section{%s}\n\n", "Equipment Replacement");
+    
+    fprintf(report, "\\section{\\textcolor{deepgreen}{%s}}\n\n", "Equipment Replacement");
+    
     fprintf(report, "\\noindent{\\huge %s.} \\\\[0.4cm]\n",
                     "Dynamic programming");
     fprintf(report, "{\\LARGE %s.}\\\\[0.4cm]\n", "Operation Research");
@@ -48,7 +50,7 @@ bool replacement_report(replacement_context* c)
     }
 
     /* Write first section */
-    fprintf(report, "\\\\[0.5cm]\n\\noindent{\\Large Details:}\n");
+    fprintf(report, "\\\\[0.5cm]\n\\noindent{\\textcolor{deepblue}{\\Large Details:}}\n");
     fprintf(report, "\\begin{compactitem}\n");
     fprintf(report, "\\item %s : \\textsc{%s}. \n",
                     "Executed on", get_current_time());
@@ -61,8 +63,8 @@ bool replacement_report(replacement_context* c)
     fprintf(report, "\\end{compactitem}\n");
     fprintf(report, "\n");
 
-    /* Write data */
-    fprintf(report, "\\subsection{%s}\n", "Data");
+    /* Write data */    
+    fprintf(report, "\\subsection{\\textcolor{deepblue}{%s}}\n", "Data");
     replacement_data(c, report);
     fprintf(report, "\\newpage\n");
 
@@ -72,7 +74,7 @@ bool replacement_report(replacement_context* c)
     fprintf(report, "\n");
 
      /* Write execution */
-    fprintf(report, "\\subsection{%s}\n", "Execution");
+    fprintf(report, "\\subsection{\\textcolor{deepblue}{%s}}\n", "Execution");    
     replacement_table(c, report, c->table_c,
                       "Table C: costs of buying the equipment in t "
                       "instant and sell it at x instant");
@@ -84,7 +86,7 @@ bool replacement_report(replacement_context* c)
     fprintf(report, "\n");
 
     /* Write analisis */
-    fprintf(report, "\\subsection{%s}\n", "Analisis");
+    fprintf(report, "\\subsection{\\textcolor{deepblue}{%s}}\n", "Analysis");
     replacement_analisis(c, report);
     fprintf(report, "\n");
 
@@ -121,7 +123,7 @@ void replacement_table(replacement_context* c, FILE* stream, matrix* m, char* ms
     /* Table headers */
     fprintf(stream, " & ");
     for(int j = 0; j < m->columns; j++) {
-        fprintf(stream, "\\cellcolor{gray90}\\textbf{%i}", j + 1);
+        fprintf(stream, "\\cellcolor{deepgreen}\\textbf{%i}", j + 1);
         if(j < m->columns - 1) {
             fprintf(stream, " & ");
         }
@@ -131,7 +133,7 @@ void replacement_table(replacement_context* c, FILE* stream, matrix* m, char* ms
     /* Table body */
     for(int i = 0; i < m->rows; i++) {
         fprintf(stream, "\\multicolumn{1}{|c||}"
-                        "{\\cellcolor{gray90}\\textbf{%i}} & ", i);
+                        "{\\cellcolor{deepgreen}\\textbf{%i}} & ", i);
         for(int j = 0; j < m->columns; j++) {
 
             fprintf(stream, "%1.4f", m->data[i][j]);
@@ -168,7 +170,7 @@ void replacement_mincost(replacement_context* c, FILE* stream){
 
     /* Table headers */
     for(int j = 0; j < size; j++) {
-        fprintf(stream, "\\cellcolor{gray90}\\textbf{%i}", j + 1);
+        fprintf(stream, "\\cellcolor{deepgreen}\\textbf{%i}", j + 1);
         if(j < size - 1) {
             fprintf(stream, " & ");
         }
