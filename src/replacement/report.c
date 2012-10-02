@@ -154,44 +154,40 @@ void replacement_table(replacement_context* c, FILE* stream, matrix* m, char* ms
 void replacement_mincost(replacement_context* c, FILE* stream){
 
     float* m = c->minimum_cost;
+    int size = c->years_plan + 1;
 
     /* Table preamble */
     fprintf(stream, "\\begin{table}[!ht]\n");
     fprintf(stream, "\\begin{adjustwidth}{-3cm}{-3cm}\n");
     fprintf(stream, "\\centering\n");
-    fprintf(stream, "\\begin{tabular}{c||");
-    for(int cl = 0; cl < c->years_plan + 1; cl++) {
+    fprintf(stream, "\\begin{tabular}{|");
+    for(int cl = 0; cl < size; cl++) {
         fprintf(stream, "c|");
     }
-    fprintf(stream, "}\n\\cline{2-%i}\n", c->years_plan + 2);
+    fprintf(stream, "}\n\\hline\n");
 
     /* Table headers */
-    fprintf(stream, " & ");
-    for(int j = 0; j < c->years_plan + 1; j++) {
-        fprintf(stream, "\\cellcolor{gray90}\\textbf{%i}", j );
-        if(j < c->years_plan) {
+    for(int j = 0; j < size; j++) {
+        fprintf(stream, "\\cellcolor{gray90}\\textbf{%i}", j + 1);
+        if(j < size - 1) {
             fprintf(stream, " & ");
         }
     }
     fprintf(stream, " \\\\\n\\hline\\hline\n");
 
     /* Table body */
-    for(int i = 0; i < 1; i++) {
-        fprintf(stream, "\\multicolumn{1}{|c||}"
-                        "{\\cellcolor{gray90}\\textbf{}} & ");
-        for(int j = 0; j < c->years_plan + 1; j++) {
+    for(int j = 0; j < size; j++) {
 
-            fprintf(stream, "%1.4f", m[j]);
+        fprintf(stream, "%1.4f", m[j]);
 
-            if(j < c->years_plan) {
-                fprintf(stream, " & ");
-            }
+        if(j < size - 1) {
+            fprintf(stream, " & ");
         }
-        fprintf(stream, " \\\\ \\hline\n");
     }
+    fprintf(stream, " \\\\ \\hline\n");
     fprintf(stream, "\\end{tabular}\n");
 
-    fprintf(stream, "\\caption{%s.}\n", "Table with the minimum costs");
+    fprintf(stream, "\\caption{%s.}\n", "Table with the minimal costs");
     fprintf(stream, "\\end{adjustwidth}\n");
     fprintf(stream, "\\end{table}\n");
     fprintf(stream, "\n\n\n");
