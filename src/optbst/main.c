@@ -69,13 +69,13 @@ int main(int argc, char **argv)
                             gtk_builder_get_object(builder, "name_renderer"));
     g_signal_connect(G_OBJECT(name_renderer),
                          "edited", G_CALLBACK(cell_edited_cb),
-                         GINT_TO_POINTER(0));
+                         GINT_TO_POINTER(1));
 
     GtkCellRenderer* prob_renderer = GTK_CELL_RENDERER(
                             gtk_builder_get_object(builder, "prob_renderer"));
     g_signal_connect(G_OBJECT(prob_renderer),
                          "edited", G_CALLBACK(cell_edited_cb),
-                         GINT_TO_POINTER(1));
+                         GINT_TO_POINTER(2));
     edit_started_cb(prob_renderer, NULL, NULL, NULL);
 
     /* Connect signals */
@@ -100,8 +100,9 @@ void add_row(GtkToolButton *toolbutton, gpointer user_data)
     GtkTreeIter iter;
     gtk_list_store_append(nodes_model, &iter);
     gtk_list_store_set(nodes_model, &iter,
-                        0, sequence_name(rows),
-                        1, 0.001,
+                        0, rows + 1,
+                        1, sequence_name(rows),
+                        2, 0.001,
                         -1);
 
     GtkTreePath* model_path = gtk_tree_model_get_path(
@@ -224,12 +225,12 @@ void process(GtkButton* button, gpointer user_data)
     int i = 0;
     do {
         gtk_tree_model_get_value(
-                            GTK_TREE_MODEL(nodes_model), &iter, 0, &value);
+                            GTK_TREE_MODEL(nodes_model), &iter, 1, &value);
         char* n = g_value_dup_string(&value);
         g_value_unset(&value);
 
         gtk_tree_model_get_value(
-                            GTK_TREE_MODEL(nodes_model), &iter, 1, &value);
+                            GTK_TREE_MODEL(nodes_model), &iter, 2, &value);
         float v = g_value_get_float(&value);
         g_value_unset(&value);
 
