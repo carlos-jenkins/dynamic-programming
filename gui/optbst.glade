@@ -9,6 +9,8 @@
       <column type="gchararray"/>
       <!-- column-name prob -->
       <column type="gfloat"/>
+      <!-- column-name prob_text -->
+      <column type="gchararray"/>
     </columns>
   </object>
   <object class="GtkWindow" id="window">
@@ -93,7 +95,7 @@
                         <signal name="editing-started" handler="edit_started_cb" swapped="no"/>
                       </object>
                       <attributes>
-                        <attribute name="text">2</attribute>
+                        <attribute name="text">3</attribute>
                       </attributes>
                     </child>
                   </object>
