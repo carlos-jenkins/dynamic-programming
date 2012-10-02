@@ -30,6 +30,8 @@
  */
 bool replacement_report(replacement_context* c);
 void replacement_table(replacement_context* c, FILE* stream);
+void replacement_analisis(replacement_context* c, FILE* stream);
 void replacement_data(replacement_context* c, FILE* stream);
+void replacement_mincost(replacement_context* c, FILE* stream);
 
 #endif

@@ -74,11 +74,14 @@ bool replacement_report(replacement_context* c)
      /* Write execution */
     fprintf(report, "\\subsection{%s}\n", "Execution");
     replacement_table(c, report);
+    fprintf(report, "\n");
+    replacement_mincost(c, report);
     fprintf(report, "\\newpage\n");
     fprintf(report, "\n");
 
     /* Write analisis */
     fprintf(report, "\\subsection{%s}\n", "Analisis");
+    replacement_analisis(c, report);
     fprintf(report, "\n");
 
     /* End document */
@@ -99,7 +102,103 @@ bool replacement_report(replacement_context* c)
     return true;
 }
 
-void replacement_table(replacement_context* c, FILE* stream)
+void replacement_table(replacement_context* c, FILE* stream){
+    matrix* m = c->table_c;
+
+    /* Table preamble */
+    fprintf(stream, "\\begin{table}[!ht]\n");
+    fprintf(stream, "\\begin{adjustwidth}{-3cm}{-3cm}\n");
+    fprintf(stream, "\\centering\n");
+    fprintf(stream, "\\begin{tabular}{c||");
+    for(int cl = 0; cl < m->columns; cl++) {
+        fprintf(stream, "c|");
+    }
+    fprintf(stream, "}\n\\cline{2-%i}\n", m->columns + 1);
+
+    /* Table headers */
+    fprintf(stream, " & ");
+    for(int j = 0; j < m->columns; j++) {
+        fprintf(stream, "\\cellcolor{gray90}\\textbf{%i}", j + 1);
+        if(j < m->columns - 1) {
+            fprintf(stream, " & ");
+        }
+    }
+    fprintf(stream, " \\\\\n\\hline\\hline\n");
+
+    /* Table body */
+    for(int i = 0; i < m->rows; i++) {
+        fprintf(stream, "\\multicolumn{1}{|c||}"
+                        "{\\cellcolor{gray90}\\textbf{%i}} & ", i);
+        for(int j = 0; j < m->columns; j++) {
+
+            if(!(i == 0 && j == 0)) {
+                fprintf(stream, "%1.4f", m->data[i][j]);
+            }
+
+            if(j < m->columns - 1) {
+                fprintf(stream, " & ");
+            }
+        }
+        fprintf(stream, " \\\\ \\hline\n");
+    }
+    fprintf(stream, "\\end{tabular}\n");
+
+    fprintf(stream, "\\caption{%s.}\n", "Table C: costs of buying the equipment in t instant and sell it at x instant");
+    fprintf(stream, "\\end{adjustwidth}\n");
+    fprintf(stream, "\\end{table}\n");
+    fprintf(stream, "\n");
+
+    }
+
+void replacement_mincost(replacement_context* c, FILE* stream){
+    float* m = c->minimum_cost;
+
+    /* Table preamble */
+    fprintf(stream, "\\begin{table}[!ht]\n");
+    fprintf(stream, "\\begin{adjustwidth}{-3cm}{-3cm}\n");
+    fprintf(stream, "\\centering\n");
+    fprintf(stream, "\\begin{tabular}{c||");
+    for(int cl = 0; cl < c->years_plan + 1; cl++) {
+        fprintf(stream, "c|");
+    }
+    fprintf(stream, "}\n\\cline{2-%i}\n", c->years_plan + 2);
+
+    /* Table headers */
+    fprintf(stream, " & ");
+    for(int j = 0; j < c->years_plan + 1; j++) {
+        fprintf(stream, "\\cellcolor{gray90}\\textbf{%i}", j );
+        if(j < c->years_plan) {
+            fprintf(stream, " & ");
+        }
+    }
+    fprintf(stream, " \\\\\n\\hline\\hline\n");
+
+    /* Table body */
+    for(int i = 0; i < 1; i++) {
+        fprintf(stream, "\\multicolumn{1}{|c||}"
+                        "{\\cellcolor{gray90}\\textbf{}} & ");
+        for(int j = 0; j < c->years_plan + 1; j++) {
+
+            if(!(i == 0 && j == 0)) {
+                fprintf(stream, "%1.4f", m[j]);
+            }
+
+            if(j < c->years_plan) {
+                fprintf(stream, " & ");
+            }
+        }
+        fprintf(stream, " \\\\ \\hline\n");
+    }
+    fprintf(stream, "\\end{tabular}\n");
+
+    fprintf(stream, "\\caption{%s.}\n", "Table with the minimum costs");
+    fprintf(stream, "\\end{adjustwidth}\n");
+    fprintf(stream, "\\end{table}\n");
+    fprintf(stream, "\n");
+}
+
+
+void replacement_analisis(replacement_context* c, FILE* stream)
 {
     float* mc = c->minimum_cost;
     for(int i = 0; i <= c->years_plan; i++) {
