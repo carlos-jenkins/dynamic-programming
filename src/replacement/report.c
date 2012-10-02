@@ -73,7 +73,9 @@ bool replacement_report(replacement_context* c)
 
      /* Write execution */
     fprintf(report, "\\subsection{%s}\n", "Execution");
-    replacement_table(c, report, c->table_c, "Table C: costs of buying the equipment in t instant and sell it at x instant");
+    replacement_table(c, report, c->table_c,
+                      "Table C: costs of buying the equipment in t "
+                      "instant and sell it at x instant");
     fprintf(report, "\n\n");
     replacement_table(c, report, c->table_p, "Table P: Replacement Plan");
     fprintf(report, "\n\n");
@@ -104,8 +106,7 @@ bool replacement_report(replacement_context* c)
     return true;
 }
 
-void replacement_table(replacement_context* c, FILE* stream, matrix* table, char* msj){
-    matrix* m = table;
+void replacement_table(replacement_context* c, FILE* stream, matrix* m, char* msj) {
 
     /* Table preamble */
     fprintf(stream, "\\begin{table}[!ht]\n");
@@ -133,9 +134,7 @@ void replacement_table(replacement_context* c, FILE* stream, matrix* table, char
                         "{\\cellcolor{gray90}\\textbf{%i}} & ", i);
         for(int j = 0; j < m->columns; j++) {
 
-            if(!(i == 0 && j == 0)) {
-                fprintf(stream, "%1.4f", m->data[i][j]);
-            }
+            fprintf(stream, "%1.4f", m->data[i][j]);
 
             if(j < m->columns - 1) {
                 fprintf(stream, " & ");
@@ -150,9 +149,10 @@ void replacement_table(replacement_context* c, FILE* stream, matrix* table, char
     fprintf(stream, "\\end{table}\n");
     fprintf(stream, "\n\n\n");
 
-    }
+}
 
 void replacement_mincost(replacement_context* c, FILE* stream){
+
     float* m = c->minimum_cost;
 
     /* Table preamble */
@@ -181,9 +181,7 @@ void replacement_mincost(replacement_context* c, FILE* stream){
                         "{\\cellcolor{gray90}\\textbf{}} & ");
         for(int j = 0; j < c->years_plan + 1; j++) {
 
-            if(!(i == 0 && j == 0)) {
-                fprintf(stream, "%1.4f", m[j]);
-            }
+            fprintf(stream, "%1.4f", m[j]);
 
             if(j < c->years_plan) {
                 fprintf(stream, " & ");
