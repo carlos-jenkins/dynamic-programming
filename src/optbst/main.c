@@ -27,6 +27,9 @@ GtkWindow* window;
 GtkTreeView* nodes_view;
 GtkListStore* nodes_model;
 
+GtkToggleButton* weight_or_prob;
+GtkLabel* total_label;
+
 /* Context */
 optbst_context* c = NULL;
 
@@ -35,6 +38,7 @@ void add_row(GtkToolButton *toolbutton, gpointer user_data);
 void remove_row(GtkToolButton *toolbutton, gpointer user_data);
 void edit_started_cb(GtkCellRenderer* renderer, GtkCellEditable* editable,
                      gchar* path, gpointer user_data);
+bool is_unique(char* new, int at_row);
 void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
                     gchar* new_text, gpointer user_data);
 void process(GtkButton* button, gpointer user_data);
@@ -63,20 +67,22 @@ int main(int argc, char **argv)
     window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
     nodes_view = GTK_TREE_VIEW(gtk_builder_get_object(builder, "nodes_view"));
     nodes_model = GTK_LIST_STORE(gtk_builder_get_object(builder, "nodes_model"));
+    weight_or_prob = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "weight_or_prob"));
+    total_label = GTK_LABEL(gtk_builder_get_object(builder, "total_label"));
 
     /* Configure cell renderers callback */
     GtkCellRenderer* name_renderer = GTK_CELL_RENDERER(
                             gtk_builder_get_object(builder, "name_renderer"));
     g_signal_connect(G_OBJECT(name_renderer),
                          "edited", G_CALLBACK(cell_edited_cb),
-                         GINT_TO_POINTER(1));
+                         GINT_TO_POINTER(0));
 
-    GtkCellRenderer* prob_renderer = GTK_CELL_RENDERER(
-                            gtk_builder_get_object(builder, "prob_renderer"));
-    g_signal_connect(G_OBJECT(prob_renderer),
+    GtkCellRenderer* weight_renderer = GTK_CELL_RENDERER(
+                            gtk_builder_get_object(builder, "weight_renderer"));
+    g_signal_connect(G_OBJECT(weight_renderer),
                          "edited", G_CALLBACK(cell_edited_cb),
-                         GINT_TO_POINTER(2));
-    edit_started_cb(prob_renderer, NULL, NULL, NULL);
+                         GINT_TO_POINTER(1));
+    edit_started_cb(weight_renderer, NULL, NULL, NULL);
 
     /* Connect signals */
     gtk_builder_connect_signals(builder, NULL);
@@ -84,6 +90,10 @@ int main(int argc, char **argv)
     /* Initialize interface */
     add_row(NULL, NULL);
     add_row(NULL, NULL);
+
+    /* Sort model */
+    gtk_tree_sortable_set_sort_column_id(
+        GTK_TREE_SORTABLE(nodes_model), 0, GTK_SORT_ASCENDING);
 
     g_object_unref(G_OBJECT(builder));
     gtk_widget_show(GTK_WIDGET(window));
@@ -100,18 +110,21 @@ void add_row(GtkToolButton *toolbutton, gpointer user_data)
     GtkTreeIter iter;
     gtk_list_store_append(nodes_model, &iter);
     gtk_list_store_set(nodes_model, &iter,
-                        0, rows + 1,
-                        1, sequence_name(rows),
-                        2, 0.0010,
-                        3, g_strdup_printf("%.4f", 0.0010),
+                        0, sequence_name(rows),
+                        1, 0.0010,
+                        2, g_strdup_printf("%.4f", 0.0010),
                         -1);
+
+    gtk_label_set_text(total_label,
+                       g_strdup_printf("Total: %i nodes.", rows + 1));
 
     GtkTreePath* model_path = gtk_tree_model_get_path(
                                 GTK_TREE_MODEL(nodes_model), &iter);
-    gtk_tree_view_set_cursor(nodes_view, model_path, NULL, false);
+    gtk_tree_view_set_cursor(nodes_view, model_path,
+                             gtk_tree_view_get_column(nodes_view, 0),
+                             true);
     gtk_tree_path_free(model_path);
 
-    gtk_widget_grab_focus(GTK_WIDGET(nodes_view));
     return;
 }
 
@@ -128,6 +141,10 @@ void remove_row(GtkToolButton *toolbutton, gpointer user_data)
     if(gtk_tree_selection_get_selected(selection, NULL, &iter)) {
 
         bool valid = gtk_list_store_remove(nodes_model, &iter);
+
+        gtk_label_set_text(total_label,
+                       g_strdup_printf("Total: %i nodes.", rows  - 1));
+
         if(!valid) {
             valid = gtk_tree_model_iter_nth_child(GTK_TREE_MODEL(nodes_model),
                                                   &iter, NULL, rows - 1);
@@ -163,12 +180,46 @@ void edit_started_cb(GtkCellRenderer* renderer, GtkCellEditable* editable,
     g_object_set(renderer, "adjustment", adj, NULL);
 }
 
+bool is_unique(char* new, int at_row)
+{
+    GtkTreeModel* model = GTK_TREE_MODEL(nodes_model);
+    GtkTreeIter iter;
+    bool valid = gtk_tree_model_get_iter_first(model, &iter);
+
+    int row = 0;
+    bool unique = true;
+    while(valid) {
+        char* name;
+        gtk_tree_model_get(model, &iter, 0, &name, -1);
+
+        if((row != at_row) && (g_strcmp0(new, name) == 0)) {
+            unique = false;
+            break;
+        }
+
+        g_free(name);
+
+        valid = gtk_tree_model_iter_next(model, &iter);
+        row++;
+    }
+
+    return unique;
+}
+
 void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
                     gchar* new_text, gpointer user_data)
 {
     int row = atoi(path);
     int column = GPOINTER_TO_INT(user_data);
+    g_strstrip(new_text); /* Strip string in place */
     printf("%s at (%i, %i)\n", new_text, row, column);
+
+    /* Check if unique */
+    if(!is_unique(new_text, row)) {
+        show_error(window, "Please set a unique name for each node.");
+        return;
+    }
+
 
     /* Get reference to model */
     GtkTreePath* model_path = gtk_tree_path_new_from_string(path);
@@ -178,7 +229,11 @@ void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
 
     GValue value = G_VALUE_INIT;
 
-    if(column == 1) {
+    if(column == 0) {
+
+        if(is_empty_string(new_text)) {
+            return;
+        }
 
         g_value_init(&value, G_TYPE_STRING);
         g_value_set_string(&value, new_text);
@@ -192,13 +247,13 @@ void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
 
             g_value_init(&value, G_TYPE_FLOAT);
             g_value_set_float(&value, v);
-            gtk_list_store_set_value(nodes_model, &iter, 2, &value);
+            gtk_list_store_set_value(nodes_model, &iter, 1, &value);
 
             g_value_unset(&value);
 
             g_value_init(&value, G_TYPE_STRING);
             g_value_set_string(&value, g_strdup_printf("%.4f", v));
-            gtk_list_store_set_value(nodes_model, &iter, 3, &value);
+            gtk_list_store_set_value(nodes_model, &iter, 2, &value);
         }
     }
 }
@@ -233,15 +288,16 @@ void process(GtkButton* button, gpointer user_data)
 
     GValue value = G_VALUE_INIT;
 
+    float total_weights = 0.0;
     int i = 0;
     do {
         gtk_tree_model_get_value(
-                            GTK_TREE_MODEL(nodes_model), &iter, 1, &value);
+                            GTK_TREE_MODEL(nodes_model), &iter, 0, &value);
         char* n = g_value_dup_string(&value);
         g_value_unset(&value);
 
         gtk_tree_model_get_value(
-                            GTK_TREE_MODEL(nodes_model), &iter, 2, &value);
+                            GTK_TREE_MODEL(nodes_model), &iter, 1, &value);
         float v = g_value_get_float(&value);
         g_value_unset(&value);
 
@@ -251,8 +307,21 @@ void process(GtkButton* button, gpointer user_data)
 
         was_set = gtk_tree_model_iter_next(
                             GTK_TREE_MODEL(nodes_model), &iter);
+        total_weights += v;
         i++;
     } while(was_set);
+
+    /* Check if weights or probs */
+    if(gtk_toggle_button_get_active(weight_or_prob)) {
+        if(fequal(total_weights, 0.0)) {
+            show_error(window, "The total weights of the nodes should not be "
+                               "zero. Check your data.");
+            return;
+        }
+        for(int i = 0; i < keys; i++) {
+            probs[i] = probs[i] / total_weights;
+        }
+    }
 
     /* Verify probabilities equality */
     float total = 0.0;
