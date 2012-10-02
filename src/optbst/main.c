@@ -30,6 +30,9 @@ GtkListStore* nodes_model;
 GtkToggleButton* weight_or_prob;
 GtkLabel* total_label;
 
+GtkFileChooser* load_dialog;
+GtkFileChooser* save_dialog;
+
 /* Context */
 optbst_context* c = NULL;
 
@@ -42,6 +45,11 @@ bool is_unique(char* new, int at_row);
 void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
                     gchar* new_text, gpointer user_data);
 void process(GtkButton* button, gpointer user_data);
+
+void save_cb(GtkButton* button, gpointer user_data);
+void load_cb(GtkButton* button, gpointer user_data);
+void save(FILE* file);
+void load(FILE* file);
 
 int main(int argc, char **argv)
 {
@@ -69,6 +77,15 @@ int main(int argc, char **argv)
     nodes_model = GTK_LIST_STORE(gtk_builder_get_object(builder, "nodes_model"));
     weight_or_prob = GTK_TOGGLE_BUTTON(gtk_builder_get_object(builder, "weight_or_prob"));
     total_label = GTK_LABEL(gtk_builder_get_object(builder, "total_label"));
+
+    load_dialog = GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "load_dialog"));
+    save_dialog = GTK_FILE_CHOOSER(gtk_builder_get_object(builder, "save_dialog"));
+
+    GtkFileFilter* file_filter = gtk_file_filter_new();
+    gtk_file_filter_set_name(file_filter, "Custom data file (*.optbst)");
+    gtk_file_filter_add_pattern(file_filter, "*.optbst");
+    gtk_file_chooser_add_filter(load_dialog, file_filter);
+    gtk_file_chooser_add_filter(save_dialog, file_filter);
 
     /* Configure cell renderers callback */
     GtkCellRenderer* name_renderer = GTK_CELL_RENDERER(
@@ -366,4 +383,72 @@ void process(GtkButton* button, gpointer user_data)
             g_free(error);
         }
     }
+}
+
+void save_cb(GtkButton* button, gpointer user_data)
+{
+    int response = gtk_dialog_run(GTK_DIALOG(save_dialog));
+    gtk_widget_hide(GTK_WIDGET(save_dialog));
+    if(response != 0) {
+        return;
+    }
+
+    char *filename;
+    filename = gtk_file_chooser_get_filename(save_dialog);
+    FILE* file = fopen(filename, "w");
+    if(file == NULL) {
+        show_error(window, "An error ocurred while trying to open "
+                           "the file. Check you have permissions.");
+        return;
+    }
+
+    printf("%s\n", filename);
+    save(file);
+
+    fclose(file);
+    g_free(filename);
+}
+
+void load_cb(GtkButton* button, gpointer user_data)
+{
+    int response = gtk_dialog_run(GTK_DIALOG(load_dialog));
+    gtk_widget_hide(GTK_WIDGET(load_dialog));
+    if(response != 0) {
+        return;
+    }
+
+    char *filename;
+    filename = gtk_file_chooser_get_filename(load_dialog);
+    if(!file_exists(filename)) {
+        show_error(window, "The selected file doesn't exists.");
+        return;
+    }
+    FILE* file = fopen(filename, "r");
+    if(file == NULL) {
+        show_error(window, "An error ocurred while trying to open "
+                           "the file. Check you have permissions.");
+        return;
+    }
+
+    printf("%s\n", filename);
+    load(file);
+
+    fclose(file);
+    g_free(filename);
+}
+
+void save(FILE* file)
+{
+    printf("save()\n");
+    /**
+     * FIXME: IMPLEMENT
+     **/
+}
+
+void load(FILE* file)
+{
+    printf("load()\n");
+    /**
+     * FIXME: IMPLEMENT
+     **/
 }
