@@ -177,7 +177,7 @@ void change_life_cb(GtkSpinButton* spinbutton, gpointer user_data)
 void process(GtkButton* button, gpointer user_data)
 {
     if(c != NULL) {
-         g_free(c->equipment);
+        g_free(c->equipment);
         replacement_context_free(c);
     }
 
@@ -202,10 +202,10 @@ void process(GtkButton* button, gpointer user_data)
 
     GValue value = G_VALUE_INIT;
 
-    int i = 0;
     float* tc = c->maintenance_cost;
     float* sc = c->sale_cost;
 
+    int i = 0;
     do {
         gtk_tree_model_get_value(
                             GTK_TREE_MODEL(costs_model), &iter, 1, &value);

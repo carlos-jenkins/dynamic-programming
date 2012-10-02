@@ -30,7 +30,6 @@ int main(int argc, char **argv)
         return(-1);
     }
 
-    matrix* w = c->table_w;
     bool* f = c->game_format;
 
     /* Set team names */
@@ -59,7 +58,7 @@ int main(int argc, char **argv)
 
     /* Show table */
     printf("-----------------------------------\n");
-    matrix_print(w);
+    matrix_print(c->table_w);
 
     /* Generate report */
     bool report_created = probwin_report(c);

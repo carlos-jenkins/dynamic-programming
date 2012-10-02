@@ -162,5 +162,79 @@ void cell_edited_cb(GtkCellRendererToggle *cell_renderer,
 
 void process(GtkButton* button, gpointer user_data)
 {
-    printf("BOOM!");
+    if(c != NULL) {
+        g_free(c->a_name);
+        g_free(c->b_name);
+        probwin_context_free(c);
+    }
+
+    /* Create context */
+    int g = gtk_spin_button_get_value_as_int(num_games);
+    c = probwin_context_new(g);
+    if(c == NULL) {
+        show_error(window, "Unable to allocate enough memory for "
+                           "this problem. Sorry.");
+        return;
+    }
+
+    /* Fill context */
+    /* Names */
+    c->a_name = g_strdup(gtk_entry_get_text(team_a_name));
+    c->b_name = g_strdup(gtk_entry_get_text(team_b_name));
+
+    /* Probs */
+    c->ph = gtk_spin_button_get_value(prob_a_home);
+    c->pr = gtk_spin_button_get_value(prob_a_road);
+
+    /* Format */
+    GtkTreeIter iter;
+    bool was_set = gtk_tree_model_get_iter_first(
+                            GTK_TREE_MODEL(format_model), &iter);
+    if(!was_set) {
+        return;
+    }
+
+    GValue value = G_VALUE_INIT;
+    bool* f = c->game_format;
+
+    int i = 0;
+    do {
+        gtk_tree_model_get_value(
+                            GTK_TREE_MODEL(format_model), &iter, 1, &value);
+        bool w = g_value_get_boolean(&value);
+        g_value_unset(&value);
+
+        /* Set values */
+        f[i] = w;
+
+        was_set = gtk_tree_model_iter_next(
+                            GTK_TREE_MODEL(format_model), &iter);
+        i++;
+    } while(was_set);
+
+    /* Execute algorithm */
+    bool success = probwin(c);
+    if(!success) {
+        show_error(window, "Error while processing the information. "
+                           "Please check your data.");
+    }
+
+    /* Generate report */
+    bool report_created = probwin_report(c);
+    if(!report_created) {
+        show_error(window, "Report could not be created. "
+                           "Please check your data.");
+    } else {
+        printf("Report created at reports/probwin.tex\n");
+
+        int as_pdf = latex2pdf("probwin", "reports");
+        if(as_pdf == 0) {
+            printf("PDF version available at reports/probwin.pdf\n");
+        } else {
+            char* error = g_strdup_printf("Unable to convert report to PDF. "
+                                          "Status: %i.", as_pdf);
+            show_error(window, error);
+            g_free(error);
+        }
+    }
 }
