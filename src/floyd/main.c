@@ -95,7 +95,7 @@ bool change_matrix(int size)
 
     /* Initialize context */
     for(int i = 0; i < size; i++) {
-        c->names[i] = g_strdup_printf("%i", i + 1);
+        c->names[i] = sequence_name(i);
     }
 
     /* Create the dynamic types array */
@@ -128,7 +128,7 @@ bool change_matrix(int size)
             for(int j = 0; j < rsize; j++) {
                 /* Set value */
                 if(j > 0) {
-                    g_value_set_string(&init, g_strdup_printf("%i", j));
+                    g_value_set_string(&init, sequence_name(j - 1));
                     g_value_set_boolean(&initb, true);
                 } else {
                     g_value_set_string(&init, "");
@@ -148,7 +148,7 @@ bool change_matrix(int size)
 
         /* Other rows, first cell */
         /* Set value */
-        g_value_set_string(&init, g_strdup_printf("%i", i));
+        g_value_set_string(&init, sequence_name(i - 1));
         gtk_list_store_set_value(model, &iter, 0, &init);
 
         /* Set editable */

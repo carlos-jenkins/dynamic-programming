@@ -145,3 +145,12 @@ bool is_empty_string(char* string)
     }
     return false;
 }
+
+const char* seq_names[] = {"A", "B", "C", "D", "E", "F", "G",
+    "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S",
+    "T", "U", "V", "W", "X", "Y", "Z"}; /* 26 */
+char* sequence_name(int s)
+{
+    if(s < 0) { s *= -1; }
+    return g_strdup_printf("%s%i", seq_names[s % 26], s / 26);
+}

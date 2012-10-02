@@ -46,4 +46,6 @@ bool insert_file(char* filename, FILE* output);
 
 bool is_empty_string(char* string);
 
+char* sequence_name(int s);
+
 #endif

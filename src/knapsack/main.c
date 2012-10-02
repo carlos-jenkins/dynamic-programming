@@ -111,10 +111,13 @@ int main(int argc, char **argv)
 
 void add_row(GtkToolButton *toolbutton, gpointer user_data)
 {
+    int rows = gtk_tree_model_iter_n_children(
+                                    GTK_TREE_MODEL(items_model), NULL);
+
     GtkTreeIter iter;
     gtk_list_store_append(items_model, &iter);
     gtk_list_store_set(items_model, &iter,
-                        0, "A",
+                        0, sequence_name(rows),
                         1, 1,
                         2, 1,
                         3, 1,
