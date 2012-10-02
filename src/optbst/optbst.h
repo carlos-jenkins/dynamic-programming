@@ -46,7 +46,7 @@ typedef struct{
 
 } optbst_context;
 
-optbst_context* optbst_context_new(int games);
+optbst_context* optbst_context_new(int keys);
 void optbst_context_free(optbst_context* c);
 
 /**

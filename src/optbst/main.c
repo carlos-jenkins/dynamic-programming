@@ -193,5 +193,85 @@ void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
 
 void process(GtkButton* button, gpointer user_data)
 {
-    printf("BOOM!\n");
+    if(c != NULL) {
+        optbst_context_free(c);
+    }
+
+    int keys = gtk_tree_model_iter_n_children(
+                                    GTK_TREE_MODEL(nodes_model), NULL);
+
+    /* Create context */
+    c = optbst_context_new(keys);
+    if(c == NULL) {
+        show_error(window, "Unable to allocate enough memory for "
+                           "this problem. Sorry.");
+        return;
+    }
+
+    /* Fill context */
+    char** names = c->names;
+    float* probs = c->keys_probabilities;
+
+    GtkTreeIter iter;
+    bool was_set = gtk_tree_model_get_iter_first(
+                            GTK_TREE_MODEL(nodes_model), &iter);
+    if(!was_set) {
+        return;
+    }
+
+    GValue value = G_VALUE_INIT;
+
+    int i = 0;
+    do {
+        gtk_tree_model_get_value(
+                            GTK_TREE_MODEL(nodes_model), &iter, 0, &value);
+        char* n = g_value_dup_string(&value);
+        g_value_unset(&value);
+
+        gtk_tree_model_get_value(
+                            GTK_TREE_MODEL(nodes_model), &iter, 1, &value);
+        float v = g_value_get_float(&value);
+        g_value_unset(&value);
+
+        /* Set values */
+        names[i] = n;
+        probs[i] = v;
+
+        was_set = gtk_tree_model_iter_next(
+                            GTK_TREE_MODEL(nodes_model), &iter);
+        i++;
+    } while(was_set);
+
+    /* Execute algorithm */
+    bool success = optbst(c);
+    if(!success) {
+        show_error(window, "Error while processing the information. "
+                           "Please check your data.");
+    }
+
+    /* Show tables */
+    printf("-----------------------------------\n");
+    matrix_print(c->table_a);
+
+    printf("-----------------------------------\n");
+    matrix_print(c->table_r);
+
+    /* Generate report */
+    bool report_created = optbst_report(c);
+    if(!report_created) {
+        show_error(window, "Report could not be created. "
+                           "Please check your data.");
+    } else {
+        printf("Report created at reports/optbst.tex\n");
+
+        int as_pdf = latex2pdf("optbst", "reports");
+        if(as_pdf == 0) {
+            printf("PDF version available at reports/optbst.pdf\n");
+        } else {
+            char* error = g_strdup_printf("Unable to convert report to PDF. "
+                                          "Status: %i.", as_pdf);
+            show_error(window, error);
+            g_free(error);
+        }
+    }
 }

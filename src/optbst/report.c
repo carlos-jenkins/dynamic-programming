@@ -70,8 +70,8 @@ bool optbst_report(optbst_context* c)
     fprintf(report, "\\newpage\n\\tableofcontents\n\\newpage\n");
     fprintf(report, "\n");
 
-    /* Write tables */
-    fprintf(report, "\\subsection{%s}\n", "Tables");
+    /* Write execution */
+    fprintf(report, "\\subsection{%s}\n", "Execution");
     optbst_execution(c, report);
     fprintf(report, "\n");
 
