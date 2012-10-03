@@ -337,15 +337,80 @@ void load_cb(GtkButton* button, gpointer user_data)
 void save(FILE* file)
 {
     printf("save()\n");
-    /**
-     * FIXME: IMPLEMENT
-     **/
+    fprintf( file, "%s\n", g_strdup(gtk_entry_get_text(name)));
+    fprintf( file, "%4.2f\n", gtk_spin_button_get_value(new));
+    fprintf( file, "%d\n", gtk_spin_button_get_value_as_int(life));
+    fprintf( file, "%d\n", gtk_spin_button_get_value_as_int(plan));
+    GtkTreeIter iter;
+    GValue value = G_VALUE_INIT;
+    bool was_set = gtk_tree_model_get_iter_first(
+                            GTK_TREE_MODEL(costs_model), &iter);
+    if(!was_set) {
+        return;
+    }
+    do {
+        gtk_tree_model_get_value(
+                            GTK_TREE_MODEL(costs_model), &iter, 1, &value);
+        float m = g_value_get_float(&value);
+        g_value_unset(&value);
+
+        gtk_tree_model_get_value(
+                            GTK_TREE_MODEL(costs_model), &iter, 2, &value);
+        float s = g_value_get_float(&value);
+        g_value_unset(&value);
+
+        was_set = gtk_tree_model_iter_next(
+                            GTK_TREE_MODEL(costs_model), &iter);
+
+        fprintf( file, "%4.2f %4.2f\n", m, s);
+
+    } while(was_set);
+     
 }
 
 void load(FILE* file)
 {
     printf("load()\n");
-    /**
-     * FIXME: IMPLEMENT
-     **/
+    char equip;
+    gchar* e = (gchar*)malloc(sizeof(gchar));
+    int v=0;
+    float c=0.0;
+
+    fscanf( file, "%s[^\n]",  &equip);
+    g_stpcpy (e, &equip);
+    gtk_entry_set_text(name,  e);
+    
+    fscanf( file, "%f[^\n]", &c);
+    gtk_spin_button_set_value(new, (gdouble)c);
+    
+    fscanf( file, "%d[^\n]", &v);
+    gtk_spin_button_set_value(life, v);
+
+    fscanf( file, "%d[^\n]", &v);
+    gtk_spin_button_set_value(plan, v);
+    
+    GtkTreeIter iter;
+    GValue value = G_VALUE_INIT;
+
+
+    float m, s = 0.0;
+    fscanf( file, "%f %f[^\n]", &m, &s);
+
+    printf("%4.2f,  %4.2f", m ,s);
+/*
+        g_value_init(&value, G_TYPE_FLOAT);
+        g_value_set_float(&value, v);
+        gtk_list_store_set_value(costs_model, &iter, 1, &value);
+
+        g_value_unset(&value);
+
+        g_value_init(&value, G_TYPE_FLOAT);
+        g_value_set_float(&value, v);
+        gtk_list_store_set_value(costs_model, &iter, 2, &value);
+
+        g_value_unset(&value);
+*/
+    
+
+    
 }
