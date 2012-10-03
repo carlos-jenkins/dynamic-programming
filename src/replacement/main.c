@@ -362,7 +362,7 @@ void save(FILE* file)
         was_set = gtk_tree_model_iter_next(
                             GTK_TREE_MODEL(costs_model), &iter);
 
-        fprintf( file, "%4.2f %4.2f\n", m, s);
+        fprintf( file, "%4f %4f\n", m, s);
 
     } while(was_set);
      
@@ -388,29 +388,25 @@ void load(FILE* file)
 
     fscanf( file, "%d[^\n]", &v);
     gtk_spin_button_set_value(plan, v);
-    
+
     GtkTreeIter iter;
     GValue value = G_VALUE_INIT;
-
+    gtk_tree_model_get_iter_first(
+                            GTK_TREE_MODEL(costs_model), &iter);
 
     float m, s = 0.0;
-    fscanf( file, "%f %f[^\n]", &m, &s);
+    while(fscanf( file, "%4f %4f[^\n]", &m, &s) != EOF) {
 
-    printf("%4.2f,  %4.2f", m ,s);
-/*
         g_value_init(&value, G_TYPE_FLOAT);
-        g_value_set_float(&value, v);
+        g_value_set_float(&value, m);
         gtk_list_store_set_value(costs_model, &iter, 1, &value);
 
         g_value_unset(&value);
 
         g_value_init(&value, G_TYPE_FLOAT);
-        g_value_set_float(&value, v);
+        g_value_set_float(&value, s);
         gtk_list_store_set_value(costs_model, &iter, 2, &value);
-
         g_value_unset(&value);
-*/
-    
 
-    
+    }   
 }
