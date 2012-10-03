@@ -339,8 +339,8 @@ void save(FILE* file)
     printf("save()\n");
     fprintf( file, "%s\n", g_strdup(gtk_entry_get_text(name)));
     fprintf( file, "%4.2f\n", gtk_spin_button_get_value(new));
-    fprintf( file, "%d\n", gtk_spin_button_get_value_as_int(life));
-    fprintf( file, "%d\n", gtk_spin_button_get_value_as_int(plan));
+    fprintf( file, "%i\n", gtk_spin_button_get_value_as_int(life));
+    fprintf( file, "%i\n", gtk_spin_button_get_value_as_int(plan));
     GtkTreeIter iter;
     GValue value = G_VALUE_INIT;
     bool was_set = gtk_tree_model_get_iter_first(
