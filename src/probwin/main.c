@@ -350,28 +350,19 @@ void load_cb(GtkButton* button, gpointer user_data)
 
 void save(FILE* file)
 {
-    printf("save()\n");
+    fprintf(file, "%s\n", gtk_entry_get_text(team_a_name));
+    fprintf(file, "%s\n", gtk_entry_get_text(team_b_name));
 
-    fprintf(file, "%s\n", g_strdup(gtk_entry_get_text(team_a_name)));
-    fprintf(file, "%s\n", g_strdup(gtk_entry_get_text(team_b_name)));
-
-    fprintf(file, "%1.2f\n", gtk_spin_button_get_value(prob_a_home));
-    fprintf(file, "%1.2f\n", gtk_spin_button_get_value(prob_a_road));
-
+    fprintf(file, "%1.4f\n", gtk_spin_button_get_value(prob_a_home));
+    fprintf(file, "%1.4f\n", gtk_spin_button_get_value(prob_a_road));
 
     fprintf( file, "%i\n", gtk_spin_button_get_value_as_int(num_games));
 
-
     GtkTreeIter iter;
+    GValue value = G_VALUE_INIT;
     bool was_set = gtk_tree_model_get_iter_first(
                             GTK_TREE_MODEL(format_model), &iter);
-    if(!was_set) {
-        return;
-    }
-
-    GValue value = G_VALUE_INIT;
-
-    do {
+    while(was_set) {
         gtk_tree_model_get_value(
                             GTK_TREE_MODEL(format_model), &iter, 1, &value);
         bool w = g_value_get_boolean(&value);
@@ -380,9 +371,8 @@ void save(FILE* file)
         was_set = gtk_tree_model_iter_next(
                             GTK_TREE_MODEL(format_model), &iter);
 
-        fprintf( file, "%i\n", w);
-
-    } while(was_set);
+        fprintf(file, "%i\n", w);
+    }
 
 }
 
