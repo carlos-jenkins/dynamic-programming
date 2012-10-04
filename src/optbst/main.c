@@ -483,20 +483,14 @@ void load_cb(GtkButton* button, gpointer user_data)
 
 void save(FILE* file)
 {
-    printf("save()\n");
-    fprintf( file, "%d\n",gtk_tree_model_iter_n_children(
+    fprintf(file, "%i\n", gtk_tree_model_iter_n_children(
                                     GTK_TREE_MODEL(nodes_model), NULL));
 
- GtkTreeIter iter;
-    bool was_set = gtk_tree_model_get_iter_first(
-                            GTK_TREE_MODEL(nodes_model), &iter);
-    if(!was_set) {
-        return;
-    }
-
+    GtkTreeIter iter;
     GValue value = G_VALUE_INIT;
-
-    do {
+    bool was_set = gtk_tree_model_get_iter_first(
+                                    GTK_TREE_MODEL(nodes_model), &iter);
+    while(was_set) {
         gtk_tree_model_get_value(
                             GTK_TREE_MODEL(nodes_model), &iter, 0, &value);
         char* n = g_value_dup_string(&value);
@@ -507,13 +501,15 @@ void save(FILE* file)
         float v = g_value_get_float(&value);
         g_value_unset(&value);
 
+        fprintf(file, "%s %.4f\n", n, v);
+        g_free(n);
+
+        /* Next */
         was_set = gtk_tree_model_iter_next(
                             GTK_TREE_MODEL(nodes_model), &iter);
-        fprintf( file, "%s %4.2f\n", n, v);
+    }
 
-    } while(was_set);
-
-    fprintf(file, "%d", gtk_toggle_button_get_active(weight_or_prob));
+    fprintf(file, "%i\n", gtk_toggle_button_get_active(weight_or_prob));
 }
 
 void load(FILE* file)
