@@ -284,38 +284,76 @@ void process(GtkButton* button, gpointer user_data)
 
 void save_cb(GtkButton* button, gpointer user_data)
 {
+    /* Load save dialog */
     int response = gtk_dialog_run(GTK_DIALOG(save_dialog));
-    gtk_widget_hide(GTK_WIDGET(save_dialog));
     if(response != 0) {
+        gtk_widget_hide(GTK_WIDGET(save_dialog));
         return;
     }
 
-    char *filename;
+    /* Get filename */
+    char* filename;
     filename = gtk_file_chooser_get_filename(save_dialog);
+
+    /* Check is not empty */
+    printf("Selected file: %s\n", filename);
+    if((filename == NULL) || is_empty_string(filename)) {
+        show_error(window, "Please select a file.");
+        g_free(filename);
+        save_cb(button, user_data);
+        return;
+    }
+    gtk_widget_hide(GTK_WIDGET(save_dialog));
+
+    /* Check extension */
+    if(!g_str_has_suffix(filename, ".replacement")) {
+        char* new_filename = g_strdup_printf("%s.replacement", filename);
+        g_free(filename);
+        filename = new_filename;
+    }
+
+    /* Try to open file for writing */
     FILE* file = fopen(filename, "w");
     if(file == NULL) {
         show_error(window, "An error ocurred while trying to open "
                            "the file. Check you have permissions.");
+        g_free(filename);
         return;
     }
 
-    printf("%s\n", filename);
+    /* Save current context */
+    printf("Saving to file %s\n", filename);
     save(file);
 
+    /* Free resources */
     fclose(file);
     g_free(filename);
 }
 
 void load_cb(GtkButton* button, gpointer user_data)
 {
+    /* Load load dialog */
     int response = gtk_dialog_run(GTK_DIALOG(load_dialog));
-    gtk_widget_hide(GTK_WIDGET(load_dialog));
     if(response != 0) {
+        gtk_widget_hide(GTK_WIDGET(load_dialog));
         return;
     }
 
-    char *filename;
+    /* Get filename */
+    char* filename;
     filename = gtk_file_chooser_get_filename(load_dialog);
+
+    /* Check is not empty */
+    printf("Selected file: %s\n", filename);
+    if((filename == NULL) || is_empty_string(filename)) {
+        show_error(window, "Please select a file.");
+        g_free(filename);
+        load_cb(button, user_data);
+        return;
+    }
+    gtk_widget_hide(GTK_WIDGET(load_dialog));
+
+    /* Try to open file for reading */
     if(!file_exists(filename)) {
         show_error(window, "The selected file doesn't exists.");
         return;
@@ -327,28 +365,27 @@ void load_cb(GtkButton* button, gpointer user_data)
         return;
     }
 
-    printf("%s\n", filename);
+    /* Load file */
+    printf("Loading file %s\n", filename);
     load(file);
 
+    /* Free resources */
     fclose(file);
     g_free(filename);
 }
 
 void save(FILE* file)
 {
-    printf("save()\n");
-    fprintf( file, "%s\n", g_strdup(gtk_entry_get_text(name)));
-    fprintf( file, "%4.2f\n", gtk_spin_button_get_value(new));
-    fprintf( file, "%i\n", gtk_spin_button_get_value_as_int(life));
-    fprintf( file, "%i\n", gtk_spin_button_get_value_as_int(plan));
+    fprintf(file, "%s\n", gtk_entry_get_text(name));
+    fprintf(file, "%.4f\n", gtk_spin_button_get_value(new));
+    fprintf(file, "%i\n", gtk_spin_button_get_value_as_int(life));
+    fprintf(file, "%i\n", gtk_spin_button_get_value_as_int(plan));
+
     GtkTreeIter iter;
     GValue value = G_VALUE_INIT;
     bool was_set = gtk_tree_model_get_iter_first(
                             GTK_TREE_MODEL(costs_model), &iter);
-    if(!was_set) {
-        return;
-    }
-    do {
+    while(was_set) {
         gtk_tree_model_get_value(
                             GTK_TREE_MODEL(costs_model), &iter, 1, &value);
         float m = g_value_get_float(&value);
@@ -362,51 +399,53 @@ void save(FILE* file)
         was_set = gtk_tree_model_iter_next(
                             GTK_TREE_MODEL(costs_model), &iter);
 
-        fprintf( file, "%4f %4f\n", m, s);
+        fprintf(file, "%.4f %.4f\n", m, s);
 
-    } while(was_set);
-     
+    }
 }
 
 void load(FILE* file)
 {
-    printf("load()\n");
-    char equip;
-    gchar* e = (gchar*)malloc(sizeof(gchar));
-    int v=0;
-    float c=0.0;
+    char* equip;
+    int v = 0;
+    float c = 0.0;
 
-    fscanf( file, "%s[^\n]",  &equip);
-    g_stpcpy (e, &equip);
-    gtk_entry_set_text(name,  e);
-    
-    fscanf( file, "%f[^\n]", &c);
+    /* Load equipment name */
+    equip = get_line(file);
+    gtk_entry_set_text(name, equip);
+
+    /* Load new equipment cost */
+    fscanf(file, "%f[^\n]", &c);
     gtk_spin_button_set_value(new, (gdouble)c);
-    
-    fscanf( file, "%d[^\n]", &v);
-    gtk_spin_button_set_value(life, v);
 
-    fscanf( file, "%d[^\n]", &v);
-    gtk_spin_button_set_value(plan, v);
+    /* Load equipment service life */
+    fscanf(file, "%i[^\n]", &v);
+    gtk_spin_button_set_value(life, (gdouble)v);
 
+    /* Load years plan */
+    fscanf(file, "%i[^\n]", &v);
+    gtk_spin_button_set_value(plan, (gdouble)v);
+
+    /* Load replacement and sale costs */
     GtkTreeIter iter;
-    GValue value = G_VALUE_INIT;
-    gtk_tree_model_get_iter_first(
+    bool has_row = gtk_tree_model_get_iter_first(
                             GTK_TREE_MODEL(costs_model), &iter);
 
-    float m, s = 0.0;
-    while(fscanf( file, "%4f %4f[^\n]", &m, &s) != EOF) {
+    float m = 0.0;
+    float s = 0.0;
+    int i = 0;
+    while((fscanf(file, "%f %f[^\n]", &m, &s) == 2) && has_row) {
 
-        g_value_init(&value, G_TYPE_FLOAT);
-        g_value_set_float(&value, m);
-        gtk_list_store_set_value(costs_model, &iter, 1, &value);
+        gtk_list_store_set(costs_model, &iter,
+                        0, i + 1,
+                        1, m,
+                        2, s,
+                        3, g_strdup_printf("%.4f", m),
+                        4, g_strdup_printf("%.4f", s),
+                        -1);
 
-        g_value_unset(&value);
-
-        g_value_init(&value, G_TYPE_FLOAT);
-        g_value_set_float(&value, s);
-        gtk_list_store_set_value(costs_model, &iter, 2, &value);
-        g_value_unset(&value);
-
-    }   
+        /* Next row */
+        has_row = gtk_tree_model_iter_next(GTK_TREE_MODEL(costs_model), &iter);
+        i++;
+    }
 }

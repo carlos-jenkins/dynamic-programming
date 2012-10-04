@@ -48,4 +48,6 @@ bool is_empty_string(char* string);
 
 char* sequence_name(int s);
 
+char* get_line();
+
 #endif

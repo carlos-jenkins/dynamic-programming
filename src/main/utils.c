@@ -154,3 +154,21 @@ char* sequence_name(int s)
     if(s < 0) { s *= -1; }
     return g_strdup_printf("%s%i", seq_names[s % 26], s / 26);
 }
+
+char* get_line(FILE * f)
+{
+    size_t size = 0;
+    size_t len  = 0;
+    size_t last = 0;
+    char* buf  = NULL;
+
+    do {
+        size += BUFSIZ;
+        buf = realloc(buf, size);
+        fgets(buf + last, size, f);
+        len = strlen(buf);
+        last = len - 1;
+    } while (!feof(f) && (buf[last] != '\n'));
+    buf[last] = '\0';
+    return buf;
+}

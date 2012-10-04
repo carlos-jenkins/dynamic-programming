@@ -130,7 +130,7 @@
             </child>
             <child>
               <object class="GtkButton" id="save_ok">
-                <property name="label">gtk-open</property>
+                <property name="label">gtk-save</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>

@@ -403,38 +403,76 @@ void process(GtkButton* button, gpointer user_data)
 
 void save_cb(GtkButton* button, gpointer user_data)
 {
+    /* Load save dialog */
     int response = gtk_dialog_run(GTK_DIALOG(save_dialog));
-    gtk_widget_hide(GTK_WIDGET(save_dialog));
     if(response != 0) {
+        gtk_widget_hide(GTK_WIDGET(save_dialog));
         return;
     }
 
-    char *filename;
+    /* Get filename */
+    char* filename;
     filename = gtk_file_chooser_get_filename(save_dialog);
+
+    /* Check is not empty */
+    printf("Selected file: %s\n", filename);
+    if((filename == NULL) || is_empty_string(filename)) {
+        show_error(window, "Please select a file.");
+        g_free(filename);
+        save_cb(button, user_data);
+        return;
+    }
+    gtk_widget_hide(GTK_WIDGET(save_dialog));
+
+    /* Check extension */
+    if(!g_str_has_suffix(filename, ".floyd")) {
+        char* new_filename = g_strdup_printf("%s.floyd", filename);
+        g_free(filename);
+        filename = new_filename;
+    }
+
+    /* Try to open file for writing */
     FILE* file = fopen(filename, "w");
     if(file == NULL) {
         show_error(window, "An error ocurred while trying to open "
                            "the file. Check you have permissions.");
+        g_free(filename);
         return;
     }
 
-    printf("%s\n", filename);
+    /* Save current context */
+    printf("Saving to file %s\n", filename);
     save(file);
 
+    /* Free resources */
     fclose(file);
     g_free(filename);
 }
 
 void load_cb(GtkButton* button, gpointer user_data)
 {
+    /* Load load dialog */
     int response = gtk_dialog_run(GTK_DIALOG(load_dialog));
-    gtk_widget_hide(GTK_WIDGET(load_dialog));
     if(response != 0) {
+        gtk_widget_hide(GTK_WIDGET(load_dialog));
         return;
     }
 
-    char *filename;
+    /* Get filename */
+    char* filename;
     filename = gtk_file_chooser_get_filename(load_dialog);
+
+    /* Check is not empty */
+    printf("Selected file: %s\n", filename);
+    if((filename == NULL) || is_empty_string(filename)) {
+        show_error(window, "Please select a file.");
+        g_free(filename);
+        load_cb(button, user_data);
+        return;
+    }
+    gtk_widget_hide(GTK_WIDGET(load_dialog));
+
+    /* Try to open file for reading */
     if(!file_exists(filename)) {
         show_error(window, "The selected file doesn't exists.");
         return;
@@ -446,9 +484,11 @@ void load_cb(GtkButton* button, gpointer user_data)
         return;
     }
 
-    printf("%s\n", filename);
+    /* Load file */
+    printf("Loading file %s\n", filename);
     load(file);
 
+    /* Free resources */
     fclose(file);
     g_free(filename);
 }

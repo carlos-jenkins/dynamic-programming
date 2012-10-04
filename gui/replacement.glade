@@ -105,7 +105,7 @@
   <object class="GtkAdjustment" id="new_adjustment">
     <property name="lower">1</property>
     <property name="upper">100000000</property>
-    <property name="value">1</property>
+    <property name="value">1000</property>
     <property name="step_increment">1</property>
     <property name="page_increment">10</property>
   </object>
@@ -155,7 +155,7 @@
             </child>
             <child>
               <object class="GtkButton" id="save_ok">
-                <property name="label">gtk-open</property>
+                <property name="label">gtk-save</property>
                 <property name="use_action_appearance">False</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -349,7 +349,7 @@
                 <property name="invisible_char">•</property>
                 <property name="invisible_char_set">True</property>
                 <property name="adjustment">new_adjustment</property>
-                <property name="digits">2</property>
+                <property name="digits">4</property>
                 <property name="numeric">True</property>
               </object>
               <packing>

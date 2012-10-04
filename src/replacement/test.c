@@ -24,7 +24,9 @@ int main(int argc, char **argv)
     printf("Testing Equipment replacement...\n\n");
 
     /* Create context */
-    replacement_context* c = replacement_context_new(5, 3);
+    int years_plan = 5;
+    int lifetime = 3;
+    replacement_context* c = replacement_context_new(years_plan, lifetime);
     if(c == NULL) {
         printf("Unable to create  Equipment replacement's "
                "context... exiting.\n");
