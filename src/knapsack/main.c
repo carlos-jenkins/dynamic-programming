@@ -228,12 +228,13 @@ void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
         if(is_inf == 0 || is_empty_string(new_text)) {
             g_value_init(&value, G_TYPE_INT);
             g_value_set_int(&value, (int) PLUS_INF);
-
+            gtk_list_store_set_value(items_model, &iter, column, &value);
             g_value_unset(&value);
 
             g_value_init(&value, G_TYPE_STRING);
             g_value_set_string(&value, "oo");
             gtk_list_store_set_value(items_model, &iter, column + 1, &value);
+            g_value_unset(&value);
 
             return;
         }
@@ -445,21 +446,17 @@ void load_cb(GtkButton* button, gpointer user_data)
 
 void save(FILE* file)
 {
-    printf("save()\n");
-
-    fprintf( file, "%i\n",gtk_tree_model_iter_n_children(
+    /* Number of items */
+    fprintf(file, "%i\n", gtk_tree_model_iter_n_children(
                                     GTK_TREE_MODEL(items_model), NULL));
 
+    /* Items data */
     GtkTreeIter iter;
-    bool was_set = gtk_tree_model_get_iter_first(
-                            GTK_TREE_MODEL(items_model), &iter);
-    if(!was_set) {
-        return;
-    }
-
     GValue value = G_VALUE_INIT;
+    bool was_set = gtk_tree_model_get_iter_first(
+                                    GTK_TREE_MODEL(items_model), &iter);
+    while(was_set) {
 
-    do {
         gtk_tree_model_get_value(
                             GTK_TREE_MODEL(items_model), &iter, 0, &value);
         char* n = g_value_dup_string(&value);
@@ -480,17 +477,16 @@ void save(FILE* file)
         int a = g_value_get_int(&value);
         g_value_unset(&value);
 
+        fprintf(file, "%s %i %i %i\n", n, v, w, a);
+        g_free(n);
+
+        /* Next */
         was_set = gtk_tree_model_iter_next(
                             GTK_TREE_MODEL(items_model), &iter);
+    }
 
-	fprintf(file, "%s %i %i %i\n", n, v, w, a);
-
-    } while(was_set);
-
-    fprintf(file, "%i\n",gtk_spin_button_get_value_as_int(capacity));
-    fprintf(file, "%s",  g_strdup(gtk_entry_get_text(unit)));
-
-
+    fprintf(file, "%i\n", gtk_spin_button_get_value_as_int(capacity));
+    fprintf(file, "%s\n", gtk_entry_get_text(unit));
 }
 
 void load(FILE* file)
@@ -500,4 +496,3 @@ void load(FILE* file)
      * FIXME: IMPLEMENT
      **/
 }
-
