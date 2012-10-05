@@ -98,7 +98,7 @@ void floyd_context_free(floyd_context* c)
 bool floyd(floyd_context *c)
 {
     /* Create graph and first iteration */
-    floyd_graph(c);
+    floyd_graph(c->table_d, c->names);
     floyd_execution(c, 0);
 
     /* Start counting time */

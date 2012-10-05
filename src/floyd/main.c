@@ -259,7 +259,7 @@ void update_graph()
     }
 
     /* Create graph */
-    floyd_graph(c);
+    floyd_graph(adj_matrix, c->names);
     if(gv2png("graph", "reports") < 0) {
         gtk_image_set_from_pixbuf(graph, NULL);
         return;

@@ -280,7 +280,7 @@ void floyd_table(matrix* m, bool d, int k, FILE* stream)
     fprintf(stream, "\n");
 }
 
-void floyd_graph(floyd_context* c)
+void floyd_graph(matrix* m, char** n)
 {
     /* Create graph file */
     FILE* graph = fopen("reports/graph.gv", "w");
@@ -294,16 +294,16 @@ void floyd_graph(floyd_context* c)
     fprintf(graph, "    node [shape = circle];\n\n");
 
     /* Labels */
-    for(int i = 0; i < c->table_d->rows; i++) {
-        char* name = c->names[i];
+    for(int i = 0; i < m->rows; i++) {
+        char* name = n[i];
         fprintf(graph, "    %i [label = \"%s\"];\n", i + 1, name);
     }
     fprintf(graph, "\n");
 
     /* Vertices */
-    for(int i = 0; i < c->table_d->rows; i++) {
-        for(int j = 0; j < c->table_d->columns; j++) {
-            float weight = c->table_d->data[i][j];
+    for(int i = 0; i < m->rows; i++) {
+        for(int j = 0; j < m->columns; j++) {
+            float weight = m->data[i][j];
             if((weight != PLUS_INF) && (weight != 0.0)) {
                 if(ceilf(weight) == weight) {
                     fprintf(graph, "    %i -> %i [label = \"%.0f\"];\n",

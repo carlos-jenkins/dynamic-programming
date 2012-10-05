@@ -32,6 +32,6 @@
 bool floyd_report(floyd_context* c);
 void floyd_execution(floyd_context* c, int k);
 void floyd_table(matrix* m, bool d, int k, FILE* stream);
-void floyd_graph(floyd_context* c);
+void floyd_graph(matrix* m, char** n);
 
 #endif
