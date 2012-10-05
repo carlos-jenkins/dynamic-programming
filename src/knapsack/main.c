@@ -477,8 +477,18 @@ void save(FILE* file)
         int a = g_value_get_int(&value);
         g_value_unset(&value);
 
-        fprintf(file, "%s %i %i %i\n", n, v, w, a);
+        gtk_tree_model_get_value(
+                            GTK_TREE_MODEL(items_model), &iter, 4, &value);
+        char* as = g_value_dup_string(&value);
+        g_value_unset(&value);
+
+        if(strncmp(as, "oo", 2) == 0) {
+            fprintf(file, "%s %i %i oo\n", n, v, w);
+        } else {
+            fprintf(file, "%s %i %i %i\n", n, v, w, a);
+        }
         g_free(n);
+        g_free(as);
 
         /* Next */
         was_set = gtk_tree_model_iter_next(
