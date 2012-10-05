@@ -32,6 +32,7 @@ GtkFileChooser* save_dialog;
 
 /* Context */
 floyd_context* c = NULL;
+matrix* adj_matrix = NULL;
 
 /* Functions */
 bool change_matrix(int size);
@@ -101,12 +102,25 @@ bool change_matrix(int size)
     }
     int rsize = size + 1;
 
+    /* Try to create the adjacency matrix */
+    if(adj_matrix != NULL) {
+        matrix_free(adj_matrix);
+    }
+    adj_matrix = matrix_new(size, size, PLUS_INF);
+    if(adj_matrix == NULL) {
+        return false;
+    }
+    for(int i = 0; i < size; i++) {
+        adj_matrix->data[i][i] = 0.0;
+    }
+
     /* Try to create the new context */
     if(c != NULL) {
         floyd_context_free(c);
     }
     c = floyd_context_new(size);
     if(c == NULL) {
+        matrix_free(adj_matrix);
         return false;
     }
 
@@ -118,6 +132,7 @@ bool change_matrix(int size)
     /* Create the dynamic types array */
     GType* types = (GType*) malloc(3 * rsize * sizeof(GType));
     if(types == NULL) {
+        matrix_free(adj_matrix);
         floyd_context_free(c);
         return false;
     }
@@ -328,7 +343,7 @@ void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
                             GTK_LIST_STORE(gtk_tree_view_get_model(input)),
                             &iter, column, &value);
 
-        c->table_d->data[row - 1][column - 1] = PLUS_INF;
+        adj_matrix->data[row - 1][column - 1] = PLUS_INF;
 
         /* Update the graph */
         update_graph();
@@ -345,7 +360,7 @@ void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
                             &iter, column, &value);
         g_free(distance_as_string);
 
-        c->table_d->data[row - 1][column - 1] = (float) distance;
+        adj_matrix->data[row - 1][column - 1] = (float) distance;
 
         /* Update the graph */
         update_graph();
@@ -374,17 +389,24 @@ void process(GtkButton* button, gpointer user_data)
     }
     floyd_context_clear(c);
 
+    /* Copy adjacency matrix */
+    for(int i = 0; i < adj_matrix->rows; i++) {
+        for(int j = 0; j < adj_matrix->columns; j++) {
+            c->table_d->data[i][j] = adj_matrix->data[i][j];
+        }
+    }
+
     /* Execute algorithm */
     bool success = floyd(c);
     if(!success) {
-        show_error(window, "Error while processing the information. "
+        show_error(window, "Error while processing the information.\n"
                            "Please check your data.");
     }
 
     /* Generate report */
     bool report_created = floyd_report(c);
     if(!report_created) {
-        show_error(window, "Report could not be created. "
+        show_error(window, "Report could not be created.\n"
                            "Please check your data.");
     } else {
         printf("Report created at reports/floyd.tex\n");
@@ -393,7 +415,7 @@ void process(GtkButton* button, gpointer user_data)
         if(as_pdf == 0) {
             printf("PDF version available at reports/floyd.pdf\n");
         } else {
-            char* error = g_strdup_printf("Unable to convert report to PDF. "
+            char* error = g_strdup_printf("Unable to convert report to PDF.\n"
                                           "Status: %i.", as_pdf);
             show_error(window, error);
             g_free(error);
@@ -495,10 +517,27 @@ void load_cb(GtkButton* button, gpointer user_data)
 
 void save(FILE* file)
 {
-    printf("save()\n");
-    /**
-     * FIXME: IMPLEMENT
-     **/
+    /* Number of nodes */
+    int num_nodes = adj_matrix->columns;
+    fprintf(file, "%i\n", num_nodes);
+
+    /* Nodes names */
+    for(int i = 0; i < num_nodes; i++) {
+        fprintf(file, "%s\n", c->names[i]);
+    }
+
+    /* Adjacency matrix */
+    for(int i = 0; i < adj_matrix->rows; i++) {
+        for(int j = 0; j < adj_matrix->columns; j++) {
+            float d = adj_matrix->data[i][j];
+            if(d == PLUS_INF) {
+                fprintf(file, "oo ");
+            } else {
+                fprintf(file, "%i ", (int)d);
+            }
+        }
+        fprintf(file, "\n");
+    }
 }
 
 void load(FILE* file)
