@@ -275,7 +275,7 @@ void update_graph()
             g_warning("%s", error->message);
             g_error_free(error);
         } else {
-            g_warning("Unknown while loading the graph.");
+            g_warning("Unknown error while loading the graph.");
         }
         return;
     }
