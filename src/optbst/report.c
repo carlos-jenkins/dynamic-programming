@@ -131,16 +131,8 @@ int find_lnodes(matrix* r, int i, int j, FILE* stream, int level)
 
     /* Current node, search node */
     int cn = (int)r->data[i][j];
-    int sn;
-
-    /* Search node */
-    while(j >= 0) {
-        sn = (int)r->data[i][j];
-        if(cn != sn) {
-            break;
-        }
-        j--;
-    }
+    j = cn - 1;
+    int sn = (int)r->data[i][j];
 
     /* No childs */
     if(sn == 0) {
@@ -262,7 +254,7 @@ void optbst_table(matrix* m, bool a, FILE* stream)
     /* Table headers */
     fprintf(stream, " & ");
     for(int j = 0; j < m->columns; j++) {
-        fprintf(stream, "\\cellcolor{gray90}\\textbf{%i}", j);
+        fprintf(stream, "\\cellcolor{gray90}\\textbf{%i}", j + 1);
         if(j < m->columns - 1) {
             fprintf(stream, " & ");
         }
@@ -272,7 +264,7 @@ void optbst_table(matrix* m, bool a, FILE* stream)
     /* Table body */
     for(int i = 0; i < m->rows; i++) {
         fprintf(stream, "\\multicolumn{1}{|c||}"
-                        "{\\cellcolor{gray90}\\textbf{%i}} & ", i + 1);
+                        "{\\cellcolor{gray90}\\textbf{%i}} & ", i);
         for(int j = 0; j < m->columns; j++) {
 
             float cell = m->data[i][j];
