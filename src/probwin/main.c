@@ -378,8 +378,43 @@ void save(FILE* file)
 
 void load(FILE* file)
 {
-    printf("load()\n");
-    /**
-     * FIXME: IMPLEMENT
-     **/
+    /* Load name of the teams */
+    char* team = get_line(file);
+    gtk_entry_set_text(team_a_name, team);
+    free(team);
+
+    team = get_line(file);
+    gtk_entry_set_text(team_b_name, team);
+    free(team);
+
+    /* Load probabilities */
+    float prob = 0.0;
+    fscanf(file, "%f%*c", &prob);
+    gtk_spin_button_set_value(prob_a_home, (gdouble)prob);
+
+    fscanf(file, "%f%*c", &prob);
+    gtk_spin_button_set_value(prob_a_road, (gdouble)prob);
+
+    /* Load number of games */
+    int n_games = 0;
+    fscanf(file, "%i%*c", &n_games);
+    gtk_spin_button_set_value(num_games, (gdouble)n_games);
+
+    /* Load game format */
+    GtkTreeIter iter;
+    bool has_row = gtk_tree_model_get_iter_first(
+                            GTK_TREE_MODEL(format_model), &iter);
+
+    for(int i = 0; (i < n_games) && has_row; i++) {
+
+        /* Get values */
+        int at_home = 0;
+        fscanf(file, "%d%*c", &at_home);
+
+        /* Set values */
+        gtk_list_store_set(format_model, &iter, 0, i + 1, 1, (bool)at_home, -1);
+
+        /* Next */
+        has_row = gtk_tree_model_iter_next(GTK_TREE_MODEL(format_model), &iter);
+    }
 }
