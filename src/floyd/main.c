@@ -23,7 +23,8 @@
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
 /* GUI */
-GtkWindow  *window;
+GtkWindow* window;
+GtkSpinButton* nodes;
 GtkTreeView* input;
 GtkImage* graph;
 
@@ -33,6 +34,7 @@ GtkFileChooser* save_dialog;
 /* Context */
 floyd_context* c = NULL;
 matrix* adj_matrix = NULL;
+char** names = NULL;
 
 /* Functions */
 bool change_matrix(int size);
@@ -69,6 +71,7 @@ int main(int argc, char **argv)
 
     /* Get pointers to objects */
     window = GTK_WINDOW(gtk_builder_get_object(builder, "window"));
+    nodes = GTK_SPIN_BUTTON(gtk_builder_get_object(builder, "nodes"));
     input = GTK_TREE_VIEW(gtk_builder_get_object(builder, "input"));
     graph = GTK_IMAGE(gtk_builder_get_object(builder, "graph"));
 
@@ -100,7 +103,11 @@ bool change_matrix(int size)
     if(size < 2) {
         return false;
     }
-    int rsize = size + 1;
+
+    int old_size = 0;
+    if(adj_matrix != NULL) {
+        old_size = adj_matrix->columns;
+    }
 
     /* Try to create the adjacency matrix */
     if(adj_matrix != NULL) {
@@ -114,22 +121,23 @@ bool change_matrix(int size)
         adj_matrix->data[i][i] = 0.0;
     }
 
-    /* Try to create the new context */
-    if(c != NULL) {
-        floyd_context_free(c);
+    /* Try to create names array */
+    if(names != NULL) {
+        for(int i = 0; i < old_size; i++) {
+            free(names[i]);
+        }
+        free(names);
     }
-    c = floyd_context_new(size);
-    if(c == NULL) {
-        matrix_free(adj_matrix);
+    names = (char**) malloc(size * sizeof(char*));
+    if(names == NULL) {
         return false;
     }
-
-    /* Initialize context */
     for(int i = 0; i < size; i++) {
-        c->names[i] = sequence_name(i);
+        names[i] = sequence_name(i);
     }
 
     /* Create the dynamic types array */
+    int rsize = size + 1;
     GType* types = (GType*) malloc(3 * rsize * sizeof(GType));
     if(types == NULL) {
         matrix_free(adj_matrix);
@@ -254,12 +262,8 @@ bool change_matrix(int size)
 
 void update_graph()
 {
-    if(c == NULL) {
-        return;
-    }
-
     /* Create graph */
-    floyd_graph(adj_matrix, c->names);
+    floyd_graph(adj_matrix, names);
     if(gv2png("graph", "reports") < 0) {
         gtk_image_set_from_pixbuf(graph, NULL);
         return;
@@ -325,8 +329,8 @@ void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
                             GTK_LIST_STORE(gtk_tree_view_get_model(input)),
                             &iter, 0, &value);
 
-            g_free(c->names[column - 1]);
-            c->names[column - 1] = g_strdup(new_text);
+            g_free(names[column - 1]);
+            names[column - 1] = g_strdup(new_text);
 
             /* Update the graph */
             update_graph();
@@ -372,7 +376,7 @@ void cell_edited_cb(GtkCellRendererText* renderer, gchar* path,
 
 void change_matrix_cb(GtkSpinButton* spinbutton, gpointer user_data)
 {
-    /* Get the number of srequested nodes */
+    /* Get the number of requested nodes */
     int value = gtk_spin_button_get_value_as_int(spinbutton);
     bool success = change_matrix(value);
     if(!success) {
@@ -384,16 +388,21 @@ void change_matrix_cb(GtkSpinButton* spinbutton, gpointer user_data)
 
 void process(GtkButton* button, gpointer user_data)
 {
+    /* Try to create the new context */
+    if(c != NULL) {
+        floyd_context_free(c);
+    }
+    c = floyd_context_new(adj_matrix->columns);
     if(c == NULL) {
+        show_error(window, "Unable to allocate enough memory for "
+                           "this problem. Sorry.");
         return;
     }
-    floyd_context_clear(c);
 
-    /* Copy adjacency matrix */
-    for(int i = 0; i < adj_matrix->rows; i++) {
-        for(int j = 0; j < adj_matrix->columns; j++) {
-            c->table_d->data[i][j] = adj_matrix->data[i][j];
-        }
+    /* Copy adjacency matrix and names */
+    matrix_copy(adj_matrix, c->table_d);
+    for(int i = 0; i < adj_matrix->columns; i++) {
+        c->names[i] = names[i];
     }
 
     /* Execute algorithm */
@@ -523,7 +532,7 @@ void save(FILE* file)
 
     /* Nodes names */
     for(int i = 0; i < num_nodes; i++) {
-        fprintf(file, "%s\n", c->names[i]);
+        fprintf(file, "%s\n", names[i]);
     }
 
     /* Adjacency matrix */
@@ -542,8 +551,83 @@ void save(FILE* file)
 
 void load(FILE* file)
 {
-    printf("load()\n");
-    /**
-     * FIXME: IMPLEMENT
-     **/
+    /* Load number of nodes */
+    int num_nodes = 0;
+    fscanf(file, "%i%*c", &num_nodes);
+
+    /* Adapt GUI */
+    bool success = change_matrix(num_nodes);
+    if(!success) {
+        show_error(window, "Unable to allocate enough memory for "
+                           "this problem. Sorry.");
+        return;
+    }
+    gtk_spin_button_set_value(nodes, (gdouble)num_nodes);
+
+    /* Load node names */
+    GtkListStore* model = GTK_LIST_STORE(gtk_tree_view_get_model(input));
+    GtkTreeIter iter;
+    bool has_row = gtk_tree_model_get_iter_first(
+                            GTK_TREE_MODEL(model), &iter);
+    if(!has_row) {
+        return;
+    }
+
+    char* name_i = NULL;
+    GValue name_v = G_VALUE_INIT;
+
+    for(int i = 0; i < num_nodes; i++) {
+        /* Get name */
+        name_i = get_line(file);
+        /* Get create GValue */
+        g_value_init(&name_v, G_TYPE_STRING);
+        g_value_set_string(&name_v, name_i);
+        /* Store */
+        gtk_list_store_set_value(model, &iter, i + 1, &name_v);
+        names[i] = g_strdup(name_i);
+        /* Free resources */
+        g_value_unset(&name_v);
+        free(name_i);
+    }
+
+    /* Load adjacency matrix */
+    gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter);
+
+    char cell_i[12];
+    GValue cell_v = G_VALUE_INIT;
+
+    for(int i = 0; i < num_nodes; i++) {
+        for(int j = 0; j < num_nodes; j++) {
+            /* Get string */
+            fscanf(file, "%s", cell_i);
+
+            /* Set the cell */
+            if(i != j) {
+                g_value_init(&cell_v, G_TYPE_STRING);
+
+                /* Check if INFINITY */
+                if(strncmp((char*) &cell_i, "oo", 2) == 0) {
+                    adj_matrix->data[i][j] = PLUS_INF;
+                    g_value_set_string(&cell_v, "oo");
+                } else {
+                    int cell = atoi((char*) &cell_i);
+                    adj_matrix->data[i][j] = cell;
+                    g_value_set_string(&cell_v, (char*) &cell_i);
+                }
+
+                /* Set value in GUI */
+                gtk_list_store_set_value(model, &iter, j + 1, &cell_v);
+                g_value_unset(&cell_v);
+
+                /* Load name */
+                g_value_init(&cell_v, G_TYPE_STRING);
+                g_value_set_string(&cell_v, names[i]);
+                gtk_list_store_set_value(model, &iter, 0, &cell_v);
+                g_value_unset(&cell_v);
+            }
+        }
+        gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter);
+    }
+
+    update_graph();
 }

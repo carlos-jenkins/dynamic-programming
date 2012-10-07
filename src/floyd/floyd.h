@@ -43,7 +43,6 @@ typedef struct {
 } floyd_context;
 
 floyd_context* floyd_context_new(int nodes);
-void floyd_context_clear(floyd_context* c);
 void floyd_context_free(floyd_context* c);
 
 /**

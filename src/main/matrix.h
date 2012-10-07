@@ -21,6 +21,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 #include <float.h>
 
 #define MATRIX_DATATYPE float
@@ -32,9 +33,20 @@ typedef struct {
 } matrix;
 
 /**
+ * Copy the content of a matrix into another matrix. Matrices must be of
+ * the same size.
+ *
+ * @param src, the source matrix structure (by reference)
+ *        dest, the destination matrix structure (by reference)
+ * @return true if copy was successful, false otherwise.
+ */
+bool matrix_copy(matrix* src, matrix* dest);
+
+/**
  * Fill a matrix with the value given.
  *
- * @param matrix, a matrix structure (by reference)
+ * @param m, a matrix structure (by reference)
+ *        value, the value to fill the matrix.
  * @return nothing
  */
 void matrix_fill(matrix* m, MATRIX_DATATYPE value);
@@ -42,7 +54,7 @@ void matrix_fill(matrix* m, MATRIX_DATATYPE value);
 /**
  * Print a matrix to the standard output.
  *
- * @param matrix, a matrix structure (by reference)
+ * @param m, a matrix structure (by reference)
  * @return nothing
  */
 void matrix_print(matrix* m);
@@ -52,7 +64,7 @@ void matrix_print(matrix* m);
  *
  * @param rows, the number of rows
  * @param columns, the number of columns
- * @param value, value to initialize the matrix.
+ * @param fill, value to initialize the matrix.
  * @return a pointer to the matrix structure or NULL if enough memory could
  *         not be allocated.
  */
@@ -62,7 +74,7 @@ matrix* matrix_new(int rows, int columns, MATRIX_DATATYPE fill);
  * Calculates the memory required based on the matrix's columns and rows.
  *
  * @return the size of the matrix in bytes.
- * @param matrix, a matrix structure (by reference)
+ * @param m, a matrix structure (by reference)
  */
 unsigned int matrix_sizeof(matrix* m);
 
@@ -70,7 +82,7 @@ unsigned int matrix_sizeof(matrix* m);
  * Free resources associated with a matrix.
  *
  * @return nothing
- * @param matrix, a matrix structure (by reference)
+ * @param m, a matrix structure (by reference)
  */
 void matrix_free(matrix* m);
 
