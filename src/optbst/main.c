@@ -488,6 +488,8 @@ void save(FILE* file)
 
     GtkTreeIter iter;
     GValue value = G_VALUE_INIT;
+
+    /* Write node names */
     bool was_set = gtk_tree_model_get_iter_first(
                                     GTK_TREE_MODEL(nodes_model), &iter);
     while(was_set) {
@@ -496,13 +498,24 @@ void save(FILE* file)
         char* n = g_value_dup_string(&value);
         g_value_unset(&value);
 
+        fprintf(file, "%s\n", n);
+        g_free(n);
+
+        /* Next */
+        was_set = gtk_tree_model_iter_next(
+                            GTK_TREE_MODEL(nodes_model), &iter);
+    }
+
+    /* Write node names */
+    was_set = gtk_tree_model_get_iter_first(
+                                    GTK_TREE_MODEL(nodes_model), &iter);
+    while(was_set) {
         gtk_tree_model_get_value(
                             GTK_TREE_MODEL(nodes_model), &iter, 1, &value);
         float v = g_value_get_float(&value);
         g_value_unset(&value);
 
-        fprintf(file, "%s %.4f\n", n, v);
-        g_free(n);
+        fprintf(file, "%.4f\n", v);
 
         /* Next */
         was_set = gtk_tree_model_iter_next(
@@ -514,8 +527,51 @@ void save(FILE* file)
 
 void load(FILE* file)
 {
-    printf("load()\n");
-    /**
-     * FIXME: IMPLEMENT
-     **/
+    /* Load number of nodes */
+    int num_nodes = 0;
+    fscanf(file, "%i%*c", &num_nodes);
+
+    /* Adapt GUI */
+    gtk_list_store_clear(nodes_model);
+    for(int i = 0; i < num_nodes; i++) {
+        add_row(NULL, NULL);
+    }
+
+    /* Load nodes names */
+    char** names = (char**) malloc(num_nodes * sizeof(char*));
+    for(int i = 0; i < num_nodes; i++) {
+        names[i] = get_line(file);
+    }
+
+    /* Load nodes data */
+    GtkTreeIter iter;
+    bool has_row = gtk_tree_model_get_iter_first(
+                            GTK_TREE_MODEL(nodes_model), &iter);
+    float w = 0.0;
+    for(int i = 0; (i < num_nodes) && has_row; i++) {
+
+        /* Get values */
+        fscanf(file, "%f%*c", &w);
+
+        /* Set values */
+        gtk_list_store_set(nodes_model, &iter,
+                    0, names[i],
+                    1, w,
+                    2, g_strdup_printf("%.4f", w),
+                    -1);
+
+        /* Next */
+        has_row = gtk_tree_model_iter_next(GTK_TREE_MODEL(nodes_model), &iter);
+    }
+
+    /* Set capacity */
+    int is_w = 0;
+    fscanf(file, "%i%*c", &is_w);
+    gtk_toggle_button_set_active(weight_or_prob, (bool)is_w);
+
+    /* Free resources */
+    for(int i = 0; i < num_nodes; i++) {
+        free(names[i]);
+    }
+    free(names);
 }
