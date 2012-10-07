@@ -415,15 +415,15 @@ void load(FILE* file)
     gtk_entry_set_text(name, equip);
 
     /* Load new equipment cost */
-    fscanf(file, "%f[^\n]", &c);
+    fscanf(file, "%f%*c", &c);
     gtk_spin_button_set_value(new, (gdouble)c);
 
     /* Load equipment service life */
-    fscanf(file, "%i[^\n]", &v);
+    fscanf(file, "%i%*c", &v);
     gtk_spin_button_set_value(life, (gdouble)v);
 
     /* Load years plan */
-    fscanf(file, "%i[^\n]", &v);
+    fscanf(file, "%i%*c", &v);
     gtk_spin_button_set_value(plan, (gdouble)v);
 
     /* Load replacement and sale costs */
@@ -434,7 +434,7 @@ void load(FILE* file)
     float m = 0.0;
     float s = 0.0;
     int i = 0;
-    while((fscanf(file, "%f %f[^\n]", &m, &s) == 2) && has_row) {
+    while((fscanf(file, "%f %f%*c", &m, &s) == 2) && has_row) {
 
         gtk_list_store_set(costs_model, &iter,
                         0, i + 1,

@@ -450,7 +450,7 @@ void save(FILE* file)
     fprintf(file, "%i\n", gtk_tree_model_iter_n_children(
                                     GTK_TREE_MODEL(items_model), NULL));
 
-    /* Items data */
+    /* Items names */
     GtkTreeIter iter;
     GValue value = G_VALUE_INIT;
     bool was_set = gtk_tree_model_get_iter_first(
@@ -461,6 +461,19 @@ void save(FILE* file)
                             GTK_TREE_MODEL(items_model), &iter, 0, &value);
         char* n = g_value_dup_string(&value);
         g_value_unset(&value);
+
+        fprintf(file, "%s\n", n);
+
+        g_free(n);
+
+        /* Next */
+        was_set = gtk_tree_model_iter_next(GTK_TREE_MODEL(items_model), &iter);
+    }
+
+    /* Items data */
+    was_set = gtk_tree_model_get_iter_first(
+                                    GTK_TREE_MODEL(items_model), &iter);
+    while(was_set) {
 
         gtk_tree_model_get_value(
                             GTK_TREE_MODEL(items_model), &iter, 1, &value);
@@ -483,16 +496,14 @@ void save(FILE* file)
         g_value_unset(&value);
 
         if(strncmp(as, "oo", 2) == 0) {
-            fprintf(file, "%s %i %i oo\n", n, v, w);
+            fprintf(file, "%i %i oo\n", v, w);
         } else {
-            fprintf(file, "%s %i %i %i\n", n, v, w, a);
+            fprintf(file, "%i %i %i\n", v, w, a);
         }
-        g_free(n);
         g_free(as);
 
         /* Next */
-        was_set = gtk_tree_model_iter_next(
-                            GTK_TREE_MODEL(items_model), &iter);
+        was_set = gtk_tree_model_iter_next(GTK_TREE_MODEL(items_model), &iter);
     }
 
     fprintf(file, "%i\n", gtk_spin_button_get_value_as_int(capacity));
@@ -501,8 +512,71 @@ void save(FILE* file)
 
 void load(FILE* file)
 {
-    printf("load()\n");
-    /**
-     * FIXME: IMPLEMENT
-     **/
+    /* Load number of items */
+    int num_items = 0;
+    fscanf(file, "%i%*c", &num_items);
+
+    /* Adapt GUI */
+    gtk_list_store_clear(items_model);
+    for(int i = 0; i < num_items; i++) {
+        add_row(NULL, NULL);
+    }
+
+    /* Load items names */
+    char** names = (char**) malloc(num_items * sizeof(char*));
+    for(int i = 0; i < num_items; i++) {
+        names[i] = get_line(file);
+    }
+
+    /* Load items data */
+    GtkTreeIter iter;
+    bool has_row = gtk_tree_model_get_iter_first(
+                            GTK_TREE_MODEL(items_model), &iter);
+    int v = 0;
+    int w = 0;
+    char buf[12];
+    char* a = (char*) &buf;
+    for(int i = 0; (i < num_items) && has_row; i++) {
+
+        /* Get values */
+        fscanf(file, "%i %i %s%*c", &v, &w, a);
+
+        /* Set values */
+        if(strncmp(a, "oo", 2) == 0) {
+            gtk_list_store_set(items_model, &iter,
+                        0, names[i],
+                        1, v,
+                        2, w,
+                        3, (int) PLUS_INF,
+                        4, "oo",
+                        -1);
+        } else {
+            gtk_list_store_set(items_model, &iter,
+                        0, names[i],
+                        1, v,
+                        2, w,
+                        3, atoi(a),
+                        4, a,
+                        -1);
+        }
+
+        /* Next */
+        has_row = gtk_tree_model_iter_next(GTK_TREE_MODEL(items_model), &iter);
+    }
+
+    /* Set capacity */
+    int c = 0;
+    fscanf(file, "%i%*c", &c);
+    gtk_spin_button_set_value(capacity, (gdouble)c);
+
+    /* Set unit */
+    char* u = get_line(file);
+    gtk_entry_set_text(unit, u);
+    free(u);
+
+    /* Free resources */
+    for(int i = 0; i < num_items; i++) {
+        free(names[i]);
+    }
+    free(names);
 }
