@@ -34,9 +34,8 @@ bool replacement_report(replacement_context* c)
     fprintf(report, "\n");
 
     /* Write header */
-    
-    fprintf(report, "\\section{\\textcolor{deepgreen}{%s}}\n\n", "Equipment Replacement");
-    
+    fprintf(report, "\\section{%s}\n\n", "Equipment Replacement");
+
     fprintf(report, "\\noindent{\\huge %s.} \\\\[0.4cm]\n",
                     "Dynamic programming");
     fprintf(report, "{\\LARGE %s.}\\\\[0.4cm]\n", "Operation Research");
@@ -63,7 +62,7 @@ bool replacement_report(replacement_context* c)
     fprintf(report, "\\end{compactitem}\n");
     fprintf(report, "\n");
 
-    /* Write data */    
+    /* Write data */
     fprintf(report, "\\subsection{\\textcolor{deepblue}{%s}}\n", "Data");
     replacement_data(c, report);
     fprintf(report, "\\newpage\n");
@@ -74,12 +73,13 @@ bool replacement_report(replacement_context* c)
     fprintf(report, "\n");
 
      /* Write execution */
-    fprintf(report, "\\subsection{\\textcolor{deepblue}{%s}}\n", "Execution");    
-    replacement_table(c, report, c->table_c,
+    fprintf(report, "\\subsection{\\textcolor{deepblue}{%s}}\n", "Execution");
+    replacement_table(c, report, c->table_c, true,
                       "Table C: costs of buying the equipment in t "
                       "instant and sell it at x instant");
     fprintf(report, "\n\n");
-    replacement_table(c, report, c->table_p, "Table P: Replacement Plan");
+    replacement_table(c, report, c->table_p, false,
+                      "Table P: Replacement Plan");
     fprintf(report, "\n\n");
     replacement_mincost(c, report);
     fprintf(report, "\\newpage\n");
@@ -108,7 +108,8 @@ bool replacement_report(replacement_context* c)
     return true;
 }
 
-void replacement_table(replacement_context* c, FILE* stream, matrix* m, char* msj) {
+void replacement_table(replacement_context* c, FILE* stream, matrix* m,
+                       bool is_c, char* msj) {
 
     /* Table preamble */
     fprintf(stream, "\\begin{table}[!ht]\n");
@@ -123,7 +124,7 @@ void replacement_table(replacement_context* c, FILE* stream, matrix* m, char* ms
     /* Table headers */
     fprintf(stream, " & ");
     for(int j = 0; j < m->columns; j++) {
-        fprintf(stream, "\\cellcolor{deepgreen}\\textbf{%i}", j + 1);
+        fprintf(stream, "\\cellcolor{gray90}\\textbf{%i}", j + 1);
         if(j < m->columns - 1) {
             fprintf(stream, " & ");
         }
@@ -133,10 +134,16 @@ void replacement_table(replacement_context* c, FILE* stream, matrix* m, char* ms
     /* Table body */
     for(int i = 0; i < m->rows; i++) {
         fprintf(stream, "\\multicolumn{1}{|c||}"
-                        "{\\cellcolor{deepgreen}\\textbf{%i}} & ", i);
+                        "{\\cellcolor{gray90}\\textbf{%i}} & ", i);
         for(int j = 0; j < m->columns; j++) {
 
-            fprintf(stream, "%1.4f", m->data[i][j]);
+            if(j >= i) {
+                if(is_c) {
+                    fprintf(stream, "%1.4f", m->data[i][j]);
+                } else {
+                    fprintf(stream, "%1.0f", m->data[i][j]);
+                }
+            }
 
             if(j < m->columns - 1) {
                 fprintf(stream, " & ");
@@ -170,7 +177,7 @@ void replacement_mincost(replacement_context* c, FILE* stream){
 
     /* Table headers */
     for(int j = 0; j < size; j++) {
-        fprintf(stream, "\\cellcolor{deepgreen}\\textbf{%i}", j + 1);
+        fprintf(stream, "\\cellcolor{gray90}\\textbf{%i}", j);
         if(j < size - 1) {
             fprintf(stream, " & ");
         }
@@ -189,7 +196,7 @@ void replacement_mincost(replacement_context* c, FILE* stream){
     fprintf(stream, " \\\\ \\hline\n");
     fprintf(stream, "\\end{tabular}\n");
 
-    fprintf(stream, "\\caption{%s.}\n", "Table with the minimal costs");
+    fprintf(stream, "\\caption{%s.}\n", "Table with the minimum costs");
     fprintf(stream, "\\end{adjustwidth}\n");
     fprintf(stream, "\\end{table}\n");
     fprintf(stream, "\n\n\n");

@@ -123,34 +123,33 @@ void replacement_context_free(replacement_context* c)
 
 bool replacement(replacement_context* c)
 {
-
     /* Start counting time */
     GTimer* timer = g_timer_new();
 
-    /* Filling the Costs table */
+    /* Run the equipment replacement algorithm */
+
+    /* Fill the costs table */
     for(int j = 0; j < c->lifetime; j++) {
-        for(int i = 1; i <= c->years_plan - j; i++) {
+        for(int i = 0; i < c->years_plan - j; i++) {
             float cost = c->equipment_cost - c->sale_cost[j];
-            /* Calculating the accumulated cost */
+            /* Calculate the accumulated cost */
             for(int k = 0; k <= j; k++) {
                 cost += c->maintenance_cost[k];
             }
-            c->table_c->data[i - 1][j + i - 1] = cost;
+            c->table_c->data[i][j + i] = cost;
         }
     }
-    /* Run the equipment replacement algorithm */
 
     /* Calculate the minimum cost */
-    for(int i = c->years_plan; 0 <= i; i--) {
+    for(int i = c->years_plan; i >= 0; i--) {
         for(int j = i + 1; j <= c->years_plan; j++) {
             float min = c->table_c->data[i][j - 1] + c->minimum_cost[j];
-            if(min <= c->minimum_cost[i] && j - i <= c->lifetime) {
-                c->table_p->data[i][j - 1]=j;
+            if((min <= c->minimum_cost[i]) && (j - i <= c->lifetime)) {
+                c->table_p->data[i][j - 1] = j;
                 c->minimum_cost[i] = min;
             }
         }
     }
-
 
     /* Stop counting time */
     g_timer_stop(timer);
