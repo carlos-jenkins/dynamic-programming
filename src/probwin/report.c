@@ -97,8 +97,9 @@ bool probwin_report(probwin_context* c)
     fprintf(report, "\n");
 
     /* Write analisis */
-    //fprintf(report, "\\subsection{%s}\n", "Analisis");
-    //fprintf(report, "TODO\n");
+    fprintf(report, "\\subsection{%s}\n", "Analisis");
+    probwin_analysis(c, report);
+    fprintf(report, "\n");
 
 
     /* Write digest */
@@ -206,4 +207,25 @@ void probwin_table(probwin_context* c, FILE* stream)
     fprintf(stream, "\\end{adjustwidth}\n");
     fprintf(stream, "\\end{table}\n");
     fprintf(stream, "\n");
+}
+
+
+void probwin_analysis(probwin_context* c, FILE* stream){
+
+    matrix* m = c->table_w;
+
+    for(int i = 0; i < m->rows; i++){
+        for(int j = 0; j< m->columns; j++){
+            if(i != 0 && j != 0){
+                int current_game = c->games + 1 - i - j;
+                float prob = m->data[ i ][ j ];
+                fprintf(stream, "At game {\\Large %i} , {\\Large %s} has a "
+                    "probability to win of {\\Large %0.4f}, and therefore "
+                    "{\\Large %s} has a probability of {\\Large %0.4f}\n\n",
+                    current_game, c->a_name,  prob, c->b_name, 1 - prob);
+            }
+        }
+    }
+    
+
 }

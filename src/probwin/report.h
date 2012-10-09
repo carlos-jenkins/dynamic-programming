@@ -31,5 +31,6 @@
 bool probwin_report(probwin_context* c);
 void probwin_format(probwin_context* c, FILE* stream);
 void probwin_table(probwin_context* c, FILE* stream);
+void probwin_analysis(probwin_context* c, FILE* stream);
 
 #endif
