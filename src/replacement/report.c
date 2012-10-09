@@ -90,6 +90,12 @@ bool replacement_report(replacement_context* c)
     replacement_analisis(c, report);
     fprintf(report, "\n");
 
+
+    /* Write digest */
+    fprintf(report, "\\subsection{\\textcolor{deepblue}{%s}}\n", "Digest");
+    replacement_path(c, report);
+    fprintf(report, "\n");
+
     /* End document */
     fprintf(report, "\\end{document}\n");
     fprintf(report, "\n");
@@ -196,7 +202,7 @@ void replacement_mincost(replacement_context* c, FILE* stream){
     fprintf(stream, " \\\\ \\hline\n");
     fprintf(stream, "\\end{tabular}\n");
 
-    fprintf(stream, "\\caption{%s.}\n", "Table with the minimum costs");
+    fprintf(stream, "\\caption{%s.}\n", "Table with the minimal costs");
     fprintf(stream, "\\end{adjustwidth}\n");
     fprintf(stream, "\\end{table}\n");
     fprintf(stream, "\n\n\n");
@@ -230,4 +236,26 @@ void replacement_data(replacement_context* c, FILE* stream)
 
     fprintf(stream, "\\end{compactitem}\n");
     fprintf(stream, "\n");
+}
+
+void find_path(matrix* m, int i, FILE* stream){
+    
+    for(int k = 0; k < m->columns; k++){
+        int p = (int)m->data[i][k];
+        if(p != 0){
+            fprintf(stream, "%i -> ", p);
+            find_path(m, p, stream);
+        }
+    }
+}
+
+void replacement_path(replacement_context* c, FILE* stream){
+    matrix *p = c->table_p;
+    for(int i = 0; i < p->rows; i++){
+        for(int j = 0; j < p->columns; j++){
+            int n = (int)p->data[ i ][ j ];
+            find_path(p, n, stream);
+        }
+        fprintf(stream, "\n\n");
+    }
 }
