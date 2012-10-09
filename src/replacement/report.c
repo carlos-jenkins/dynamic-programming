@@ -233,28 +233,48 @@ void replacement_data(replacement_context* c, FILE* stream)
     fprintf(stream, "\n");
 }
 
-void find_path(matrix* m, int i, int j, FILE* stream)
+void find_path(matrix* m, int i, int* path, int c, FILE* stream)
 {
-    if(i == m->columns) {
-        fprintf(stream, "}.\n");
-        return;
+    bool is_end = true;
+    for(int j = i; j < m->columns; j++) {
+        int p = (int) m->data[i][j];
+        if(p != 0) {
+            is_end = false;
+            /* Append current to path */
+            path[c] = p;
+            /* Continue path search */
+            find_path(m, p, path, c + 1, stream);
+            /* Clear this branch path */
+            for(int k = c + 1; k <= m->rows; k++) {
+                path[k] = -1;
+            }
+        }
     }
 
-    for(int k = j; k < m->columns; k++) {
-        int p = (int) m->data[i][k];
-        if(p != 0) {
-            if(i == 0) {
-                fprintf(stream, "\\item \\textsc{");
-            }
-            fprintf(stream, "%i -> ", p);
-            find_path(m, p, j + 1, stream);
+    /* Flush route if is end */
+    if(is_end) {
+        fprintf(stream, "\\item \\textsc{");
+        for(int k = 0; path[k] != -1; k++) {
+            fprintf(stream, "%i ", path[k]);
         }
+        fprintf(stream, "}\n");
     }
 }
 
 void replacement_path(replacement_context* c, FILE* stream)
 {
     fprintf(stream, "\\begin{compactitem}\n");
-    find_path(c->table_p, 0, 0, stream);
+    /* Allocate array for paths */
+    int* path = (int*) malloc((c->table_p->rows + 1) * sizeof(int));
+    if(path != NULL) {
+        /* Initialize array */
+        for(int i = 0; i <= c->table_p->rows; i++) {
+            path[i] = -1;
+        }
+        /* Find and print paths */
+        find_path(c->table_p, 0, path, 0, stream);
+    } else {
+        fprintf(stream, "\\item %s", "No memory available for path.");
+    }
     fprintf(stream, "\\end{compactitem}\n");
 }
