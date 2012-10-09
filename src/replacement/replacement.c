@@ -56,7 +56,6 @@ replacement_context* replacement_context_new(int years_plan, int lifetime)
         return NULL;
     }
 
-
     /* Try to allocate matrices */
     c->table_c = matrix_new(years_plan, years_plan, 0.0);
     if(c->table_c == NULL) {
@@ -141,12 +140,19 @@ bool replacement(replacement_context* c)
     }
 
     /* Calculate the minimum cost */
-    for(int i = c->years_plan; i >= 0; i--) {
+    for(int i = c->years_plan - 1; i >= 0; i--) {
+        /* Calculate the minimum global cost */
         for(int j = i + 1; j <= c->years_plan; j++) {
             float min = c->table_c->data[i][j - 1] + c->minimum_cost[j];
-            if((min <= c->minimum_cost[i]) && (j - i <= c->lifetime)) {
-                c->table_p->data[i][j - 1] = j;
+            if((min < c->minimum_cost[i]) && (j - i <= c->lifetime)) {
                 c->minimum_cost[i] = min;
+            }
+        }
+        /* Calculate viable plans */
+        for(int j = i + 1; j <= c->years_plan; j++) {
+            float min = c->table_c->data[i][j - 1] + c->minimum_cost[j];
+            if((min == c->minimum_cost[i]) && (j - i <= c->lifetime)) {
+                c->table_p->data[i][j - 1] = j;
             }
         }
     }
