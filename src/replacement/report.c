@@ -281,6 +281,7 @@ void replacement_path(replacement_context* c, FILE* stream)
         }
         /* Find and print paths */
         find_path(c->table_p, 0, path, 0, stream);
+        free(path);
     } else {
         fprintf(stream, "\\item %s", "No memory available for path.");
     }
