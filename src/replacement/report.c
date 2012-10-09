@@ -75,11 +75,11 @@ bool replacement_report(replacement_context* c)
      /* Write execution */
     fprintf(report, "\\subsection{\\textcolor{deepblue}{%s}}\n", "Execution");
     replacement_table(c, report, c->table_c, true,
-                      "Table C: costs of buying the equipment in t "
-                      "instant and sell it at x instant");
+                      "Costs of buying the equipment in x "
+                      "instant and sell it at y instant");
     fprintf(report, "\n\n");
     replacement_table(c, report, c->table_p, false,
-                      "Table P: Replacement Plan");
+                      "Replacement plan");
     fprintf(report, "\n\n");
     replacement_mincost(c, report);
     fprintf(report, "\\newpage\n");
@@ -187,8 +187,7 @@ void replacement_mincost(replacement_context* c, FILE* stream){
     /* Table body */
     for(int j = 0; j < size; j++) {
 
-        fprintf(stream, "%1.4f", m[j]);
-
+        fprintf(stream, "%.4f", m[j]);
         if(j < size - 1) {
             fprintf(stream, " & ");
         }
@@ -206,11 +205,12 @@ void replacement_mincost(replacement_context* c, FILE* stream){
 void replacement_analisis(replacement_context* c, FILE* stream)
 {
     float* mc = c->minimum_cost;
+    fprintf(stream, "\\begin{compactitem}\n");
     for(int i = 0; i <= c->years_plan; i++) {
-           fprintf(stream, "G(%d): %4.2f \n", i, mc[i]);
-           fprintf(stream, "\n");
+        fprintf(stream, "\\item G(%i): \\textsc{%4.2f}.\n", i, mc[i]);
     }
-    fprintf(stream, "\n\n\n");
+    fprintf(stream, "\\end{compactitem}\n");
+    fprintf(stream, "\n");
 }
 
 void replacement_data(replacement_context* c, FILE* stream)
