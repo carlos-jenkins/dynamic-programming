@@ -253,16 +253,24 @@ void find_path(matrix* m, int i, int* path, int c, FILE* stream)
 
     /* Flush route if is end */
     if(is_end) {
-        fprintf(stream, "\\item \\textsc{");
-        for(int k = 0; path[k] != -1; k++) {
-            fprintf(stream, "%i ", path[k]);
+        /* Count jumps */
+        int jumps = 0;
+        for(; path[jumps] != -1; jumps++) {}
+        /* Print plan */
+        fprintf(stream, "\\item {\\Large \\textsc{");
+        for(int k = 0; k < jumps; k++) {
+            fprintf(stream, "%i", path[k]);
+            if(k < jumps - 1) {
+                fprintf(stream, " $\\longrightarrow$ ");
+            }
         }
-        fprintf(stream, "}\n");
+        fprintf(stream, "}}\n");
     }
 }
 
 void replacement_path(replacement_context* c, FILE* stream)
 {
+    fprintf(stream, "Optimal replacement plan: \n");
     fprintf(stream, "\\begin{compactitem}\n");
     /* Allocate array for paths */
     int* path = (int*) malloc((c->table_p->rows + 1) * sizeof(int));
