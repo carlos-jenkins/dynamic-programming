@@ -206,6 +206,8 @@ void replacement_mincost(replacement_context* c, FILE* stream){
 void replacement_analisis(replacement_context* c, FILE* stream)
 {
     float* mc = c->minimum_cost;
+    fprintf(stream, "Minimal Costs (Optimal): \n");
+        fprintf(stream, "\n\n");
     for(int i = 0; i <= c->years_plan; i++) {
            fprintf(stream, "G(%d): %4.2f \n", i, mc[i]);
            fprintf(stream, "\n");
