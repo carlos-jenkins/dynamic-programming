@@ -33,7 +33,7 @@ void replacement_table(replacement_context* c, FILE* stream, matrix* m, bool is_
 void replacement_analisis(replacement_context* c, FILE* stream);
 void replacement_data(replacement_context* c, FILE* stream);
 void replacement_mincost(replacement_context* c, FILE* stream);
-void find_path(matrix* m, int i, FILE* stream);
+void find_path(matrix* m, int i, int j, FILE* stream);
 void replacement_path(replacement_context* c, FILE* stream);
 
 

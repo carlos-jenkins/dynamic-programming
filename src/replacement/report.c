@@ -63,7 +63,7 @@ bool replacement_report(replacement_context* c)
     fprintf(report, "\n");
 
     /* Write data */
-    fprintf(report, "\\subsection{\\textcolor{deepblue}{%s}}\n", "Data");
+    fprintf(report, "\\subsection{%s}\n", "Data");
     replacement_data(c, report);
     fprintf(report, "\\newpage\n");
 
@@ -73,26 +73,22 @@ bool replacement_report(replacement_context* c)
     fprintf(report, "\n");
 
      /* Write execution */
-    fprintf(report, "\\subsection{\\textcolor{deepblue}{%s}}\n", "Execution");
+    fprintf(report, "\\subsection{%s}\n", "Execution");
     replacement_table(c, report, c->table_c, true,
                       "Costs of buying the equipment in x "
                       "instant and sell it at y instant");
-    fprintf(report, "\n\n");
     replacement_table(c, report, c->table_p, false,
                       "Replacement plan");
-    fprintf(report, "\n\n");
     replacement_mincost(c, report);
     fprintf(report, "\\newpage\n");
     fprintf(report, "\n");
 
     /* Write analisis */
-    fprintf(report, "\\subsection{\\textcolor{deepblue}{%s}}\n", "Analysis");
+    fprintf(report, "\\subsection{%s}\n", "Analysis");
     replacement_analisis(c, report);
-    fprintf(report, "\n");
-
 
     /* Write digest */
-    fprintf(report, "\\subsection{\\textcolor{deepblue}{%s}}\n", "Digest");
+    fprintf(report, "\\subsection{%s}\n", "Digest");
     replacement_path(c, report);
     fprintf(report, "\n");
 
@@ -162,7 +158,7 @@ void replacement_table(replacement_context* c, FILE* stream, matrix* m,
     fprintf(stream, "\\caption{%s.}\n", msj);
     fprintf(stream, "\\end{adjustwidth}\n");
     fprintf(stream, "\\end{table}\n");
-    fprintf(stream, "\n\n\n");
+    fprintf(stream, "\n");
 
 }
 
@@ -204,15 +200,14 @@ void replacement_mincost(replacement_context* c, FILE* stream){
     fprintf(stream, "\\caption{%s.}\n", "Table with the minimal costs");
     fprintf(stream, "\\end{adjustwidth}\n");
     fprintf(stream, "\\end{table}\n");
-    fprintf(stream, "\n\n\n");
+    fprintf(stream, "\n");
 }
-
 
 void replacement_analisis(replacement_context* c, FILE* stream)
 {
     float* mc = c->minimum_cost;
     fprintf(stream, "Minimal Costs (Optimal): \n");
-    fprintf(stream, "\n\n");
+    fprintf(stream, "\n");
     fprintf(stream, "\\begin{compactitem}\n");
     for(int i = 0; i <= c->years_plan; i++) {
         fprintf(stream, "\\item G(%i): \\textsc{%4.2f}.\n", i, mc[i]);
@@ -238,24 +233,28 @@ void replacement_data(replacement_context* c, FILE* stream)
     fprintf(stream, "\n");
 }
 
-void find_path(matrix* m, int i, FILE* stream){
-    
-    for(int k = 0; k < m->columns; k++){
-        int p = (int)m->data[i][k];
-        if(p != 0){
+void find_path(matrix* m, int i, int j, FILE* stream)
+{
+    if(i == m->columns) {
+        fprintf(stream, "}.\n");
+        return;
+    }
+
+    for(int k = j; k < m->columns; k++) {
+        int p = (int) m->data[i][k];
+        if(p != 0) {
+            if(i == 0) {
+                fprintf(stream, "\\item \\textsc{");
+            }
             fprintf(stream, "%i -> ", p);
-            find_path(m, p, stream);
+            find_path(m, p, j + 1, stream);
         }
     }
 }
 
-void replacement_path(replacement_context* c, FILE* stream){
-    matrix *p = c->table_p;
-    for(int i = 0; i < p->rows; i++){
-        for(int j = 0; j < p->columns; j++){
-            int n = (int)p->data[ i ][ j ];
-            find_path(p, n, stream);
-        }
-        fprintf(stream, "\n\n");
-    }
+void replacement_path(replacement_context* c, FILE* stream)
+{
+    fprintf(stream, "\\begin{compactitem}\n");
+    find_path(c->table_p, 0, 0, stream);
+    fprintf(stream, "\\end{compactitem}\n");
 }
