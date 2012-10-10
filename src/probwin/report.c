@@ -209,24 +209,28 @@ void probwin_table(probwin_context* c, FILE* stream)
     fprintf(stream, "\n");
 }
 
-
-void probwin_analysis(probwin_context* c, FILE* stream){
-
+void probwin_analysis(probwin_context* c, FILE* stream)
+{
     matrix* m = c->table_w;
 
-    for(int i = 0; i < m->rows; i++){
-        for(int j = 0; j< m->columns; j++){
-            if(i != 0 && j != 0){
+    for(int i = 0; i < m->rows; i++) {
+        for(int j = 0; j< m->columns; j++) {
+            if((i != 0) && (j != 0)) {
                 int current_game = c->games + 1 - i - j;
-                float prob = m->data[ i ][ j ];
-                
-                fprintf(stream, " -  {\\Large Playing game %i :}\n %s  needs to win %i games to become champion with a probability to win of  %0.4f,\n"
-                "and therefore %s needs to win %i games to become champion with a probability to win of %0.4f\n",
-                current_game, c->a_name,  i,  prob,  c->b_name, j, 1 - prob);
-                fprintf(stream, "\n\n\n");                    
+                float prob = m->data[i][j];
+
+                fprintf(stream, "\\noindent{}"
+                                "- {\\Large Playing game %i :}\n %s  needs to "
+                                "win %i games to become champion with a "
+                                "probability to win of  %0.4f, \nand therefore "
+                                "%s needs to win %i games to become champion "
+                                "with a probability to win of %0.4f\n",
+                                current_game, c->a_name, i, prob,
+                                c->b_name, j, 1 - prob);
+                fprintf(stream, "\n");
             }
         }
     }
-    
+
 
 }
