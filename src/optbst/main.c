@@ -575,7 +575,6 @@ void load(FILE* file)
                     -1);
         /* Next */
         has_row = gtk_tree_model_iter_next(GTK_TREE_MODEL(nodes_model), &iter);
-        printf("Last name is %s and has_row %d\n", names[i], has_row);
     }
 
     /* Set capacity */
