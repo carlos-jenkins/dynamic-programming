@@ -37,6 +37,7 @@ GtkFileChooser* save_dialog;
 optbst_context* c = NULL;
 
 /* Functions */
+void enable_sort(bool e);
 void add_row(GtkToolButton *toolbutton, gpointer user_data);
 void remove_row(GtkToolButton *toolbutton, gpointer user_data);
 void edit_started_cb(GtkCellRenderer* renderer, GtkCellEditable* editable,
@@ -109,14 +110,26 @@ int main(int argc, char **argv)
     add_row(NULL, NULL);
 
     /* Sort model */
-    gtk_tree_sortable_set_sort_column_id(
-        GTK_TREE_SORTABLE(nodes_model), 0, GTK_SORT_ASCENDING);
+    enable_sort(true);
 
     g_object_unref(G_OBJECT(builder));
     gtk_widget_show(GTK_WIDGET(window));
     gtk_main();
 
     return(0);
+}
+
+void enable_sort(bool e)
+{
+    if(e) {
+        gtk_tree_sortable_set_sort_column_id(
+            GTK_TREE_SORTABLE(nodes_model), 0, GTK_SORT_ASCENDING);
+    } else {
+        gtk_tree_sortable_set_sort_column_id(
+            GTK_TREE_SORTABLE(nodes_model),
+            GTK_TREE_SORTABLE_UNSORTED_SORT_COLUMN_ID,
+            GTK_SORT_ASCENDING);
+    }
 }
 
 void add_row(GtkToolButton *toolbutton, gpointer user_data)
@@ -532,6 +545,7 @@ void load(FILE* file)
     fscanf(file, "%i%*c", &num_nodes);
 
     /* Adapt GUI */
+    enable_sort(false);
     gtk_list_store_clear(nodes_model);
     for(int i = 0; i < num_nodes; i++) {
         add_row(NULL, NULL);
@@ -559,9 +573,9 @@ void load(FILE* file)
                     1, w,
                     2, g_strdup_printf("%.4f", w),
                     -1);
-
         /* Next */
         has_row = gtk_tree_model_iter_next(GTK_TREE_MODEL(nodes_model), &iter);
+        printf("Last name is %s and has_row %d\n", names[i], has_row);
     }
 
     /* Set capacity */
@@ -574,4 +588,7 @@ void load(FILE* file)
         free(names[i]);
     }
     free(names);
+
+    /* Reorder nodes */
+    enable_sort(true);
 }
