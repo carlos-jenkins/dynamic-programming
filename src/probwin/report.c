@@ -219,10 +219,11 @@ void probwin_analysis(probwin_context* c, FILE* stream){
             if(i != 0 && j != 0){
                 int current_game = c->games + 1 - i - j;
                 float prob = m->data[ i ][ j ];
-                fprintf(stream, "At game {\\Large %i} , {\\Large %s} has a "
-                    "probability to win of {\\Large %0.4f}, and therefore "
-                    "{\\Large %s} has a probability of {\\Large %0.4f}\n\n",
-                    current_game, c->a_name,  prob, c->b_name, 1 - prob);
+                
+                fprintf(stream, " -  {\\Large Playing game %i :}\n %s  needs to win %i games to become champion with a probability to win of  %0.4f,\n"
+                "and therefore %s needs to win %i games to become champion with a probability to win of %0.4f\n",
+                current_game, c->a_name,  i,  prob,  c->b_name, j, 1 - prob);
+                fprintf(stream, "\n\n\n");                    
             }
         }
     }
