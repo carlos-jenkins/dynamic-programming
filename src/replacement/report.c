@@ -49,7 +49,7 @@ bool replacement_report(replacement_context* c)
     }
 
     /* Write first section */
-    fprintf(report, "\\\\[0.5cm]\n\\noindent{\\textcolor{deepblue}{\\Large Details:}}\n");
+    fprintf(report, "\\\\[0.5cm]\n\\noindent{\\Large Details:}\n");
     fprintf(report, "\\begin{compactitem}\n");
     fprintf(report, "\\item %s : \\textsc{%s}. \n",
                     "Executed on", get_current_time());
@@ -75,22 +75,22 @@ bool replacement_report(replacement_context* c)
      /* Write execution */
     fprintf(report, "\\subsection{%s}\n", "Execution");
     replacement_table(c, report, c->table_c, true,
-                      "Costs of buying the equipment in x "
-                      "instant and sell it at y instant");
+                      "Cost to purchase the equipment at the"
+                      "instant X and sell it at the instant Y");
     replacement_table(c, report, c->table_p, false,
-                      "Replacement plan");
+                      "Replacement plans");
     replacement_mincost(c, report);
     fprintf(report, "\\newpage\n");
     fprintf(report, "\n");
 
     /* Write analisis */
     fprintf(report, "\\subsection{%s}\n", "Analysis");
-    replacement_analisis(c, report);
+    replacement_costs(c, report);
+    replacement_path(c, report);
 
     /* Write digest */
     fprintf(report, "\\subsection{%s}\n", "Digest");
-    replacement_path(c, report);
-    fprintf(report, "\n");
+    replacement_digest(c, report);
 
     /* End document */
     fprintf(report, "\\end{document}\n");
@@ -141,9 +141,9 @@ void replacement_table(replacement_context* c, FILE* stream, matrix* m,
 
             if(j >= i) {
                 if(is_c) {
-                    fprintf(stream, "%1.4f", m->data[i][j]);
+                    fprintf(stream, "%.4f", m->data[i][j]);
                 } else {
-                    fprintf(stream, "%1.0f", m->data[i][j]);
+                    fprintf(stream, "%.0f", m->data[i][j]);
                 }
             }
 
@@ -160,6 +160,44 @@ void replacement_table(replacement_context* c, FILE* stream, matrix* m,
     fprintf(stream, "\\end{table}\n");
     fprintf(stream, "\n");
 
+}
+
+void replacement_data(replacement_context* c, FILE* stream)
+{
+    /* Common data */
+    fprintf(stream, "\\begin{compactitem}\n");
+
+    fprintf(stream, "\\item %s : \\textsc{%s}. \n",
+                    "Equipment", c->equipment);
+    fprintf(stream, "\\item %s : \\textsc{%.2f}. \n",
+                    "Equipment cost", c->equipment_cost);
+    fprintf(stream, "\\item %s : \\textsc{%i %s}. \n",
+                    "Equipment Lifetime", c->lifetime, "years");
+    fprintf(stream, "\\item %s : \\textsc{%i %s}. \n",
+                    "Replacement plan for", c->years_plan, "years");
+
+    fprintf(stream, "\\end{compactitem}\n");
+    fprintf(stream, "\n");
+
+    /* Maintenance and sale costs */
+    /* Table preamble and headers */
+    fprintf(stream, "\\begin{table}[!ht]\n");
+    fprintf(stream, "\\centering\n");
+    fprintf(stream, "\\begin{tabular}{|c|c|c|}\n\\hline\n");
+    fprintf(stream, "\\cellcolor{gray90}\\textbf{%s} & ", "Year");
+    fprintf(stream, "\\cellcolor{gray90}\\textbf{%s} & ", "Maintenance");
+    fprintf(stream, "\\cellcolor{gray90}\\textbf{%s} "  , "Sale");
+    fprintf(stream, "\\\\\n\\hline\\hline\n");
+    /* Table body */
+    for(int i = 0; i < c->lifetime; i++) {
+        fprintf(stream, "%i & %.4f & %.4f \\\\ \\hline\n",
+                        i + 1, c->maintenance_cost[i], c->sale_cost[i]);
+    }
+    /* Table closure */
+    fprintf(stream, "\\end{tabular}\n");
+    fprintf(stream, "\\caption{%s.}\n", "Maintenance and sale costs");
+    fprintf(stream, "\\end{table}\n");
+    fprintf(stream, "\n");
 }
 
 void replacement_mincost(replacement_context* c, FILE* stream){
@@ -197,16 +235,17 @@ void replacement_mincost(replacement_context* c, FILE* stream){
     fprintf(stream, " \\\\ \\hline\n");
     fprintf(stream, "\\end{tabular}\n");
 
-    fprintf(stream, "\\caption{%s.}\n", "Table with the minimal costs");
+    fprintf(stream, "\\caption{%s.}\n", "Table with the minimum costs");
     fprintf(stream, "\\end{adjustwidth}\n");
     fprintf(stream, "\\end{table}\n");
     fprintf(stream, "\n");
 }
 
-void replacement_analisis(replacement_context* c, FILE* stream)
+void replacement_costs(replacement_context* c, FILE* stream)
 {
     float* mc = c->minimum_cost;
-    fprintf(stream, "Minimal Costs (Optimal): \n");
+    fprintf(stream, "\\noindent{%s:}\n",
+                    "Optimal minimum costs \\textsc{G(t)}");
     fprintf(stream, "\n");
     fprintf(stream, "\\begin{compactitem}\n");
     for(int i = 0; i <= c->years_plan; i++) {
@@ -216,21 +255,26 @@ void replacement_analisis(replacement_context* c, FILE* stream)
     fprintf(stream, "\n");
 }
 
-void replacement_data(replacement_context* c, FILE* stream)
+void replacement_path(replacement_context* c, FILE* stream)
 {
+    fprintf(stream, "\\noindent{%s:}\n", "Optimal replacement plans");
     fprintf(stream, "\\begin{compactitem}\n");
-
-    fprintf(stream, "\\item %s : \\textsc{%s}. \n",
-                    "Equipment", c->equipment);
-    fprintf(stream, "\\item %s : \\textsc{%.2f}. \n",
-                    "Equipment cost", c->equipment_cost);
-    fprintf(stream, "\\item %s : \\textsc{%i %s}. \n",
-                    "Equipment Lifetime", c->lifetime, "years");
-    fprintf(stream, "\\item %s : \\textsc{%i %s}. \n",
-                    "Replacement plan for", c->years_plan, "years");
-
+    /* Allocate array for paths */
+    int size = c->table_p->rows + 2;
+    int* path = (int*) malloc(size * sizeof(int));
+    if(path != NULL) {
+        /* Initialize array */
+        path[0] = 0;
+        for(int i = 1; i < size; i++) {
+            path[i] = -1;
+        }
+        /* Find and print paths */
+        find_path(c->table_p, 0, path, 1, stream);
+        free(path);
+    } else {
+        fprintf(stream, "\\item %s", "No memory available for path.");
+    }
     fprintf(stream, "\\end{compactitem}\n");
-    fprintf(stream, "\n");
 }
 
 void find_path(matrix* m, int i, int* path, int c, FILE* stream)
@@ -268,22 +312,30 @@ void find_path(matrix* m, int i, int* path, int c, FILE* stream)
     }
 }
 
-void replacement_path(replacement_context* c, FILE* stream)
+void replacement_digest(replacement_context* c, FILE* stream)
 {
-    fprintf(stream, "Optimal replacement plan: \n");
-    fprintf(stream, "\\begin{compactitem}\n");
-    /* Allocate array for paths */
-    int* path = (int*) malloc((c->table_p->rows + 1) * sizeof(int));
-    if(path != NULL) {
-        /* Initialize array */
-        for(int i = 0; i <= c->table_p->rows; i++) {
-            path[i] = -1;
+    fprintf(stream, "The minimum cost for the whole project "
+                    "(%i years) is {\\Large %.4f}.\n",
+                    c->years_plan,
+                    c->minimum_cost[0]);
+    fprintf(stream, "After the initial buy, you may replace your equipment "
+                    "at years ");
+    for(int i = 0; i < c->table_p->rows;) {
+        for(int j = i; i < c->table_p->columns; j++) {
+            int p = (int) c->table_p->data[i][j];
+            if(p != 0) {
+                i = p;
+                fprintf(stream, "%i", p);
+                break;
+            }
         }
-        /* Find and print paths */
-        find_path(c->table_p, 0, path, 0, stream);
-        free(path);
-    } else {
-        fprintf(stream, "\\item %s", "No memory available for path.");
+        if(i < c->table_p->rows) {
+            fprintf(stream, ", ");
+        }
     }
-    fprintf(stream, "\\end{compactitem}\n");
+    fprintf(stream, "; or using any other of the plans listed in the analysis "
+                    "section. Please note that by using any other replacement "
+                    "plan not listed there guarantees to have a greater total "
+                    "cost.");
+    fprintf(stream, "\n");
 }

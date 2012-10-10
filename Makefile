@@ -8,16 +8,16 @@ COMMON = -Isrc/main/ src/main/matrix.c src/main/utils.c src/main/latex.c src/mai
 GUICOMMON = src/main/dialogs.c
 
 # Rules
-all: bin/main bin/floyd bin/knapsack bin/optbst bin/probwin bin/replacement
+all: clean bin/main bin/floyd bin/knapsack bin/optbst bin/probwin bin/replacement
 
-test: bin/test/floyd bin/test/knapsack bin/test/optbst bin/test/probwin bin/test/replacement
+test: clean bin/test/floyd bin/test/knapsack bin/test/optbst bin/test/probwin bin/test/replacement
 
 # Algorithms
-floyd: bin/floyd bin/test/floyd
-knapsack: bin/knapsack bin/test/knapsack
-optbst: bin/optbst bin/test/optbst
-probwin: bin/probwin bin/test/probwin
-replacement: bin/replacement bin/test/replacement
+floyd: clean bin/floyd bin/test/floyd
+knapsack: clean bin/knapsack bin/test/knapsack
+optbst: clean bin/optbst bin/test/optbst
+probwin: clean bin/probwin bin/test/probwin
+replacement: clean bin/replacement bin/test/replacement
 
 # Main binaries
 bin/main: src/main/main.c

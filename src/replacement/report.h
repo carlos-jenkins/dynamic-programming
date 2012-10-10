@@ -30,11 +30,11 @@
  */
 bool replacement_report(replacement_context* c);
 void replacement_table(replacement_context* c, FILE* stream, matrix* m, bool is_c, char* msj);
-void replacement_analisis(replacement_context* c, FILE* stream);
 void replacement_data(replacement_context* c, FILE* stream);
 void replacement_mincost(replacement_context* c, FILE* stream);
-void find_path(matrix* m, int i, int* path, int c, FILE* stream);
+void replacement_costs(replacement_context* c, FILE* stream);
 void replacement_path(replacement_context* c, FILE* stream);
-
+void find_path(matrix* m, int i, int* path, int c, FILE* stream);
+void replacement_digest(replacement_context* c, FILE* stream);
 
 #endif
