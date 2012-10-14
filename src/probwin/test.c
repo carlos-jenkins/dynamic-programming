@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Carolina Aguilar <caroagse@gmail.co.cr>
+ * Copyright (C) 2012 Carolina Aguilar <caroagse@gmail.com>
  * Copyright (C) 2012 Carlos Jenkins <carlos@jenkins.co.cr>
  *
  * This program is free software; you can redistribute it and/or modify
