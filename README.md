@@ -22,8 +22,8 @@ programming algorithms:
   in a weighted graph.
 
 
-This Software is written is C and uses GTK+ 3 for the GUI. It uses LaTeX to render
-reports and Graphviz to draw graphs and trees.
+This Software is written is C and uses GTK+ 3 for the GUI. It uses LaTeX to
+render reports and Graphviz to draw graphs and trees.
 
 ![Dynamic Programming GUI and reports](https://raw.github.com/carlos-jenkins/dynamic-programming/master/media/wall.png "Dynamic Programming GUI and reports")
 

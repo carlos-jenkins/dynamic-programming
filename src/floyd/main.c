@@ -130,6 +130,7 @@ bool change_matrix(int size)
     }
     names = (char**) malloc(size * sizeof(char*));
     if(names == NULL) {
+        matrix_free(adj_matrix);
         return false;
     }
     for(int i = 0; i < size; i++) {
@@ -141,7 +142,6 @@ bool change_matrix(int size)
     GType* types = (GType*) malloc(3 * rsize * sizeof(GType));
     if(types == NULL) {
         matrix_free(adj_matrix);
-        floyd_context_free(c);
         return false;
     }
     for(int i = 0; i < rsize; i++) {
